@@ -1,0 +1,89 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.88430000773045,
+        "y": 6.988869992232738
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.8050972064677056,
+        "y": 7.485020937950779
+      },
+      "isLocked": false,
+      "linkedName": "1"
+    },
+    {
+      "anchor": {
+        "x": 7.811550949188856,
+        "y": 7.432969239644484
+      },
+      "prevControl": {
+        "x": 7.2238447841284925,
+        "y": 7.5150303354436945
+      },
+      "nextControl": {
+        "x": 8.801943019698438,
+        "y": 7.294681327404328
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.499097719727531,
+        "y": 6.136457039994825
+      },
+      "prevControl": {
+        "x": 6.592253194851274,
+        "y": 5.947238493852276
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "shot"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.5,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Intake"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.5,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 720.0,
+    "maxAngularAcceleration": 1080.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 9.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}
