@@ -7,6 +7,9 @@
     }
   },
   "NetworkTables": {
+    "Persistent Values": {
+      "open": false
+    },
     "transitory": {
       "* Logger *": {
         "open": true
@@ -17,13 +20,19 @@
         },
         "open": true
       },
-      "FMSInfo": {
+      "AdvantageKit": {
+        "PowerDistribution": {
+          "open": true
+        },
         "open": true
       },
       "LiveWindow": {
         ".status": {
           "open": true
         },
+        "open": true
+      },
+      "Shuffleboard": {
         "open": true
       },
       "SmartDashboard": {

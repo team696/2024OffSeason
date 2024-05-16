@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.VecBuilder;
@@ -47,10 +49,12 @@ public class Swerve extends SubsystemBase {
     zeroYaw();
     }
 
+  @AutoLogOutput
   public Rotation2d getYaw() {
     return Rotation2d.fromDegrees(-1 * m_Pigeon.getAngle()); 
   }
 
+  @AutoLogOutput
   public Pose2d getPose() {
     return m_poseEstimator.getEstimatedPosition();
   }
