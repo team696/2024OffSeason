@@ -21,7 +21,13 @@
         "open": true
       },
       "AdvantageKit": {
-        "PowerDistribution": {
+        "RealOutputs": {
+          "Logger": {
+            "open": true
+          },
+          "Robot": {
+            "open": true
+          },
           "open": true
         },
         "open": true
@@ -30,9 +36,6 @@
         ".status": {
           "open": true
         },
-        "open": true
-      },
-      "Shuffleboard": {
         "open": true
       },
       "SmartDashboard": {

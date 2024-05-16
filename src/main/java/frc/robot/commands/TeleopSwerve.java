@@ -25,11 +25,13 @@ public class TeleopSwerve extends Command {
     private double multiplier = 1;
 
     public static void config(DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, BooleanSupplier rotationLock, double deadBand) {
-        translation = x;
-        strafe = y;
+        strafe = x;
+        translation = y;
         rotation = r;
 
         lockRotation = rotationLock;
+
+        deadband = deadBand;
 
         pidController = new PIDController(0.0056, 0.00, 0);
         pidController.enableContinuousInput(-180, 180);
@@ -77,9 +79,9 @@ public class TeleopSwerve extends Command {
         } else {
             if (Math.abs(rAxis) > deadband) {
                 if (rAxis > 0)
-                    rAxis = Util.map(rAxis, deadband, 1, 0, 1);
+                    rAxis = Util.map(rAxis * rAxis, deadband, 1, 0, 1);
                 else 
-                    rAxis = Util.map(rAxis, -deadband, -1, 0, -1);
+                    rAxis = Util.map(rAxis * rAxis * -1, -deadband, -1, 0, -1);
             } else {
                 rAxis = 0;
             }

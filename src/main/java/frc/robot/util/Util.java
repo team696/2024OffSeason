@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import frc.lib.Log.PLog;
+import frc.robot.Robot;
 
 public class Util {
     public static double lerp(double t, double min, double max) {
@@ -100,6 +101,12 @@ public class Util {
 	}
 
     public static void setRobotType () {
+        if (Robot.isSimulation()) {
+            Constants.Robot.detected = Constants.Robot.Robots.SIM;
+            PLog.info("Robot", "Simulation Detected");
+            return;
+        }
+
         List<byte[]> macAddresses;
 		try {
 			macAddresses = Util.getMacAddresses();
@@ -111,11 +118,11 @@ public class Util {
 		for (byte[] macAddress : macAddresses) {
 			if (Arrays.compare(Constants.Robot.COMP_MAC, macAddress) == 0) {
 				Constants.Robot.detected = Constants.Robot.Robots.COMP;
-                PLog.info("Robot", "Comp Bot Connected");
+                PLog.info("Robot", "Comp Bot Detected");
 				break;
 			} else if (Arrays.compare(Constants.Robot.BETA_MAC, macAddress) == 0) {
 				Constants.Robot.detected = Constants.Robot.Robots.BETA;
-                PLog.info("Robot", "Beta Bot Connected");
+                PLog.info("Robot", "Beta Bot Detected");
 				break;
 			}
 		}

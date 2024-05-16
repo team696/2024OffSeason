@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -30,6 +32,7 @@ public final class Constants {
 	}
 	public static class Motors {
         public static final class Falcon {
+			@AutoLogOutput
             public static final double stallCurA = 257;
             public static final double stallTorqueNm = 4.69;
             public static final double freeSpinRPM = 6380;
@@ -53,8 +56,8 @@ public final class Constants {
 
 		public static final double massKgs = Units.lbsToKilograms(70);
 
-		public static final double wheelX = Units.inchesToMeters(21.75);
-		public static final double wheelY = Units.inchesToMeters(21.75);
+		public static final double wheelX = Units.inchesToMeters(13.0);
+		public static final double wheelY = Units.inchesToMeters(13.0);
 		public static final double wheelDiameter = Units.inchesToMeters(3.89);
 		public static final double wheelCircumference = wheelDiameter * Math.PI;
 

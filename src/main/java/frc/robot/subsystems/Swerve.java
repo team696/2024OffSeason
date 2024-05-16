@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 
@@ -49,12 +50,10 @@ public class Swerve extends SubsystemBase {
     zeroYaw();
     }
 
-  @AutoLogOutput
   public Rotation2d getYaw() {
     return Rotation2d.fromDegrees(-1 * m_Pigeon.getAngle()); 
   }
 
-  @AutoLogOutput
   public Pose2d getPose() {
     return m_poseEstimator.getEstimatedPosition();
   }
@@ -148,6 +147,8 @@ public class Swerve extends SubsystemBase {
     }
 
     m_poseEstimator.update(getYaw(), m_swervePositions);
+
+    Logger.recordOutput("Pose", getPose());
 
     Constants.Field.sim.setRobotPose(getPose());
     Constants.Field.sim.getObject("robot").setPose(getPose());

@@ -54,7 +54,7 @@ public class Configs {
         swerve_Angle.Voltage.PeakReverseVoltage = -12.;
 
         /** Swerve Drive Motor Configuration */
-        swerve_Drive.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        swerve_Drive.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         swerve_Drive.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         swerve_Drive.Feedback.SensorToMechanismRatio = Constants.swerve.driveGearRatio;
         swerve_Drive.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -70,8 +70,8 @@ public class Configs {
         swerve_Drive.Slot0.kP = 2.;
         swerve_Drive.Slot0.kI = 0.0;
         swerve_Drive.Slot0.kD = 0.0;
-        swerve_Drive.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.25;
-        swerve_Drive.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.25;
+        swerve_Drive.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.1;
+        swerve_Drive.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;
         swerve_Drive.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.02;
         swerve_Drive.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
 
@@ -79,24 +79,24 @@ public class Configs {
         Mod0.CANcoderId = 0;  
         Mod0.DriveMotorId = 3; 
         Mod0.SteerMotorId = 6;
-        Mod0.CANcoderOffset = -0.456;
+        Mod0.CANcoderOffset = -0.307;
  
         Mod1.CANcoderId = 3; 
         Mod1.DriveMotorId = 4;
         Mod1.SteerMotorId = 7;
-        Mod1.CANcoderOffset = -0.2307;
+        Mod1.CANcoderOffset = 0.268;
 
         Mod2.CANcoderId = 2; 
         Mod2.DriveMotorId = 2;
         Mod2.SteerMotorId = 1;
-        Mod2.CANcoderOffset = -0.129;
+        Mod2.CANcoderOffset = 0.371;
 
         Mod3.CANcoderId = 1; 
         Mod3.DriveMotorId = 5;
         Mod3.SteerMotorId = 0;
-        Mod3.CANcoderOffset = -0.138;
+        Mod3.CANcoderOffset = 0.357;
 
         /** Pigeon Configuration */ 
-        swerve_Pigeon.MountPose.MountPoseYaw = 87;
+        swerve_Pigeon.MountPose.MountPoseYaw = -177;
     }
 }

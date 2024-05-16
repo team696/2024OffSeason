@@ -1,4 +1,6 @@
 package frc.robot;
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -17,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Swerve;
+import frc.robot.util.Auto;
 import frc.robot.util.Constants;
 import frc.robot.util.Controls;
 import frc.robot.util.Util;
@@ -28,19 +31,26 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void robotInit() {
+        Util.setRobotType();
+
         Logger.recordMetadata("ProjectName", "2024OffSeason"); // Set a metadata value
 
-        Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
-        
-        if (Constants.DEBUG)
-          Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-
+        switch (Constants.Robot.detected) {
+          case SIM:
+            Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+            break;
+          case COMP:
+          case BETA:
+          case UNKNOWN:
+          default:
+            Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+            Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+            break;
+        }
         m_PDH = new PowerDistribution(1, ModuleType.kRev); 
-
+        
         Logger.start(); 
 
-        Util.setRobotType();
-        
         DriverStation.silenceJoystickConnectionWarning(true);
     
         LiveWindow.disableAllTelemetry();
@@ -53,6 +63,8 @@ public class Robot extends LoggedRobot {
         SmartDashboard.putData(Swerve.get());
 
         configureControllerBinds();
+
+        Auto.Initialize();
     }
 
   @Override
@@ -73,7 +85,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = null;
+    m_autonomousCommand = Auto.Selected();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -127,7 +139,7 @@ public class Robot extends LoggedRobot {
 
     @SuppressWarnings("unused") 
     private void configureControllerBinds() { 
-      TeleopSwerve.config(Controls.Controller.leftJoyX, Controls.Controller.leftJoyY, Controls.Controller.rightJoyX, null, 0.08);
+      TeleopSwerve.config(Controls.Controller.leftJoyX, Controls.Controller.leftJoyY, Controls.Controller.rightJoyX, null, 0.02);
       Swerve.get().setDefaultCommand(new TeleopSwerve());
       Controls.Controller.A.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
     }
