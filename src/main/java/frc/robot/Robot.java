@@ -1,11 +1,8 @@
 package frc.robot;
-import org.littletonrobotics.junction.AutoLog;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.LogFileUtil;
+
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import edu.wpi.first.wpilibj.DriverStation;

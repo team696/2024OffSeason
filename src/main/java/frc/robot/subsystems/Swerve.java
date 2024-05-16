@@ -141,7 +141,7 @@ public class Swerve extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
+  public void periodic() { 
     for (int i = 0; i < 4; ++i) {
       m_swervePositions[i] = Constants.swerve.swerveMods[i].getPosition();
     }
