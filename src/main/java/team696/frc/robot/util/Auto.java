@@ -1,4 +1,4 @@
-package frc.robot.util;
+package team696.frc.robot.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.lib.Log.PLog;
-import frc.robot.subsystems.Swerve;
+import team696.frc.lib.Log.PLog;
+import team696.frc.robot.subsystems.Swerve;
 
 public class Auto {
     public static Auto m_instance;

@@ -1,4 +1,4 @@
-package frc.lib.Log;
+package team696.frc.lib.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,8 +19,8 @@ import java.util.regex.Matcher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.Robot;
-import frc.robot.util.Util;
+import team696.frc.robot.Robot;
+import team696.frc.robot.util.Util;
 
 public class Logger {
     public static Logger m_Logger;

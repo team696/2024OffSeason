@@ -1,4 +1,4 @@
-package frc.robot.util;
+package team696.frc.robot.util;
 
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -8,7 +8,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import frc.lib.TalonFactory;
+import team696.frc.lib.TalonFactory;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 

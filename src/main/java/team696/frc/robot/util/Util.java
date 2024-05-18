@@ -1,4 +1,4 @@
-package frc.robot.util;
+package team696.frc.robot.util;
 
 import java.io.IOException;
 import java.net.NetworkInterface;
@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 
-import frc.lib.Log.PLog;
-import frc.robot.Robot;
+import team696.frc.lib.Log.PLog;
+import team696.frc.robot.Robot;
 
 public class Util {
     public static double lerp(double t, double min, double max) {

@@ -1,4 +1,4 @@
-package frc.robot.util;
+package team696.frc.robot.util;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;

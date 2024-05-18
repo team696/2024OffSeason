@@ -1,4 +1,4 @@
-package frc.lib;
+package team696.frc.lib;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.Timer;
-import frc.lib.Log.PLog;
+import team696.frc.lib.Log.PLog;
 
 public class TalonFactory { //TODO: Make this general for CAN devices
     private final double TIMEOUT = 0.025;

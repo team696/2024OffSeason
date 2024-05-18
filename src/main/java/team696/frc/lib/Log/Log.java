@@ -1,4 +1,4 @@
-package frc.lib.Log;
+package team696.frc.lib.Log;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

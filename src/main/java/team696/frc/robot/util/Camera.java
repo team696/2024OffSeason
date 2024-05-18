@@ -1,4 +1,4 @@
-package frc.robot.util;
+package team696.frc.robot.util;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,9 +27,9 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.lib.Log.PLog;
-import frc.robot.Robot;
-import frc.robot.subsystems.Swerve;
+import team696.frc.lib.Log.PLog;
+import team696.frc.robot.Robot;
+import team696.frc.robot.subsystems.Swerve;
 
 public class Camera {
     private  class cam {

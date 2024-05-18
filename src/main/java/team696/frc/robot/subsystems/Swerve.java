@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package team696.frc.robot.subsystems;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -18,10 +18,10 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.Camera;
-import frc.robot.util.Constants;
-import frc.robot.util.StateEstimator;
-import frc.robot.util.SwerveModule;
+import team696.frc.robot.util.Camera;
+import team696.frc.robot.util.Constants;
+import team696.frc.robot.util.StateEstimator;
+import team696.frc.robot.util.SwerveModule;
 
 public class Swerve extends SubsystemBase {
   private static Swerve m_Swerve;
