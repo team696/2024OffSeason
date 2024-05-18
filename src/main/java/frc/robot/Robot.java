@@ -17,8 +17,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.Auto;
+import frc.robot.util.Camera;
 import frc.robot.util.Constants;
 import frc.robot.util.Controls;
+import frc.robot.util.StateEstimator;
 import frc.robot.util.Util;
 
 public class Robot extends LoggedRobot {
@@ -31,6 +33,23 @@ public class Robot extends LoggedRobot {
         Util.setRobotType();
 
         Logger.recordMetadata("ProjectName", "2024OffSeason"); // Set a metadata value
+
+        Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
+        Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
+        Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+        Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
+        Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+        switch (BuildConstants.DIRTY) {
+          case 0:
+            Logger.recordMetadata("GitDirty", "All changes committed");
+            break;
+          case 1:
+            Logger.recordMetadata("GitDirty", "Uncomitted changes");
+            break;
+          default:
+            Logger.recordMetadata("GitDirty", "Unknown");
+            break;
+        }
 
         switch (Constants.Robot.detected) {
           case SIM:
@@ -62,6 +81,8 @@ public class Robot extends LoggedRobot {
         configureControllerBinds();
 
         Auto.Initialize();
+
+        Camera.get();
     }
 
   @Override
@@ -120,7 +141,9 @@ public class Robot extends LoggedRobot {
   public void simulationInit() { }
 
   @Override
-  public void simulationPeriodic() { }
+  public void simulationPeriodic() { 
+    Camera.get().simPeriodic(StateEstimator.get().getFusedPose());
+  }
 
   @SuppressWarnings("unused") 
     private void configureBinds() {

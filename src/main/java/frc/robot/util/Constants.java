@@ -72,7 +72,7 @@ public final class Constants {
 		private static final SwerveModule backRight = new SwerveModule(3, Constants.CONFIGS.Mod3);
 		public static final SwerveModule[] swerveMods = { frontLeft, frontRight, backLeft, backRight };
 
-		public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
+		public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
 			new Translation2d(wheelX / 2.0, wheelY / 2.0), // FL
 			new Translation2d(wheelX / 2.0, -wheelY / 2.0), // FR
 			new Translation2d(-wheelX / 2.0, wheelY / 2.0), // BL
