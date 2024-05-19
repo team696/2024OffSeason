@@ -17,10 +17,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import team696.frc.robot.commands.TeleopSwerve;
 import team696.frc.robot.subsystems.Swerve;
 import team696.frc.robot.util.Auto;
-import team696.frc.robot.util.Camera;
+import team696.frc.robot.util.PVCamera;
 import team696.frc.robot.util.Constants;
 import team696.frc.robot.util.Controls;
-import team696.frc.robot.util.StateEstimator;
 import team696.frc.robot.util.Util;
 
 public class Robot extends LoggedRobot {
@@ -82,7 +81,7 @@ public class Robot extends LoggedRobot {
 
         Auto.Initialize();
 
-        Camera.get();
+        PVCamera.get();
     }
 
   @Override
@@ -142,7 +141,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void simulationPeriodic() { 
-    Camera.get().simPeriodic(StateEstimator.get().getFusedPose());
+    PVCamera.get().simPeriodic(Swerve.get().getPose());
   }
 
   @SuppressWarnings("unused") 

@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -23,6 +22,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.net.PortForwarder;
@@ -31,7 +31,7 @@ import team696.frc.lib.Log.PLog;
 import team696.frc.robot.Robot;
 import team696.frc.robot.subsystems.Swerve;
 
-public class Camera {
+public class PVCamera {
     private  class cam {
         @SuppressWarnings("unused")
         public String name;
@@ -67,7 +67,7 @@ public class Camera {
         }
     }
 
-    private static Camera m_Camera;
+    private static PVCamera m_Camera;
 
     private AprilTagFieldLayout m_atLayout; 
 
@@ -75,14 +75,14 @@ public class Camera {
 
     private VisionSystemSim visionSim;
 
-    public static synchronized Camera get() {
+    public static synchronized PVCamera get() {
         if (m_Camera == null) {
-            m_Camera = new Camera();
+            m_Camera = new PVCamera();
         }
         return m_Camera;
     }
     
-    private Camera() {
+    private PVCamera() {
         m_Cameras = new ArrayList<cam>();
 
         try {
@@ -108,21 +108,8 @@ public class Camera {
         }
     }
 
-    public List<EstimatedRobotPose> getLatestResults() {
-        List<EstimatedRobotPose> results = new ArrayList<EstimatedRobotPose>();
-        for (cam camera : m_Cameras) {
-            Optional<EstimatedRobotPose> potential = camera.latest();
-            if (potential.isEmpty()) continue;
-
-            results.add(potential.get());
-
-            Logger.recordOutput(camera.name, potential.get().estimatedPose);
-        }
-        return results;
-    }
-
-    /** Old way of fusing odometry and vision */
-    public void updatePose(SwerveDrivePoseEstimator estimator) {
+    /** Update Swerve Drive Pose Estimator */
+    public void updatePose(SwerveDrivePoseEstimator estimator, Twist2d vel) {
         if (RobotBase.isSimulation()) return;
 
         for (cam camera : m_Cameras) {
@@ -146,14 +133,16 @@ public class Camera {
                 }
                 PhotonTrackedTarget bestTarget = targets.get(0);
                 if (bestTarget.getPoseAmbiguity() > 0.13) return; // Too Ambiguous, Ignore
-                //if (bestTarget.getBestCameraToTarget().getTranslation().getNorm() > 4) return; // Tag Too far, Ignore
+                if (Math.abs(vel.dtheta) > 1) return; // Rotating too fast, ignore
+                if (Math.sqrt(vel.dx * vel.dx + vel.dy + vel.dy) > Constants.swerve.maxSpeed * 0.4) return; // Moving Too fast, ignore
+                //if (bestTarget.getBestCameraToTarget().getTranslation().getNorm() > 4) return; // Tag Too far, Ignore --> comment for know becuase deviation ratio sort of fixes this.
                 double deviationRatio; 
                 if (bestTarget.getPoseAmbiguity() < 1/100.0) {
                     deviationRatio = 1/100.0; // Tag estimation very good -> Use it
                 } else {
                     deviationRatio = Math.pow(bestTarget.getBestCameraToTarget().getTranslation().getNorm(),2) / 2; // Trust Less With Distance
                 }
-                Matrix<N3, N1> deviation = VecBuilder.fill(deviationRatio, deviationRatio, 5 * deviationRatio);
+                Matrix<N3, N1> deviation = VecBuilder.fill(deviationRatio, deviationRatio, 100 * deviationRatio);
                 estimator.setVisionMeasurementStdDevs(deviation);
                 estimator.addVisionMeasurement(estimation.get().estimatedPose.toPose2d(), estimation.get().timestampSeconds);
             }

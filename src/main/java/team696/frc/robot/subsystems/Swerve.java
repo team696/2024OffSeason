@@ -3,6 +3,7 @@ package team696.frc.robot.subsystems;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix6.mechanisms.swerve.SimSwerveDrivetrain;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -16,11 +17,12 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import team696.frc.robot.util.Camera;
+import team696.frc.robot.util.PVCamera;
+import team696.frc.robot.Robot;
 import team696.frc.robot.util.Constants;
-import team696.frc.robot.util.StateEstimator;
 import team696.frc.robot.util.SwerveModule;
 
 public class Swerve extends SubsystemBase {
@@ -31,7 +33,7 @@ public class Swerve extends SubsystemBase {
   private SwerveModulePosition[] m_swervePositions = new SwerveModulePosition[4];
   private SwerveDrivePoseEstimator m_poseEstimator;
 
-  ChassisSpeeds DesiredState = new ChassisSpeeds();
+  private SimSwerveDrivetrain m_SimSwerveDrivetrain;
 
   public static Swerve get() {
     if (m_Swerve == null) {
@@ -42,16 +44,19 @@ public class Swerve extends SubsystemBase {
   
   private Swerve() {
     for (int i = 0; i < 4; ++i) {
-      m_swervePositions[i] = Constants.swerve.swerveMods[i].getPosition();
+      m_swervePositions[i] = Constants.swerve.modules[i].getPosition();
     }
 
-    //m_Gyro = new AHRS(SPI.Port.kMXP);
     m_Pigeon = new Pigeon2(0);
     m_Pigeon.getConfigurator().apply(Constants.CONFIGS.swerve_Pigeon);
 
-    m_poseEstimator = new SwerveDrivePoseEstimator(Constants.swerve.kinematics, getYaw(), m_swervePositions, new Pose2d(0,0,new Rotation2d(0)), VecBuilder.fill(0.1, 0.1, 0.03), VecBuilder.fill(0.3, 0.3, 0.6)); 
+    m_poseEstimator = new SwerveDrivePoseEstimator(Constants.swerve.kinematics, getYaw(), m_swervePositions, new Pose2d(0,0,new Rotation2d(0)), VecBuilder.fill(0.1, 0.1, 0.01), VecBuilder.fill(0.3, 0.3, 0.6)); 
   
     zeroYaw();
+
+    if (Robot.isSimulation()) {
+      m_SimSwerveDrivetrain = new SimSwerveDrivetrain(Constants.swerve.modPositions, m_Pigeon, Constants.CONFIGS.drivetrain, Constants.CONFIGS.Mods);
+    }
   }
 
   public Rotation2d getYaw() {
@@ -81,7 +86,7 @@ public class Swerve extends SubsystemBase {
 
   private SwerveModuleState[] getStates() { 
     SwerveModuleState[] states = new SwerveModuleState[4]; 
-    for(SwerveModule mod : Constants.swerve.swerveMods) { 
+    for(SwerveModule mod : Constants.swerve.modules) { 
       states[mod.moduleNumber] = mod.getState(); 
     } 
     return states; 
@@ -109,11 +114,9 @@ public class Swerve extends SubsystemBase {
   } 
 
     public void setModuleStates(SwerveModuleState[] desiredStates, boolean openLoop) {
-    DesiredState = Constants.swerve.kinematics.toChassisSpeeds(desiredStates);
-
     SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.swerve.maxSpeed);
     
-    for(SwerveModule mod : Constants.swerve.swerveMods){
+    for(SwerveModule mod : Constants.swerve.modules){
         mod.setDesiredState(desiredStates[mod.moduleNumber], false);
     }
   } 
@@ -125,28 +128,29 @@ public class Swerve extends SubsystemBase {
   @Override
   public void periodic() { 
     for (int i = 0; i < 4; ++i) {
-      m_swervePositions[i] = Constants.swerve.swerveMods[i].getPosition();
+      m_swervePositions[i] = Constants.swerve.modules[i].getPosition();
     }
-    
-    ChassisSpeeds stupid_velocity = ChassisSpeeds.fromRobotRelativeSpeeds(getRobotRelativeSpeeds(), getYaw());
-    Twist2d last_velocity_measured = new Twist2d(stupid_velocity.vxMetersPerSecond, stupid_velocity.vyMetersPerSecond, stupid_velocity.omegaRadiansPerSecond);
-    Twist2d last_velocity_predicted = new Twist2d(DesiredState.vxMetersPerSecond, DesiredState.vyMetersPerSecond, DesiredState.omegaRadiansPerSecond);
 
-    StateEstimator.get().updateOdom(m_poseEstimator.update(getYaw(), m_swervePositions), last_velocity_measured, last_velocity_predicted);
+    Twist2d last_velocity_measured = new Twist2d(getRobotRelativeSpeeds().vxMetersPerSecond, getRobotRelativeSpeeds().vyMetersPerSecond, getRobotRelativeSpeeds().omegaRadiansPerSecond);
 
-    StateEstimator.get().addVision(Camera.get().getLatestResults());
+    m_poseEstimator.update(getYaw(), m_swervePositions);
 
-    Logger.recordOutput("Odometry Pose", getPose());
-    Logger.recordOutput("Kalman Pose", StateEstimator.get().getFusedPose());
-    Logger.recordOutput("Estimator Odometry Pose", StateEstimator.get().getOdomPose());
+    PVCamera.get().updatePose(m_poseEstimator, last_velocity_measured);
+
+    Logger.recordOutput("Pose", getPose());
 
     Constants.Field.sim.setRobotPose(getPose());
   }
 
+  @Override 
+  public void simulationPeriodic() {
+    m_SimSwerveDrivetrain.update(0.02, RobotController.getBatteryVoltage(), Constants.swerve.sim_modules);
+  }
+  
   @Override
   public void initSendable(SendableBuilder builder) {
     if (Constants.DEBUG) {
-      for(SwerveModule mod : Constants.swerve.swerveMods){
+      for(SwerveModule mod : Constants.swerve.modules){
         builder.addDoubleProperty("Mod " + mod.moduleNumber + " Cancoder", ()->mod.getCANCoderAngle().getRotations(), null);
       }
       builder.addDoubleProperty("Gyro", ()->getYaw().getDegrees(), null);

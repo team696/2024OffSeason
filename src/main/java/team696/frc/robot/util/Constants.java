@@ -2,6 +2,7 @@ package team696.frc.robot.util;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -70,13 +71,21 @@ public final class Constants {
 		private static final SwerveModule frontRight = new SwerveModule(1, Constants.CONFIGS.Mod1);
 		private static final SwerveModule backLeft = new SwerveModule(2, Constants.CONFIGS.Mod2);
 		private static final SwerveModule backRight = new SwerveModule(3, Constants.CONFIGS.Mod3);
-		public static final SwerveModule[] swerveMods = { frontLeft, frontRight, backLeft, backRight };
+		public static final SwerveModule[] modules = { frontLeft, frontRight, backLeft, backRight };
 
-		public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
+		public static final com.ctre.phoenix6.mechanisms.swerve.SwerveModule[] sim_modules = {new com.ctre.phoenix6.mechanisms.swerve.SwerveModule(Constants.CONFIGS.Mod0,"rio"),
+			new com.ctre.phoenix6.mechanisms.swerve.SwerveModule(Constants.CONFIGS.Mod1,"rio"),
+			new com.ctre.phoenix6.mechanisms.swerve.SwerveModule(Constants.CONFIGS.Mod2,"rio"),
+			new com.ctre.phoenix6.mechanisms.swerve.SwerveModule(Constants.CONFIGS.Mod3,"rio")};
+
+		public static final Translation2d[] modPositions = {
 			new Translation2d(wheelX / 2.0, wheelY / 2.0), // FL
 			new Translation2d(wheelX / 2.0, -wheelY / 2.0), // FR
 			new Translation2d(-wheelX / 2.0, wheelY / 2.0), // BL
-			new Translation2d(-wheelX / 2.0, -wheelY / 2.0)); // BR   
+			new Translation2d(-wheelX / 2.0, -wheelY / 2.0) // BR  
+		};
+
+		public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(modPositions);
 	}
 
 	public static class Robot {

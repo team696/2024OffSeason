@@ -60,22 +60,19 @@
         },
         "SystemStats": {
           "open": true
-        },
-        "open": true
+        }
       },
       "LiveWindow": {
         ".status": {
           "open": true
-        },
-        "open": true
+        }
       },
       "SmartDashboard": {
-        "Swerve": {
-          "open": true
+        "VisionSystemSim-visionSim": {
+          "Sim Field": {
+            "open": true
+          }
         },
-        "open": true
-      },
-      "photonvision": {
         "open": true
       }
     }
