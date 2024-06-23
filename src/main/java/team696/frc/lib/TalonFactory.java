@@ -15,9 +15,10 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.Timer;
 import team696.frc.lib.Log.PLog;
+import team696.frc.robot.util.Constants;
 
 public class TalonFactory { //TODO: Make this general for CAN devices
-    private final double TIMEOUT = 0.025;
+    private final double TIMEOUT = 0.05;
     private TalonFX m_Motor;
     private TalonFXConfiguration m_Config;
     private String name;
@@ -55,9 +56,10 @@ public class TalonFactory { //TODO: Make this general for CAN devices
         return configure(false);
     }
 
-    private boolean configure(boolean force) {
+    public boolean configure(boolean force) {
         if (!force && configured) return true;
-        if (Timer.getFPGATimestamp() - lastConfigure < 3) return false;
+        if (!force && Timer.getFPGATimestamp() - lastConfigure < 3) return false;
+        if (!Constants.CONFIGS.Configured) return false;
 
         lastConfigure = Timer.getFPGATimestamp();
         StatusCode configCode = m_Motor.getConfigurator().apply(this.m_Config, TIMEOUT);
@@ -108,6 +110,7 @@ public class TalonFactory { //TODO: Make this general for CAN devices
     public void setPosition(double newPosition) {
         if (configure())
             if(!m_Motor.setPosition(newPosition).isOK()) {
+                PLog.info(this.name, "Failed To Set Position");
                 configured = false;
             }
     }

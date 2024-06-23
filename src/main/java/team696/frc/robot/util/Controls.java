@@ -47,5 +47,11 @@ public final class Controls {
         public static final DoubleSupplier rightJoyX = ()->-controller.getRawAxis(4);
 
         public static final Trigger A = controller.a();
+        public static final Trigger B = controller.b();
+        public static final Trigger X = controller.x();
+        public static final Trigger Y = controller.y();
+
+        public static final Trigger RB = controller.rightBumper();
+        public static final Trigger LB = controller.leftBumper();
     }
 }

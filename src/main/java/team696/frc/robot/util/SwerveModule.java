@@ -36,11 +36,11 @@ public class SwerveModule {
         angleEncoder.getConfigurator().apply(Constants.CONFIGS.swerve_CANCoder);
 
         /* Angle Motor Config */
-        mAngleMotor = new TalonFactory(moduleConstants.SteerMotorId, Constants.CONFIGS.swerve_Angle, "Swerve Drive " + moduleNumber);
+        mAngleMotor = new TalonFactory(moduleConstants.SteerMotorId, Constants.CONFIGS.swerve_Angle, "Swerve Angle " + moduleNumber);
         resetToAbsolute();
 
         /* Drive Motor Config */
-        mDriveMotor = new TalonFactory(moduleConstants.DriveMotorId, Constants.CONFIGS.swerve_Drive, "Swerve Angle " + moduleNumber);
+        mDriveMotor = new TalonFactory(moduleConstants.DriveMotorId, Constants.CONFIGS.swerve_Drive, "Swerve Drive " + moduleNumber);
 
         m_lastAngle = getState().angle.getRotations();
     }
@@ -57,8 +57,7 @@ public class SwerveModule {
         double ratio = Math.cos(desiredState.angle.getRadians() - getState().angle.getRadians()); 
         if(isOpenLoop){
             mDriveMotor.VoltageOut(desiredState.speedMetersPerSecond / Constants.swerve.maxSpeed * ratio);
-        }
-        else {
+        } else {
             driveVelocity.Velocity = Util.MPSToRPS(desiredState.speedMetersPerSecond * ratio, Constants.swerve.wheelCircumference);
             driveVelocity.FeedForward = driveFeedForward.calculate(desiredState.speedMetersPerSecond);
             mDriveMotor.setControl(driveVelocity);

@@ -52,6 +52,10 @@ public class TeleopSwerve extends Command {
         this(multiplier, ()->0, true, true);
     }
 
+    public TeleopSwerve(DoubleSupplier goal) {
+        this(1, goal, true, true);
+    }
+
     public TeleopSwerve() {
         this(1, ()->0, true, true);
     }

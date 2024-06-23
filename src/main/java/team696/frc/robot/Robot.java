@@ -15,6 +15,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import team696.frc.robot.commands.TeleopSwerve;
+import team696.frc.robot.subsystems.Hood;
+import team696.frc.robot.subsystems.Intake;
+import team696.frc.robot.subsystems.Serializer;
+import team696.frc.robot.subsystems.Shooter;
 import team696.frc.robot.subsystems.Swerve;
 import team696.frc.robot.util.Auto;
 import team696.frc.robot.util.PVCamera;
@@ -23,16 +27,15 @@ import team696.frc.robot.util.Controls;
 import team696.frc.robot.util.Util;
 
 public class Robot extends LoggedRobot {
-  private Command m_autonomousCommand;
+    private Command m_autonomousCommand;
 
-  private PowerDistribution m_PDH;
+    private PowerDistribution m_PDH;
 
     @Override
     public void robotInit() {
         Util.setRobotType();
 
-        Logger.recordMetadata("ProjectName", "2024OffSeason"); // Set a metadata value
-
+        Logger.recordMetadata("ProjectName", "2024OffSeason");
         Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
         Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
         Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
@@ -70,18 +73,20 @@ public class Robot extends LoggedRobot {
     
         LiveWindow.disableAllTelemetry();
         RobotController.setEnabled3V3(false);
-        RobotController.setEnabled5V(false);
+        RobotController.setEnabled5V(true);
         RobotController.setEnabled6V(false);
 
         m_PDH.setSwitchableChannel(true);
         
         SmartDashboard.putData(Swerve.get());
+        SmartDashboard.putData(Shooter.get());
+        SmartDashboard.putData(Intake.get());
+        SmartDashboard.putData(Hood.get());
+        SmartDashboard.putData(Serializer.get());
 
         configureControllerBinds();
 
         Auto.Initialize();
-
-        PVCamera.get();
     }
 
   @Override
@@ -158,8 +163,16 @@ public class Robot extends LoggedRobot {
 
     @SuppressWarnings("unused") 
     private void configureControllerBinds() { 
-      TeleopSwerve.config(Controls.Controller.leftJoyX, Controls.Controller.leftJoyY, Controls.Controller.rightJoyX, null, 0.02);
-      Swerve.get().setDefaultCommand(new TeleopSwerve());
+      TeleopSwerve.config(Controls.Controller.leftJoyX, Controls.Controller.leftJoyY, Controls.Controller.rightJoyX, Controls.Controller.RB, 0.02);
+      Swerve.get().setDefaultCommand(new TeleopSwerve(()->Swerve.get().getAngleToSpeaker().getDegrees()));
       Controls.Controller.A.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
+
+      Controls.Controller.X.whileTrue(Shooter.get().spinShooter());
+
+      Controls.Controller.Y.whileTrue(Hood.get().positionHood());
+
+      Controls.Controller.B.whileTrue(Serializer.get().intake());
+
+      Controls.Controller.LB.whileTrue(Intake.get().spin(0.75));
     }
 }

@@ -22,7 +22,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.net.PortForwarder;
@@ -94,7 +94,7 @@ public class PVCamera {
         visionSim = new VisionSystemSim("visionSim");
         visionSim.addAprilTags(m_atLayout);
 
-        m_Cameras.add(new cam("nuts", "nuts", new Transform3d()));
+        m_Cameras.add(new cam("nuts", "Shooter", new Transform3d()));
 
         for (cam camera : m_Cameras) {
             camera.setLayout(m_atLayout);
@@ -109,7 +109,7 @@ public class PVCamera {
     }
 
     /** Update Swerve Drive Pose Estimator */
-    public void updatePose(SwerveDrivePoseEstimator estimator, Twist2d vel) {
+    public void updatePose(SwerveDrivePoseEstimator estimator, ChassisSpeeds vel) {
         if (RobotBase.isSimulation()) return;
 
         for (cam camera : m_Cameras) {
@@ -133,8 +133,8 @@ public class PVCamera {
                 }
                 PhotonTrackedTarget bestTarget = targets.get(0);
                 if (bestTarget.getPoseAmbiguity() > 0.13) return; // Too Ambiguous, Ignore
-                if (Math.abs(vel.dtheta) > 1) return; // Rotating too fast, ignore
-                if (Math.sqrt(vel.dx * vel.dx + vel.dy + vel.dy) > Constants.swerve.maxSpeed * 0.4) return; // Moving Too fast, ignore
+                if (Math.abs(vel.omegaRadiansPerSecond) > 1) return; // Rotating too fast, ignore
+                if (Math.sqrt(vel.vxMetersPerSecond * vel.vxMetersPerSecond + vel.vyMetersPerSecond + vel.vyMetersPerSecond) > Constants.swerve.maxSpeed * 0.4) return; // Moving Too fast, ignore
                 //if (bestTarget.getBestCameraToTarget().getTranslation().getNorm() > 4) return; // Tag Too far, Ignore --> comment for know becuase deviation ratio sort of fixes this.
                 double deviationRatio; 
                 if (bestTarget.getPoseAmbiguity() < 1/100.0) {

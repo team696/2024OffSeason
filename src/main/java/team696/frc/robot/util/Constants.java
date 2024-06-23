@@ -1,7 +1,9 @@
 package team696.frc.robot.util;
 
-import org.littletonrobotics.junction.AutoLogOutput;
+import java.util.Map;
+import java.util.TreeMap;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -11,6 +13,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 public final class Constants {
+	public static final double epsilon = 0.0000001; // just a really small number
+
 	public static final boolean DEBUG = true;
 
     public static final Configs CONFIGS = new Configs();
@@ -21,12 +25,12 @@ public final class Constants {
 	public static final class Field {
 		public static final Field2d sim = new Field2d();
         public static final class RED {
-		    public static final Translation2d Speaker = new Translation2d(16.58, 5.55);
+		    public static final Translation2d Speaker = new Translation2d(16.34, 5.55);
             public static final Pose2d Amp = new Pose2d(12, 8, new Rotation2d(Math.PI/2));
             public static final Pose2d Source = new Pose2d(1, 0.5, Rotation2d.fromDegrees(-135));
         }
         public static final class BLUE {
-            public static final Translation2d Speaker = new Translation2d(0, 5.55);
+            public static final Translation2d Speaker = new Translation2d(0.2, 5.569);
             public static final Pose2d Amp = new Pose2d(4, 8, new Rotation2d(Math.PI/2));
             public static final Pose2d Source = new Pose2d(15.15, 1.5, Rotation2d.fromDegrees(135)); 
         }
@@ -46,7 +50,6 @@ public final class Constants {
             public static final double freeSpinA = 1.5;
         }
 	}
-
 	public static class swerve {
 		public static final double drivekS = (0.667 / 12); 
 		public static final double drivekV = (2.44 / 12);
@@ -73,11 +76,6 @@ public final class Constants {
 		private static final SwerveModule backRight = new SwerveModule(3, Constants.CONFIGS.Mod3);
 		public static final SwerveModule[] modules = { frontLeft, frontRight, backLeft, backRight };
 
-		public static final com.ctre.phoenix6.mechanisms.swerve.SwerveModule[] sim_modules = {new com.ctre.phoenix6.mechanisms.swerve.SwerveModule(Constants.CONFIGS.Mod0,"rio"),
-			new com.ctre.phoenix6.mechanisms.swerve.SwerveModule(Constants.CONFIGS.Mod1,"rio"),
-			new com.ctre.phoenix6.mechanisms.swerve.SwerveModule(Constants.CONFIGS.Mod2,"rio"),
-			new com.ctre.phoenix6.mechanisms.swerve.SwerveModule(Constants.CONFIGS.Mod3,"rio")};
-
 		public static final Translation2d[] modPositions = {
 			new Translation2d(wheelX / 2.0, wheelY / 2.0), // FL
 			new Translation2d(wheelX / 2.0, -wheelY / 2.0), // FR
@@ -86,6 +84,38 @@ public final class Constants {
 		};
 
 		public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(modPositions);
+	}
+
+	public static class shooter {
+		public static class state {
+			public double angle;
+
+			public double speed_l;
+			public double speed_r;
+
+			public state(double a, double l, double r) {
+				angle = a;
+				speed_l = l;
+				speed_r = r;
+			}
+		}
+
+		public static final TreeMap<Double, state> distToState = new TreeMap<Double, state>(){{
+			put(1.5, new state(1,1,1));
+            put(2. , new state(1,1,1));
+            put(2.5, new state(1,1,1));
+		}};
+
+		public static final state adjustedState(double dist) {
+			dist = Util.clamp(dist, Constants.shooter.distToState.firstKey() + epsilon, Constants.shooter.distToState.lastKey() - epsilon);
+        	Map.Entry<Double, state> lower = Constants.shooter.distToState.floorEntry(dist);
+        	Map.Entry<Double, state> higher = Constants.shooter.distToState.ceilingEntry(dist);
+
+        	return new state(
+				Util.lerp((dist - lower.getKey())/(higher.getKey() - lower.getKey()), lower.getValue().angle, higher.getValue().angle), 
+				higher.getValue().speed_l, 
+				higher.getValue().speed_r);
+		}
 	}
 
 	public static class Robot {
