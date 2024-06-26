@@ -34,6 +34,7 @@ public class Shooter extends SubsystemBase {
     _VelocityControllerL = new VelocityVoltage(0);
     _VelocityControllerR = new VelocityVoltage(0);
 
+    //this.setDefaultCommand(this.spinShooter(1500));
   }
 
   public static Shooter get() {
