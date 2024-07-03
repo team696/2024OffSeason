@@ -4,6 +4,8 @@
 
 package team696.frc.robot.subsystems;
 
+import com.ctre.phoenix6.controls.PositionVoltage;
+
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,12 +21,18 @@ public class Serializer extends SubsystemBase {
   private DigitalInput _FrontBeam;
   private DigitalInput _BackBeam;
 
+  private PositionVoltage _PositionController;
+
   /** Creates a new Serializer. */
   private Serializer() {
-    _Serializer = new TalonFactory(15, Constants.canivoreName, Constants.CONFIGS.shooter_Serializer, "Shooter Serializer");
+    _Serializer = new TalonFactory(15, Constants.canivoreName, Constants.configs.shooter.serializer, "Shooter Serializer");
 
     _FrontBeam = new DigitalInput(1);
     _BackBeam = new DigitalInput(0);
+
+    _PositionController = new PositionVoltage(0);
+
+    this.setDefaultCommand(holdPosition());
   }
 
   public static Serializer get() {
@@ -48,20 +56,32 @@ public class Serializer extends SubsystemBase {
     _Serializer.stop();
   }
 
-  public Command feed() {
-    return this.runEnd(()->_Serializer.PercentOutput(0.5), ()->_Serializer.stop());
+  public Command feed(double speed) {
+    return this.runEnd(()->setSpeed(speed), ()->_Serializer.stop());
+  }
+
+  public boolean FrontBeam() {
+    return _FrontBeam.get();
+  }
+
+  public boolean BackBeam() {
+    return _BackBeam.get();
   }
 
   public void serialize() {
-    if (!_FrontBeam.get()) {
+    if (!FrontBeam()) {
         _Serializer.stop();
       } else {
-        if (!_BackBeam.get()) {
-          _Serializer.PercentOutput(0.3);
+        if (!BackBeam()) {
+          setSpeed(0.25);
         } else {
-          _Serializer.PercentOutput(0.5);
+          setSpeed(0.65);
         }
       }
+  }
+
+  public Command holdPosition() {
+    return this.startEnd(()->_Serializer.setControl(_PositionController.withPosition(_Serializer.getPosition())), ()->_Serializer.stop());
   }
 
   public Command intake() {
@@ -70,7 +90,7 @@ public class Serializer extends SubsystemBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addBooleanProperty("Front Beam Break", ()->_FrontBeam.get(), null);
-    builder.addBooleanProperty("Back Beam Break", ()->_BackBeam.get(), null);
+    builder.addBooleanProperty("Front Beam Break", ()->FrontBeam(), null);
+    builder.addBooleanProperty("Back Beam Break", ()->BackBeam(), null);
   }
 }

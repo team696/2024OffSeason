@@ -8,14 +8,16 @@ import edu.wpi.first.wpilibj2.command.Command;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Serializer;
 import team696.frc.robot.subsystems.Shooter;
-import team696.frc.robot.subsystems.Swerve;
 import team696.frc.robot.util.Constants;
 
-public class Shoot extends Command {
+public class ManualShot extends Command {
 
   boolean feed;
+  Constants.shooter.state desiredState;
 
-  public Shoot() {
+  public ManualShot(Constants.shooter.state d) {
+    desiredState = d;
+
     addRequirements(Hood.get(), Serializer.get(), Shooter.get());
   }
 
@@ -26,15 +28,13 @@ public class Shoot extends Command {
 
   @Override
   public void execute() {
-    double dist = Swerve.get().getDistToSpeaker();
-    Constants.shooter.state desiredState = Constants.shooter.adjustedState(dist);
+    desiredState = new Constants.shooter.state(0., Shooter.get().leftSpeed, Shooter.get().rightSpeed);
 
     Shooter.get().setShooter(desiredState);
     Hood.get().setHood(desiredState);
 
     if (Shooter.get().upToSpeed(desiredState, 75) 
-        && Hood.get().atAngle(desiredState, 1)
-        && Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().getAngleToSpeaker().getDegrees()) < 4) {
+        && Hood.get().atAngle(desiredState, 1)) {
           feed = true;
     }
 

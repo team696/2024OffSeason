@@ -43,7 +43,7 @@ public class Swerve extends SubsystemBase {
     }
 
     m_Pigeon = new Pigeon2(0);
-    m_Pigeon.getConfigurator().apply(Constants.CONFIGS.swerve_Pigeon);
+    m_Pigeon.getConfigurator().apply(Constants.configs.swerve.pigeon);
 
     m_poseEstimator = new SwerveDrivePoseEstimator(Constants.swerve.kinematics, getYaw(), m_swervePositions, new Pose2d(0,0,new Rotation2d(0)), VecBuilder.fill(0.1, 0.1, 0.01), VecBuilder.fill(0.3, 0.3, 0.6)); 
   
@@ -168,6 +168,7 @@ public class Swerve extends SubsystemBase {
         builder.addDoubleProperty("Mod " + mod.moduleNumber + " Motor", ()->mod.getState().angle.getRotations(), null);
       }
       builder.addDoubleProperty("Gyro", ()->getYaw().getDegrees(), null);
+      builder.addDoubleProperty("DistToSpeaker",()->getDistToSpeaker(),null);
     }
 
     SmartDashboard.putData("Field", Constants.Field.sim);

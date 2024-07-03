@@ -53,5 +53,8 @@ public final class Controls {
 
         public static final Trigger RB = controller.rightBumper();
         public static final Trigger LB = controller.leftBumper();
+
+        public static final Trigger LT = controller.leftTrigger(0.5);
+        public static final Trigger RT = controller.rightTrigger(0.5);
     }
 }

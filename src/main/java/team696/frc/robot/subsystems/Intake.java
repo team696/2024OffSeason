@@ -16,7 +16,7 @@ public class Intake extends SubsystemBase {
 
   /** Creates a new Intake. */
   private Intake() {
-    _serializer = new TalonFactory(10, Constants.canivoreName, Constants.CONFIGS.intake_serializer, "Intake Serializer");
+    _serializer = new TalonFactory(10, Constants.canivoreName, Constants.configs.intake.serializer, "Intake Serializer");
   }
 
   public static Intake get(){

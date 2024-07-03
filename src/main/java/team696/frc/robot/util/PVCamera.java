@@ -13,6 +13,7 @@ import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -20,11 +21,14 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.RobotBase;
 import team696.frc.lib.Log.PLog;
@@ -94,7 +98,7 @@ public class PVCamera {
         visionSim = new VisionSystemSim("visionSim");
         visionSim.addAprilTags(m_atLayout);
 
-        m_Cameras.add(new cam("nuts", "Shooter", new Transform3d()));
+        m_Cameras.add(new cam("Shooter", "Cam_3", new Transform3d(new Translation3d(Units.inchesToMeters(-6.516),Units.inchesToMeters(4.689),Units.inchesToMeters(8.75)), new Rotation3d(0,Math.toRadians(-23),-Math.PI))));
 
         for (cam camera : m_Cameras) {
             camera.setLayout(m_atLayout);
@@ -112,11 +116,17 @@ public class PVCamera {
     public void updatePose(SwerveDrivePoseEstimator estimator, ChassisSpeeds vel) {
         if (RobotBase.isSimulation()) return;
 
+        for (AprilTag tag : m_atLayout.getTags()) {
+            Constants.Field.sim.getObject(tag.ID + " Real Position").setPose(tag.pose.toPose2d());
+        }
+
         for (cam camera : m_Cameras) {
             if(!camera.m_PCamera.isConnected()) {
                 PLog.unusual("Camera", camera.name + " Not Found!");
                 continue;
             }
+
+            Constants.Field.sim.getObject(camera.name).setPose(new Pose2d(Swerve.get().getPose().getTranslation().plus(camera.position.getTranslation().toTranslation2d().rotateBy(Swerve.get().getPose().getRotation())) ,new Rotation2d()));
 
             Optional<EstimatedRobotPose> estimation = camera.latest();
             if (estimation.isPresent()) {
@@ -129,6 +139,7 @@ public class PVCamera {
                         Transform2d balls = new Transform2d(target.getTranslation(), target.getRotation());
                         Pose2d tagToCam = Swerve.get().getPose().transformBy(balls);
                         Constants.Field.sim.getObject(String.valueOf(t.getFiducialId())).setPose(tagToCam.plus(new Transform2d(camera.position.getTranslation().toTranslation2d().rotateBy(new Rotation2d(Math.PI)), camera.position.getRotation().toRotation2d())));
+                        
                     }
                 }
                 PhotonTrackedTarget bestTarget = targets.get(0);
@@ -142,7 +153,7 @@ public class PVCamera {
                 } else {
                     deviationRatio = Math.pow(bestTarget.getBestCameraToTarget().getTranslation().getNorm(),2) / 2; // Trust Less With Distance
                 }
-                Matrix<N3, N1> deviation = VecBuilder.fill(deviationRatio, deviationRatio, 100 * deviationRatio);
+                Matrix<N3, N1> deviation = VecBuilder.fill(deviationRatio, deviationRatio, 50 * deviationRatio);
                 estimator.setVisionMeasurementStdDevs(deviation);
                 estimator.addVisionMeasurement(estimation.get().estimatedPose.toPose2d(), estimation.get().timestampSeconds);
             }

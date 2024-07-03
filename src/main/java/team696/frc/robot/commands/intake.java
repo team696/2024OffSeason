@@ -24,7 +24,7 @@ public class intake extends Command {
     Serializer.get().serialize();
 
     if (Hood.get().getPosition() > 5) {
-      Intake.get().setSpeed(0.75);
+      Intake.get().setSpeed(0.87);
     } else {
       Intake.get().stop();
     }

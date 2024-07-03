@@ -4,7 +4,7 @@
 
 package team696.frc.robot.subsystems;
 
-import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,9 +19,9 @@ public class Hood extends SubsystemBase {
     private TalonFactory _LeftAngle;
     private TalonFactory _RightAngle;
 
-    private PositionVoltage _AngleRequest;
+    private MotionMagicVoltage _AngleRequest;
 
-    private double angle;
+    private double inputangle;
 
     public static Hood get() {
         if (m_Hood == null) {
@@ -36,13 +36,13 @@ public class Hood extends SubsystemBase {
         _LeftAngle = new TalonFactory(
             11,
             Constants.canivoreName,
-            Constants.CONFIGS.shooter_LeftAngle,
+            Constants.configs.hood.left,
             "Shooter Left Angle"
         );
         _RightAngle = new TalonFactory(
             12,
             Constants.canivoreName,
-            Constants.CONFIGS.shooter_RightAngle,
+            Constants.configs.hood.right,
             "Shooter Right Angle"
         );
 
@@ -51,7 +51,7 @@ public class Hood extends SubsystemBase {
         _LeftAngle.setPosition(0);
         _RightAngle.setPosition(0);
 
-        _AngleRequest = new PositionVoltage(0);
+        _AngleRequest = new MotionMagicVoltage(0);
 
         this.setDefaultCommand(this.positionHood(0.1));
     }
@@ -60,12 +60,15 @@ public class Hood extends SubsystemBase {
         return _LeftAngle.getPosition();
     }
 
-    public void setHood(Constants.shooter.state desired) {
-        _LeftAngle.setControl(_AngleRequest.withPosition(desired.angle));
+    public void setHood(Constants.shooter.state desired) { 
+        setHood(desired.angle);
     }
 
-    public void setHood(double angle) {
-        _LeftAngle.setControl(_AngleRequest.withPosition(angle));
+    public void setHood(double angle) {                                              
+        _LeftAngle.setControl(_AngleRequest
+                                .withPosition(angle)
+                                //.withFeedForward(12 * Constants.shooter.kG * Math.cos(Util.map(getPosition(), 0.0, 8., 0.88, Math.PI/2)))
+                             ); 
     }
 
     public void stop() {
@@ -83,14 +86,14 @@ public class Hood extends SubsystemBase {
 
     public Command positionHood(double pos) {
         return this.runEnd(
-                () -> _LeftAngle.setControl(_AngleRequest.withPosition(pos)),
+                () -> setHood(pos),
                 () -> _LeftAngle.stop()
             );
     }
 
     public Command positionHood() {
         return this.runEnd(
-                () -> _LeftAngle.setControl(_AngleRequest.withPosition(angle)),
+                () -> _LeftAngle.setControl(_AngleRequest.withPosition(inputangle)),
                 () -> _LeftAngle.stop()
             );
     }
@@ -113,7 +116,7 @@ public class Hood extends SubsystemBase {
             null
         );
 
-        builder.addDoubleProperty("Manual Angle", null, a -> angle = a);
-        SmartDashboard.putNumber("Hood/Manual Angle", 0);
+        builder.addDoubleProperty("Manual Angle", null, a -> inputangle = a);
+        SmartDashboard.putNumber("Hood/Manual Angle", inputangle);
     }
 }

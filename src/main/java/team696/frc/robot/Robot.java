@@ -14,7 +14,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import team696.frc.robot.commands.Amp;
+import team696.frc.robot.commands.Shoot;
+import team696.frc.robot.commands.ShooterIntake;
 import team696.frc.robot.commands.TeleopSwerve;
+import team696.frc.robot.commands.intake;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Intake;
 import team696.frc.robot.subsystems.Serializer;
@@ -167,12 +171,12 @@ public class Robot extends LoggedRobot {
       Swerve.get().setDefaultCommand(new TeleopSwerve(()->Swerve.get().getAngleToSpeaker().getDegrees()));
       Controls.Controller.A.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
 
-      Controls.Controller.X.whileTrue(Shooter.get().spinShooter());
+      Controls.Controller.X.whileTrue(new Shoot());
 
-      Controls.Controller.Y.whileTrue(Hood.get().positionHood());
+      Controls.Controller.Y.whileTrue(new ShooterIntake());
 
-      Controls.Controller.B.whileTrue(Serializer.get().intake());
+      Controls.Controller.B.whileTrue(new intake());
 
-      Controls.Controller.LB.whileTrue(Intake.get().spin(0.75));
+      Controls.Controller.LB.whileTrue(new Amp(Controls.Controller.LT));
     }
 }

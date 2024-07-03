@@ -13,11 +13,11 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 public final class Constants {
+	public static final Configs configs = new Configs();
+
 	public static final double epsilon = 0.0000001; // just a really small number
 
 	public static final boolean DEBUG = true;
-
-    public static final Configs CONFIGS = new Configs();
 
 	public static final String canivoreName = "vore";
 
@@ -25,12 +25,12 @@ public final class Constants {
 	public static final class Field {
 		public static final Field2d sim = new Field2d();
         public static final class RED {
-		    public static final Translation2d Speaker = new Translation2d(16.34, 5.55);
+		    public static final Translation2d Speaker = new Translation2d(16.71, 5.54);
             public static final Pose2d Amp = new Pose2d(12, 8, new Rotation2d(Math.PI/2));
             public static final Pose2d Source = new Pose2d(1, 0.5, Rotation2d.fromDegrees(-135));
         }
         public static final class BLUE {
-            public static final Translation2d Speaker = new Translation2d(0.2, 5.569);
+            public static final Translation2d Speaker = new Translation2d(-0.11, 5.54);
             public static final Pose2d Amp = new Pose2d(4, 8, new Rotation2d(Math.PI/2));
             public static final Pose2d Source = new Pose2d(15.15, 1.5, Rotation2d.fromDegrees(135)); 
         }
@@ -70,10 +70,10 @@ public final class Constants {
 		public static final double maxSpeed = theoreticalMaxSpeed * 0.9; //MPS
 		public static final double maxAngularVelocity = 8; //MPS^2
 
-		private static final SwerveModule frontLeft = new SwerveModule(0, Constants.CONFIGS.Mod0);
-		private static final SwerveModule frontRight = new SwerveModule(1, Constants.CONFIGS.Mod1);
-		private static final SwerveModule backLeft = new SwerveModule(2, Constants.CONFIGS.Mod2);
-		private static final SwerveModule backRight = new SwerveModule(3, Constants.CONFIGS.Mod3);
+		private static final SwerveModule frontLeft = new SwerveModule(0, Constants.configs.swerve.Mod0);
+		private static final SwerveModule frontRight = new SwerveModule(1, Constants.configs.swerve.Mod1);
+		private static final SwerveModule backLeft = new SwerveModule(2, Constants.configs.swerve.Mod2);
+		private static final SwerveModule backRight = new SwerveModule(3, Constants.configs.swerve.Mod3);
 		public static final SwerveModule[] modules = { frontLeft, frontRight, backLeft, backRight };
 
 		public static final Translation2d[] modPositions = {
@@ -87,6 +87,8 @@ public final class Constants {
 	}
 
 	public static class shooter {
+		public static final double kG = 0.042;
+
 		public static class state {
 			public double angle;
 
@@ -101,9 +103,14 @@ public final class Constants {
 		}
 
 		public static final TreeMap<Double, state> distToState = new TreeMap<Double, state>(){{
-			put(1.5, new state(1,1,1));
-            put(2. , new state(1,1,1));
-            put(2.5, new state(1,1,1));
+			put(1.5, new state(4.2, 3500, 3500));
+			put(2.0, new state(3.5, 3500, 3500));
+			put(2.5, new state(2.9, 3500, 3500));
+			put(3.0, new state(2.2, 3500, 3500));
+			put(3.5, new state(1.7, 3500, 3500));
+			put(4.0, new state(1.5, 3500, 3500));
+			put(5.0, new state(1.2, 3500, 3500));
+			put(12., new state(1.0, 3500, 3500));
 		}};
 
 		public static final state adjustedState(double dist) {

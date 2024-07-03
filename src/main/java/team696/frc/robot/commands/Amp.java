@@ -10,10 +10,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Serializer;
 import team696.frc.robot.subsystems.Shooter;
+import team696.frc.robot.util.Constants;
+import team696.frc.robot.util.Constants.shooter.state;
 
 public class Amp extends Command {
 
   BooleanSupplier shoot_button;
+
+  Constants.shooter.state desired = new Constants.shooter.state(11., 1300, 900);
 
   public Amp(BooleanSupplier sbutton) {
     shoot_button = sbutton;
@@ -26,15 +30,23 @@ public class Amp extends Command {
 
   @Override
   public void execute() {
-    Hood.get().setHood(8);
-    
-    Shooter.get().setShooter(500, 500);
-
-    if (shoot_button.getAsBoolean()) {
-      Serializer.get().setSpeed(0.75);
+    if (Shooter.get().upToSpeed(desired,125)) {
+      if (shoot_button.getAsBoolean() ) {
+        Hood.get().setHood(desired);
+        if (Hood.get().atAngle(desired, 3.5)) {
+                Serializer.get().setSpeed(1.);
+        } else {
+        Serializer.get().setSpeed(0);
+        }
+      }
     } else {
-      Serializer.get().setSpeed(0);
+      Hood.get().setHood(0);
     }
+
+    
+    Shooter.get().setShooter(desired);
+
+
   }
 
   @Override

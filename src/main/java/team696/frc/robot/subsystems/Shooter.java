@@ -6,6 +6,7 @@ package team696.frc.robot.subsystems;
 
 import com.ctre.phoenix6.controls.VelocityVoltage;
 
+import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,17 +23,20 @@ public class Shooter extends SubsystemBase {
   private VelocityVoltage _VelocityControllerL;
   private VelocityVoltage _VelocityControllerR;
 
+  private BangBangController _BangBangController;
 
-  private double leftSpeed = 0;
-  private double rightSpeed = 0;
+  public double leftSpeed = 500;
+  public double rightSpeed = 500;
 
   /** Creates a new Shooter. */
   private Shooter() {
-    _LeftShooter = new TalonFactory(13, Constants.canivoreName, Constants.CONFIGS.shooter_LeftShooter, "Shooter Left Shooter");
-    _RightShooter = new TalonFactory(14, Constants.canivoreName, Constants.CONFIGS.shooter_rightShooter, "Shooter Right Shooter");
+    _LeftShooter = new TalonFactory(13, Constants.canivoreName, Constants.configs.shooter.left, "Shooter Left Shooter");
+    _RightShooter = new TalonFactory(14, Constants.canivoreName, Constants.configs.shooter.right, "Shooter Right Shooter");
 
     _VelocityControllerL = new VelocityVoltage(0);
     _VelocityControllerR = new VelocityVoltage(0);
+
+    _BangBangController = new BangBangController(100);
 
     //this.setDefaultCommand(this.spinShooter(1500));
   }
@@ -65,13 +69,18 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setShooter(Constants.shooter.state desired) {
-    _LeftShooter.setControl(_VelocityControllerL.withVelocity(desired.speed_l));
-    _RightShooter.setControl(_VelocityControllerR.withVelocity(desired.speed_r));
+    _LeftShooter.setControl(_VelocityControllerL.withVelocity(desired.speed_l / 60.0));
+    _RightShooter.setControl(_VelocityControllerR.withVelocity(desired.speed_r / 60.0));
   }
 
   public void setShooter(double l, double r) {
-    _LeftShooter.setControl(_VelocityControllerL.withVelocity(l));
-    _RightShooter.setControl(_VelocityControllerR.withVelocity(r));
+    _LeftShooter.setControl(_VelocityControllerL.withVelocity(l/60.0));
+    _RightShooter.setControl(_VelocityControllerR.withVelocity(r/60.0));
+  }
+
+  public void setBangShooter(double speed) {
+    _LeftShooter.PercentOutput(_BangBangController.calculate(_LeftShooter.getVelocity() * 60, speed));
+    _RightShooter.PercentOutput(_BangBangController.calculate(_RightShooter.getVelocity() * 60, speed));
   }
 
   public void stop() {
@@ -96,9 +105,11 @@ public class Shooter extends SubsystemBase {
     builder.addDoubleProperty("Left Speed", null, (l)->leftSpeed=l);
     builder.addDoubleProperty("Right Speed", null, (r)->rightSpeed=r);
 
+    SmartDashboard.putNumber("Shooter/Left Speed", leftSpeed);
+    SmartDashboard.putNumber("Shooter/Right Speed", rightSpeed);
 
-    SmartDashboard.putNumber("Shooter/Left Speed", 0);
-    SmartDashboard.putNumber("Shooter/Right Speed", 0);
+    builder.addDoubleProperty("Left Velocity", ()->_LeftShooter.getVelocity() * 60, null);
+    builder.addDoubleProperty("Right Velocity", ()->_RightShooter.getVelocity() * 60, null);
   }
 }
 

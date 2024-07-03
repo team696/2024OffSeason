@@ -4,6 +4,7 @@
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Intake": "Subsystem",
       "/SmartDashboard/VisionSystemSim-visionSim/Sim Field": "Field2d"
     },
     "windows": {

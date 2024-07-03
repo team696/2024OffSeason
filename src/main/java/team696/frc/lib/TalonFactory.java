@@ -15,7 +15,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.Timer;
 import team696.frc.lib.Log.PLog;
-import team696.frc.robot.util.Constants;
 
 public class TalonFactory { //TODO: Make this general for CAN devices
     private final double TIMEOUT = 0.05;
@@ -59,7 +58,6 @@ public class TalonFactory { //TODO: Make this general for CAN devices
     public boolean configure(boolean force) {
         if (!force && configured) return true;
         if (!force && Timer.getFPGATimestamp() - lastConfigure < 3) return false;
-        if (!Constants.CONFIGS.Configured) return false;
 
         lastConfigure = Timer.getFPGATimestamp();
         StatusCode configCode = m_Motor.getConfigurator().apply(this.m_Config, TIMEOUT);
