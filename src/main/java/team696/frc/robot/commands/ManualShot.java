@@ -28,8 +28,6 @@ public class ManualShot extends Command {
 
   @Override
   public void execute() {
-    desiredState = new Constants.shooter.state(0., Shooter.get().leftSpeed, Shooter.get().rightSpeed);
-
     Shooter.get().setShooter(desiredState);
     Hood.get().setHood(desiredState);
 

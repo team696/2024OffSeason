@@ -38,7 +38,7 @@ public class Shooter extends SubsystemBase {
 
     _BangBangController = new BangBangController(100);
 
-    //this.setDefaultCommand(this.spinShooter(1500));
+    this.setDefaultCommand(this.spinShooterRPM(1000));
   }
 
   public static Shooter get() {
@@ -88,16 +88,24 @@ public class Shooter extends SubsystemBase {
     _RightShooter.stop();
   }
 
+  public void setShooterPercent(double l, double r) {
+  _LeftShooter.PercentOutput(l);_RightShooter.PercentOutput(r);
+  }
+
  public Command spinShooter() {
-    return this.runEnd(()->  {_LeftShooter.PercentOutput(leftSpeed);_RightShooter.PercentOutput(rightSpeed);}, ()->{_LeftShooter.stop(); _RightShooter.stop();});
+    return this.runEnd(()->  setShooterPercent(leftSpeed, rightSpeed), this::stop);
   }
 
   public Command spinShooter(double speed) {
-    return this.runEnd(()->  {_LeftShooter.PercentOutput(speed);_RightShooter.PercentOutput(speed);}, ()->{_LeftShooter.stop(); _RightShooter.stop();});
+    return this.runEnd(()->  setShooterPercent(speed, speed), this::stop);
   }
 
   public Command spinShooter(double speedl, double speedr) {
-    return this.runEnd(()->  {_LeftShooter.PercentOutput(speedl);_RightShooter.PercentOutput(speedr);}, ()->{_LeftShooter.stop(); _RightShooter.stop();});
+    return this.runEnd(()->  setShooterPercent(speedl, speedr), this::stop);
+  }
+
+  public Command spinShooterRPM(double speed) {
+    return this.runEnd(()->setShooter(speed, speed), this::stop);
   }
 
   @Override

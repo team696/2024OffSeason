@@ -150,7 +150,8 @@ public class Swerve extends SubsystemBase {
 
     m_poseEstimator.update(getYaw(), m_swervePositions);
 
-    PVCamera.get().updatePose(m_poseEstimator, getRobotRelativeSpeeds());
+    if (!DriverStation.isAutonomousEnabled())
+      PVCamera.get().updatePose(m_poseEstimator, getRobotRelativeSpeeds());
 
     Logger.recordOutput("Pose", getPose()); 
 

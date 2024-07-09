@@ -11,7 +11,6 @@ import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Serializer;
 import team696.frc.robot.subsystems.Shooter;
 import team696.frc.robot.util.Constants;
-import team696.frc.robot.util.Constants.shooter.state;
 
 public class Amp extends Command {
 

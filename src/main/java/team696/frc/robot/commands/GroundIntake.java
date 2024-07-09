@@ -9,9 +9,9 @@ import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Intake;
 import team696.frc.robot.subsystems.Serializer;
 
-public class intake extends Command {
+public class GroundIntake extends Command {
   
-  public intake() {
+  public GroundIntake() {
     addRequirements(Hood.get(), Intake.get(), Serializer.get());
   }
 
@@ -39,6 +39,9 @@ public class intake extends Command {
 
   @Override
   public boolean isFinished() {
+    if (!Serializer.get().FrontBeam())
+      return true;
+
     return false;
   }
 }

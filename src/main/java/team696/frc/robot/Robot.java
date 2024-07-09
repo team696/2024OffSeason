@@ -15,10 +15,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import team696.frc.robot.commands.Amp;
+import team696.frc.robot.commands.Drop;
 import team696.frc.robot.commands.Shoot;
 import team696.frc.robot.commands.ShooterIntake;
 import team696.frc.robot.commands.TeleopSwerve;
-import team696.frc.robot.commands.intake;
+import team696.frc.robot.commands.GroundIntake;
+import team696.frc.robot.commands.ManualShot;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Intake;
 import team696.frc.robot.subsystems.Serializer;
@@ -88,7 +90,9 @@ public class Robot extends LoggedRobot {
         SmartDashboard.putData(Hood.get());
         SmartDashboard.putData(Serializer.get());
 
-        configureControllerBinds();
+        configureBinds();
+        configureOperatorBinds();
+        //configureControllerBinds();
 
         Auto.Initialize();
     }
@@ -155,14 +159,21 @@ public class Robot extends LoggedRobot {
 
   @SuppressWarnings("unused") 
     private void configureBinds() {
-      TeleopSwerve.config(Controls.leftJoyX, Controls.leftJoyY, Controls.rightJoyX, null, Constants.deadBand);
-      Swerve.get().setDefaultCommand(new TeleopSwerve());
+      TeleopSwerve.config(Controls.leftJoyX, Controls.leftJoyY, Controls.rightJoyX, Controls.rightJoy, Constants.deadBand);
+      Swerve.get().setDefaultCommand(new TeleopSwerve(()->Swerve.get().getAngleToSpeaker().getDegrees()));
       Controls.leftJoy.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
     }
 
     @SuppressWarnings("unused") 
     private void configureOperatorBinds() {
-    
+      Controls.Amp.whileTrue(new Amp(Controls.Rollers));
+      Controls.Shoot.whileTrue(new Shoot());
+      Controls.Drop.whileTrue(new Drop());
+
+      Controls.Ground.whileTrue((new GroundIntake()).alongWith(new TeleopSwerve(()->Swerve.get().getPose().getRotation().getDegrees() + PVCamera.get().getBestTargetYaw())));
+      Controls.Source.whileTrue(new ShooterIntake());
+
+      Controls.Trap.whileTrue(new ManualShot(new Constants.shooter.state(4.5, 3500, 3500)));
     }
 
     @SuppressWarnings("unused") 
@@ -171,11 +182,13 @@ public class Robot extends LoggedRobot {
       Swerve.get().setDefaultCommand(new TeleopSwerve(()->Swerve.get().getAngleToSpeaker().getDegrees()));
       Controls.Controller.A.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
 
-      Controls.Controller.X.whileTrue(new Shoot());
+      Controls.Controller.RT.whileTrue(new Shoot());
 
       Controls.Controller.Y.whileTrue(new ShooterIntake());
 
-      Controls.Controller.B.whileTrue(new intake());
+      Controls.Controller.X.whileTrue(new Drop());
+
+      Controls.Controller.B.whileTrue(new GroundIntake());
 
       Controls.Controller.LB.whileTrue(new Amp(Controls.Controller.LT));
     }

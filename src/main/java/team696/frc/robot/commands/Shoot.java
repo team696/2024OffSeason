@@ -4,6 +4,7 @@
 
 package team696.frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Serializer;
@@ -15,6 +16,9 @@ public class Shoot extends Command {
 
   boolean feed;
 
+  boolean didSeeFront = false;
+  double didUnseeFront = 0;
+
   public Shoot() {
     addRequirements(Hood.get(), Serializer.get(), Shooter.get());
   }
@@ -22,6 +26,9 @@ public class Shoot extends Command {
   @Override
   public void initialize() {
     feed = false;
+
+    didSeeFront = false;
+    didUnseeFront = 0;
   }
 
   @Override
@@ -43,6 +50,16 @@ public class Shoot extends Command {
     } else {
       Serializer.get().stop();
     }
+
+    if (feed) {
+      if (!Serializer.get().FrontBeam()) {
+        didSeeFront = true;
+      }
+
+      if (didSeeFront && didUnseeFront == 0 && Serializer.get().FrontBeam()) {
+        didUnseeFront = Timer.getFPGATimestamp();
+      }
+    }
   }
 
   @Override
@@ -54,6 +71,13 @@ public class Shoot extends Command {
 
   @Override
   public boolean isFinished() {
+    if (didUnseeFront != 0 && Timer.getFPGATimestamp() - didUnseeFront > 0.75) {
+      return true;
+    }
+    if (!didSeeFront && Serializer.get().FrontBeam() && Serializer.get().BackBeam()) {
+      return true;
+    }
+
     return false;
   }
 }

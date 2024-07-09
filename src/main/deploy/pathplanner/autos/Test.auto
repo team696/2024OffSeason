@@ -1,20 +1,44 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 2.3598426185179213,
-      "y": 5.457475175650742
-    },
-    "rotation": 0
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Example Path"
+            "pathName": "Mid To Mid"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Mid To Mid Left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left To Shot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]

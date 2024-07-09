@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -22,6 +23,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import team696.frc.lib.Log.PLog;
+import team696.frc.robot.commands.GroundIntake;
+import team696.frc.robot.commands.Rotate;
+import team696.frc.robot.commands.Shoot;
 import team696.frc.robot.subsystems.Swerve;
 
 public class Auto {
@@ -56,6 +60,9 @@ public class Auto {
             },
             m_swerve
         );
+
+        NamedCommands.registerCommand("Shoot", (new Rotate()).andThen(new Shoot()));
+        NamedCommands.registerCommand("Intake", new GroundIntake());
 
         PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
             Constants.Field.sim.getObject("Target").setPose(pose);

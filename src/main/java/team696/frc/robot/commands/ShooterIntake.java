@@ -41,7 +41,7 @@ public class ShooterIntake extends Command {
       return;
     }
 
-    Hood.get().setHood(3);
+    Hood.get().setHood(11.);
 
     if (Serializer.get().BackBeam() || !Serializer.get().FrontBeam()) {
       double multipliter = 1;
