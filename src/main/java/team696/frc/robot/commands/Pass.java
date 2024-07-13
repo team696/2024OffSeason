@@ -12,14 +12,14 @@ import team696.frc.robot.subsystems.Shooter;
 import team696.frc.robot.subsystems.Swerve;
 import team696.frc.robot.util.Constants;
 
-public class Shoot extends Command {
+public class Pass extends Command {
 
   boolean feed;
 
   boolean didSeeFront = false;
   double didUnseeFront = 0;
 
-  public Shoot() {
+  public Pass() {
     addRequirements(Hood.get(), Serializer.get(), Shooter.get());
   }
 
@@ -33,16 +33,16 @@ public class Shoot extends Command {
 
   @Override
   public void execute() {
-    double dist = Swerve.get().getDistToSpeaker();
-    Constants.shooter.state desiredState = Constants.shooter.adjustedState(dist);
+    double dist = Swerve.get().getDistToCorner();
+    Constants.shooter.state desiredState = Constants.shooter.adjustedPassState(dist);
 
     Shooter.get().setShooter(desiredState);
     Hood.get().setHood(desiredState);
 
-    if (Shooter.get().upToSpeed(desiredState, 100) 
+    if (Shooter.get().upToSpeed(desiredState, 250) 
         && Hood.get().atAngle(desiredState, 1.5)
-        && Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().getAngleToSpeaker().getDegrees()) < 6
-        && Math.abs(Swerve.get().getRobotRelativeSpeeds().omegaRadiansPerSecond) < 1) {
+        && Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().getAngleToCorner().getDegrees()) < 12
+        && Math.abs(Swerve.get().getRobotRelativeSpeeds().omegaRadiansPerSecond) < 1.5) {
           feed = true;
     }
 

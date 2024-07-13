@@ -38,7 +38,7 @@ public class Shooter extends SubsystemBase {
 
     _BangBangController = new BangBangController(100);
 
-    this.setDefaultCommand(this.spinShooterRPM(1000));
+    this.setDefaultCommand(this.spinShooter(0.2));
   }
 
   public static Shooter get() {
@@ -62,7 +62,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean upToSpeed(Constants.shooter.state desired, double tolerance) {
-      if (_LeftShooter.getVelocity() * 60 < desired.speed_l - tolerance || _LeftShooter.getVelocity() * 60 > desired.speed_l + tolerance) return false;
+      if (_LeftShooter.getVelocity()  * 60 < desired.speed_l - tolerance || _LeftShooter.getVelocity()  * 60 > desired.speed_l + tolerance) return false;
       if (_RightShooter.getVelocity() * 60 < desired.speed_r - tolerance || _RightShooter.getVelocity() * 60 > desired.speed_r + tolerance) return false;
 
       return true;

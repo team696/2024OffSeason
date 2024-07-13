@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,7 +21,7 @@ import team696.frc.robot.commands.Shoot;
 import team696.frc.robot.commands.ShooterIntake;
 import team696.frc.robot.commands.TeleopSwerve;
 import team696.frc.robot.commands.GroundIntake;
-import team696.frc.robot.commands.ManualShot;
+import team696.frc.robot.commands.Pass;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Intake;
 import team696.frc.robot.subsystems.Serializer;
@@ -166,14 +167,17 @@ public class Robot extends LoggedRobot {
 
     @SuppressWarnings("unused") 
     private void configureOperatorBinds() {
-      Controls.Amp.whileTrue(new Amp(Controls.Rollers));
+      Controls.Amp.whileTrue(new Amp(Controls.Rollers).alongWith(new TeleopSwerve(
+        ()-> DriverStation.getAlliance().isPresent() ? (DriverStation.getAlliance().get() == Alliance.Red ? Constants.Field.RED.Amp.getRotation().getDegrees() : Constants.Field.BLUE.Amp.getRotation().getDegrees()) : Constants.Field.BLUE.Amp.getRotation().getDegrees(),
+        ()-> DriverStation.getAlliance().isPresent() ? (DriverStation.getAlliance().get() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation()           : Constants.Field.BLUE.Amp.getTranslation())           : Constants.Field.BLUE.Amp.getTranslation()
+        )));
       Controls.Shoot.whileTrue(new Shoot());
       Controls.Drop.whileTrue(new Drop());
 
       Controls.Ground.whileTrue((new GroundIntake()).alongWith(new TeleopSwerve(()->Swerve.get().getPose().getRotation().getDegrees() + PVCamera.get().getBestTargetYaw())));
       Controls.Source.whileTrue(new ShooterIntake());
 
-      Controls.Trap.whileTrue(new ManualShot(new Constants.shooter.state(4.5, 3500, 3500)));
+      Controls.Trap.whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner().getDegrees())));
     }
 
     @SuppressWarnings("unused") 
@@ -190,6 +194,6 @@ public class Robot extends LoggedRobot {
 
       Controls.Controller.B.whileTrue(new GroundIntake());
 
-      Controls.Controller.LB.whileTrue(new Amp(Controls.Controller.LT));
+      Controls.Controller.LB.whileTrue(new Amp(Controls.Controller.LT).alongWith(new TeleopSwerve(()-> DriverStation.getAlliance().isPresent() ? (DriverStation.getAlliance().get() == Alliance.Red ? Constants.Field.RED.Amp.getRotation().getDegrees() : Constants.Field.BLUE.Amp.getRotation().getDegrees()) : Constants.Field.BLUE.Amp.getRotation().getDegrees())));
     }
 }

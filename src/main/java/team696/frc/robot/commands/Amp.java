@@ -16,7 +16,7 @@ public class Amp extends Command {
 
   BooleanSupplier shoot_button;
 
-  Constants.shooter.state desired = new Constants.shooter.state(11., 1300, 900);
+  Constants.shooter.state desired = new Constants.shooter.state(11.25, 950, 950);
 
   public Amp(BooleanSupplier sbutton) {
     shoot_button = sbutton;
@@ -29,23 +29,15 @@ public class Amp extends Command {
 
   @Override
   public void execute() {
-    if (Shooter.get().upToSpeed(desired,125)) {
-      if (shoot_button.getAsBoolean() ) {
-        Hood.get().setHood(desired);
-        if (Hood.get().atAngle(desired, 3.5)) {
-                Serializer.get().setSpeed(1.);
-        } else {
-        Serializer.get().setSpeed(0);
-        }
-      }
-    } else {
-      Hood.get().setHood(0);
-    }
-
-    
     Shooter.get().setShooter(desired);
+    Hood.get().setHood(desired);
+    
 
-
+      if (shoot_button.getAsBoolean() ) {
+        Serializer.get().setSpeed(1.);
+      } else {
+        Serializer.get().setSpeed(0);
+      }
   }
 
   @Override

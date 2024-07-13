@@ -121,11 +121,25 @@ public class Swerve extends SubsystemBase {
     Rotation2d rot;
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
       delta = getPose().getTranslation().minus(Constants.Field.RED.Speaker);
-      rot  = Rotation2d.fromRadians(delta.getY() / delta.getX());
-      return rot.rotateBy(Rotation2d.fromDegrees(180));
+      rot = Rotation2d.fromRadians(Math.atan2(delta.getY(), delta.getX()));
+      return rot;
     } else {
       delta = getPose().getTranslation().minus(Constants.Field.BLUE.Speaker);
-      rot  = Rotation2d.fromRadians(delta.getY() / delta.getX());
+      rot  = Rotation2d.fromRadians(Math.atan2(delta.getY(), delta.getX()));
+      return rot;
+    }
+  }
+
+  public Rotation2d getAngleToCorner() {
+    Translation2d delta;
+    Rotation2d rot;
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+      delta = getPose().getTranslation().minus(Constants.Field.RED.Corner);
+      rot = Rotation2d.fromRadians(Math.atan2(delta.getY(), delta.getX()));
+      return rot;
+    } else {
+      delta = getPose().getTranslation().minus(Constants.Field.BLUE.Corner);
+      rot = Rotation2d.fromRadians(Math.atan2(delta.getY(), delta.getX()));
       return rot;
     }
   }
@@ -139,6 +153,14 @@ public class Swerve extends SubsystemBase {
         return getPose().getTranslation().getDistance(Constants.Field.RED.Speaker);
     } else {
         return getPose().getTranslation().getDistance(Constants.Field.BLUE.Speaker);
+    }
+  }
+
+    public double getDistToCorner() {
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+        return getPose().getTranslation().getDistance(Constants.Field.RED.Corner);
+    } else {
+        return getPose().getTranslation().getDistance(Constants.Field.BLUE.Corner);
     }
   }
 

@@ -25,14 +25,18 @@ public final class Constants {
 	public static final class Field {
 		public static final Field2d sim = new Field2d();
         public static final class RED {
-		    public static final Translation2d Speaker = new Translation2d(16.71, 5.54);
-            public static final Pose2d Amp = new Pose2d(12, 8, new Rotation2d(Math.PI/2));
+		    public static final Translation2d Speaker = new Translation2d(16.57, 5.54);
+            public static final Pose2d Amp = new Pose2d(12, 8, new Rotation2d(-Math.PI/2));
             public static final Pose2d Source = new Pose2d(1, 0.5, Rotation2d.fromDegrees(-135));
+			public static final Translation2d Corner = new Translation2d(16.71, 8.);
+
         }
         public static final class BLUE {
-            public static final Translation2d Speaker = new Translation2d(-0.11, 5.54);
+            public static final Translation2d Speaker = new Translation2d(-0.04, 5.54);
             public static final Pose2d Amp = new Pose2d(4, 8, new Rotation2d(Math.PI/2));
             public static final Pose2d Source = new Pose2d(15.15, 1.5, Rotation2d.fromDegrees(135)); 
+			public static final Translation2d Corner = new Translation2d(-0.21, 8.);
+
         }
 	}
 	public static class Motors {
@@ -102,16 +106,28 @@ public final class Constants {
 			}
 		}
 
+		public static double rollerSpeed = 3800;
+		public static double rollerSpeedA = 3900;
+
 		public static final TreeMap<Double, state> distToState = new TreeMap<Double, state>(){{
-			put(1.5, new state(4.2, 3500, 3500));
-			put(2.0, new state(3.5, 3500, 3500));
-			put(2.5, new state(2.9, 3500, 3500));
-			put(3.0, new state(2.2, 3500, 3500));
-			put(3.5, new state(1.7, 3500, 3500));
-			put(4.0, new state(1.5, 3500, 3500));
-			put(5.0, new state(1.2, 3500, 3500));
-			put(12., new state(1.0, 3500, 3500));
+			put(1.5, new state(4.2, rollerSpeed, rollerSpeedA));
+			put(2.0, new state(3.1, rollerSpeed, rollerSpeedA));
+			put(2.5, new state(2.3, rollerSpeed, rollerSpeedA));
+			put(3.0, new state(1.6, rollerSpeed, rollerSpeedA));
+			put(3.5, new state(1.2, rollerSpeed, rollerSpeedA));
+			put(4.0, new state(0.75, rollerSpeed, rollerSpeedA));
+			put(5.0, new state(0.6, rollerSpeed, rollerSpeedA));
+			put(12., new state(0.7, rollerSpeed, rollerSpeedA));
 		}};
+
+		public static final TreeMap<Double, state> Pass = new TreeMap<Double, state>(){{
+			put(1.5, new state(0.0, 1800, 1800));
+			put(4.0, new state(0.0, 1800, 1800));
+			put(5.0, new state(0.3, 3000, 3000));
+			put(6.0, new state(1.5, 4200, 4200));
+			put(12., new state(3.0, 4200, 4200));
+		}};
+
 
 		public static final state adjustedState(double dist) {
 			dist = Util.clamp(dist, Constants.shooter.distToState.firstKey() + epsilon, Constants.shooter.distToState.lastKey() - epsilon);
@@ -119,7 +135,18 @@ public final class Constants {
         	Map.Entry<Double, state> higher = Constants.shooter.distToState.ceilingEntry(dist);
 
         	return new state(
-				Util.lerp((dist - lower.getKey())/(higher.getKey() - lower.getKey()), lower.getValue().angle, higher.getValue().angle), 
+				Util.lerp((dist - lower.getKey()) / (higher.getKey() - lower.getKey()), lower.getValue().angle, higher.getValue().angle), 
+				higher.getValue().speed_l, 
+				higher.getValue().speed_r);
+		}
+
+		public static final state adjustedPassState(double dist) {
+			dist = Util.clamp(dist, Constants.shooter.Pass.firstKey() + epsilon, Constants.shooter.Pass.lastKey() - epsilon);
+        	Map.Entry<Double, state> lower = Constants.shooter.Pass.floorEntry(dist);
+        	Map.Entry<Double, state> higher = Constants.shooter.Pass.ceilingEntry(dist);
+
+        	return new state(
+				Util.lerp((dist - lower.getKey()) / (higher.getKey() - lower.getKey()), lower.getValue().angle, higher.getValue().angle), 
 				higher.getValue().speed_l, 
 				higher.getValue().speed_r);
 		}

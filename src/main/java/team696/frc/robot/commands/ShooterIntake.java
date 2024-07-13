@@ -46,7 +46,7 @@ public class ShooterIntake extends Command {
     if (Serializer.get().BackBeam() || !Serializer.get().FrontBeam()) {
       double multipliter = 1;
       if (!Serializer.get().FrontBeam()) multipliter = 0.5;
-      Shooter.get().setShooter(-1400,-1400);
+      Shooter.get().setShooter(-1800,-1800);
       Serializer.get().setSpeed(-0.6 * multipliter);
     } else {
       Shooter.get().stop();
