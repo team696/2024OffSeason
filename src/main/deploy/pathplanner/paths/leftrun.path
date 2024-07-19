@@ -1,0 +1,126 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.5532872310880803,
+        "y": 7.470432290086371
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.2999712643394155,
+        "y": 7.763594710068798
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.338259740721815,
+        "y": 7.2337936310113875
+      },
+      "prevControl": {
+        "x": 7.254388550605895,
+        "y": 7.731464757676598
+      },
+      "nextControl": {
+        "x": 9.247039536232393,
+        "y": 6.816517603336957
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.857410341279826,
+        "y": 5.943729251271733
+      },
+      "prevControl": {
+        "x": 4.578805757806071,
+        "y": 6.105751554888324
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "runshot"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.8,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Drop"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.55,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Intake"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 1.75,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "ShootFree"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.5,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 720.0,
+    "maxAngularAcceleration": 1080.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 5.12199227464196,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

@@ -17,6 +17,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -117,11 +118,11 @@ public class PVCamera {
         m_EstimationCameras.add(
             new e_cam(
                 "Shooter",
-                "Cam_3",
+                "B",
                 new Transform3d(
                     new Translation3d(
                         Units.inchesToMeters(-6.516),
-                        Units.inchesToMeters(4.689),
+                        Units.inchesToMeters(4.9),
                         Units.inchesToMeters(8.75)
                     ),
                     new Rotation3d(0, Math.toRadians(-23), -Math.PI)
@@ -227,17 +228,14 @@ public class PVCamera {
                     }
                 }
                 PhotonTrackedTarget bestTarget = targets.get(0);
-                if (bestTarget.getPoseAmbiguity() > 0.13) return; // Too Ambiguous, Ignore
-                if (Math.abs(vel.omegaRadiansPerSecond) > 1) return; // Rotating too fast, ignore
+                if (bestTarget.getPoseAmbiguity() > 0.17) return; // Too Ambiguous, Ignore
+                if (Math.abs(vel.omegaRadiansPerSecond) > 1.5) return; // Rotating too fast, ignore
                 if (
                     Math.sqrt(
-                        vel.vxMetersPerSecond * vel.vxMetersPerSecond +
-                        vel.vyMetersPerSecond +
-                        vel.vyMetersPerSecond
+                        vel.vxMetersPerSecond * vel.vxMetersPerSecond + vel.vyMetersPerSecond * vel.vyMetersPerSecond
                     ) >
-                    Constants.swerve.maxSpeed * 0.4
+                    Constants.swerve.maxSpeed * 0.6
                 ) return; // Moving Too fast, ignore
-                //if (bestTarget.getBestCameraToTarget().getTranslation().getNorm() > 4) return; // Tag Too far, Ignore --> comment for know becuase deviation ratio sort of fixes this.
                 double deviationRatio;
                 if (bestTarget.getPoseAmbiguity() < 1 / 100.0) {
                     deviationRatio = 1 / 100.0; // Tag estimation very good -> Use it
@@ -250,6 +248,11 @@ public class PVCamera {
                         2
                     ) /
                     2; // Trust Less With Distance
+                }
+                if(DriverStation.isAutonomousEnabled()) {
+                    if (bestTarget.getBestCameraToTarget().getTranslation().getNorm() > 4.) return; // Tag Too far, Ignore --> comment for know becuase deviation ratio sort of fixes this.
+                
+                    deviationRatio *= 2;
                 }
                 Matrix<N3, N1> deviation = VecBuilder.fill(
                     deviationRatio,

@@ -7,12 +7,13 @@ package team696.frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Intake;
+import team696.frc.robot.subsystems.LED;
 import team696.frc.robot.subsystems.Serializer;
 
 public class GroundIntake extends Command {
   
   public GroundIntake() {
-    addRequirements(Hood.get(), Intake.get(), Serializer.get());
+    addRequirements(Hood.get(), Intake.get(), Serializer.get(), LED.get());
   }
 
   @Override
@@ -28,6 +29,14 @@ public class GroundIntake extends Command {
     } else {
       Intake.get().stop();
     }
+
+    if (!Serializer.get().FrontBeam()) {
+      LED.get().setColor(0,255,0);
+    } else if (!Serializer.get().BackBeam()) {
+      LED.get().setColor(0,0,255); 
+    } else {
+      LED.get().setColor(255,0,0); 
+    }
   }
 
   @Override
@@ -39,9 +48,10 @@ public class GroundIntake extends Command {
 
   @Override
   public boolean isFinished() {
-    if (!Serializer.get().FrontBeam())
+    if (!Serializer.get().FrontBeam() && !Serializer.get().BackBeam())
       return true;
 
     return false;
   }
 }
+

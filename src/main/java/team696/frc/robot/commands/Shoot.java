@@ -7,6 +7,7 @@ package team696.frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import team696.frc.robot.subsystems.Hood;
+import team696.frc.robot.subsystems.LED;
 import team696.frc.robot.subsystems.Serializer;
 import team696.frc.robot.subsystems.Shooter;
 import team696.frc.robot.subsystems.Swerve;
@@ -20,7 +21,7 @@ public class Shoot extends Command {
   double didUnseeFront = 0;
 
   public Shoot() {
-    addRequirements(Hood.get(), Serializer.get(), Shooter.get());
+    addRequirements(Hood.get(), Serializer.get(), Shooter.get(), LED.get());
   }
 
   @Override
@@ -42,7 +43,9 @@ public class Shoot extends Command {
     if (Shooter.get().upToSpeed(desiredState, 100) 
         && Hood.get().atAngle(desiredState, 1.5)
         && Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().getAngleToSpeaker().getDegrees()) < 6
-        && Math.abs(Swerve.get().getRobotRelativeSpeeds().omegaRadiansPerSecond) < 1) {
+        && Math.abs(Swerve.get().getRobotRelativeSpeeds().omegaRadiansPerSecond) < 1
+        && Math.abs(Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond) < 1.5
+        && Math.abs(Swerve.get().getRobotRelativeSpeeds().vyMetersPerSecond) < 3) {
           feed = true;
     }
 
@@ -61,6 +64,12 @@ public class Shoot extends Command {
         didUnseeFront = Timer.getFPGATimestamp();
       }
     }
+
+    if(Serializer.get().FrontBeam() && Serializer.get().FrontBeam()) {
+      LED.get().setColor(0, 255, 0);
+    } else {
+      LED.get().setColor(255, 0, 0);
+    }
   }
 
   @Override
@@ -72,7 +81,7 @@ public class Shoot extends Command {
 
   @Override
   public boolean isFinished() {
-    if (didUnseeFront != 0 && Timer.getFPGATimestamp() - didUnseeFront > 0.75) {
+    if (didUnseeFront != 0 && Timer.getFPGATimestamp() - didUnseeFront > 0.01) {
       return true;
     }
     if (!didSeeFront && Serializer.get().FrontBeam() && Serializer.get().BackBeam()) {

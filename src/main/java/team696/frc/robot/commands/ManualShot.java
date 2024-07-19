@@ -52,6 +52,9 @@ public class ManualShot extends Command {
 
   @Override
   public boolean isFinished() {
+    if (Serializer.get().FrontBeam())
+      return true;
+
     return false;
   }
 }

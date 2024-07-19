@@ -88,11 +88,15 @@ public class TeleopSwerve extends Command {
         if (goalPose != null) { // Aim Assist
             Translation2d diff = Swerve.get().getPose().getTranslation().minus(goalPose.get());
 
-            Rotation2d angleToGoal = Rotation2d.fromRadians(Math.atan2(diff.getY(), diff.getX()));
+            //Rotation2d angleToGoal = Rotation2d.fromRadians(Math.atan2(diff.getY(), diff.getX()));
 
-            Rotation2d rotDiff = theta.minus(angleToGoal);
+            //Rotation2d rotDiff = theta.minus(angleToGoal);
 
-            theta = theta.plus(rotDiff.times( Math.min(1, 1/diff.getNorm() / 3 ) ));
+            double dist = diff.getNorm();
+
+            //theta = theta.plus(rotDiff.times( Math.min(1., 1/diff.getNorm() / 3.5 ) ));
+
+            multiplier = Math.min(1, dist*dist/3 + 0.05);
         }
 
         if (lockRotation != null && lockRotation.getAsBoolean()) { // Rotation Lock To Angle TODO: REWORK THIS PID

@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team696.frc.robot.util.Constants;
 import team696.frc.robot.util.PVCamera;
 import team696.frc.robot.util.SwerveModule;
+import team696.frc.robot.util.Util;
 
 public class Swerve extends SubsystemBase {
   private static Swerve m_Swerve;
@@ -29,6 +30,8 @@ public class Swerve extends SubsystemBase {
 
   public SwerveModulePosition[] m_swervePositions = new SwerveModulePosition[4];
   private SwerveDrivePoseEstimator m_poseEstimator;
+
+  private Rotation2d yawOffset = new Rotation2d(0);
 
   public static Swerve get() {
     if (m_Swerve == null) {
@@ -59,8 +62,12 @@ public class Swerve extends SubsystemBase {
   }
 
   public void zeroYaw() {
-    m_Pigeon.reset();
-    resetPose(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees((DriverStation.getAlliance().isPresent() ? (DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? 180 : 0) : 0))));
+    yawOffset = getYaw();
+    resetPose(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(Util.getAlliance() == DriverStation.Alliance.Red ? 180 : 0) ));
+  }
+
+  public void updateYawOffset() {
+    yawOffset = getPose().getRotation().minus(getYaw());
   }
 
   public void resetPose(Pose2d pose) {
@@ -90,7 +97,7 @@ public class Swerve extends SubsystemBase {
                                 translation.getX(), 
                                 translation.getY(), 
                                 rotation, 
-                                getPose().getRotation().rotateBy(Rotation2d.fromDegrees((DriverStation.getAlliance().isPresent() ? (DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? 180 : 0) : 0)))
+                                getYaw().plus(yawOffset).rotateBy(Rotation2d.fromDegrees( (Util.getAlliance() == Alliance.Red ? 180 : 0) ))    /* getPose().getRotation().rotateBy(Rotation2d.fromDegrees( (Util.getAlliance() == Alliance.Red ? 180 : 0) )) */
                             ) : new ChassisSpeeds(
                                 translation.getX(), 
                                 translation.getY(), 
@@ -104,7 +111,7 @@ public class Swerve extends SubsystemBase {
     setModuleStates(swerveModuleStates);
   } 
 
-    public void setModuleStates(SwerveModuleState[] desiredStates, boolean openLoop) {
+  public void setModuleStates(SwerveModuleState[] desiredStates, boolean openLoop) {
     SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.swerve.maxSpeed);
     
     for(SwerveModule mod : Constants.swerve.modules) {
@@ -117,51 +124,53 @@ public class Swerve extends SubsystemBase {
   } 
 
   public Rotation2d getAngleToSpeaker() {
-    Translation2d delta;
-    Rotation2d rot;
-    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-      delta = getPose().getTranslation().minus(Constants.Field.RED.Speaker);
-      rot = Rotation2d.fromRadians(Math.atan2(delta.getY(), delta.getX()));
-      return rot;
-    } else {
-      delta = getPose().getTranslation().minus(Constants.Field.BLUE.Speaker);
-      rot  = Rotation2d.fromRadians(Math.atan2(delta.getY(), delta.getX()));
-      return rot;
-    }
+    if (Util.getAlliance() == Alliance.Red) 
+      return getVelocityAdjustedAngleToPos(Constants.Field.RED.Speaker);
+
+    return getVelocityAdjustedAngleToPos(Constants.Field.BLUE.Speaker);
   }
 
   public Rotation2d getAngleToCorner() {
-    Translation2d delta;
-    Rotation2d rot;
-    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-      delta = getPose().getTranslation().minus(Constants.Field.RED.Corner);
-      rot = Rotation2d.fromRadians(Math.atan2(delta.getY(), delta.getX()));
+    if (Util.getAlliance() == Alliance.Red) 
+      return getVelocityAdjustedAngleToPos(Constants.Field.RED.Corner);
+
+    return getVelocityAdjustedAngleToPos(Constants.Field.BLUE.Corner);
+  }
+
+  public Rotation2d getAngleToPos(Translation2d position) {
+      Translation2d delta = getPose().getTranslation().minus(position);
+      Rotation2d rot = Rotation2d.fromRadians(Math.atan2(delta.getY(), delta.getX()));
       return rot;
-    } else {
-      delta = getPose().getTranslation().minus(Constants.Field.BLUE.Corner);
-      rot = Rotation2d.fromRadians(Math.atan2(delta.getY(), delta.getX()));
-      return rot;
-    }
+  }
+
+  public Rotation2d getVelocityAdjustedAngleToPos(Translation2d position) {
+    double dist = getPose().getTranslation().getDistance(position);
+    Translation2d adjustment = (new Translation2d(0, 1.0/12.0 * getRobotRelativeSpeeds().vyMetersPerSecond * dist)).rotateBy(getAngleToPos(position)).plus(getPose().getTranslation()).minus(position);
+    Rotation2d rot = Rotation2d.fromRadians(Math.atan2(adjustment.getY(), adjustment.getX()));
+
+    return rot;
   }
 
   public double AngleDiffFromSpeakerDeg() {
-    return getPose().getRotation().getDegrees() - getAngleToSpeaker().getDegrees();
+    return getPose().getRotation().minus(getAngleToSpeaker()).getDegrees();
   }
 
   public double getDistToSpeaker() {
-    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-        return getPose().getTranslation().getDistance(Constants.Field.RED.Speaker);
-    } else {
-        return getPose().getTranslation().getDistance(Constants.Field.BLUE.Speaker);
-    }
+    if (Util.getAlliance() == Alliance.Red) 
+        return getDistToPos(Constants.Field.RED.Speaker);
+   
+    return getDistToPos(Constants.Field.BLUE.Speaker);
   }
 
-    public double getDistToCorner() {
-    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-        return getPose().getTranslation().getDistance(Constants.Field.RED.Corner);
-    } else {
-        return getPose().getTranslation().getDistance(Constants.Field.BLUE.Corner);
-    }
+  public double getDistToCorner() {
+    if (Util.getAlliance() == Alliance.Red) 
+        return getDistToPos(Constants.Field.RED.Corner);
+    
+    return getDistToPos(Constants.Field.BLUE.Corner);
+  }
+
+  public double getDistToPos(Translation2d position) {
+    return getPose().getTranslation().getDistance(position);
   }
 
   @Override
@@ -172,8 +181,7 @@ public class Swerve extends SubsystemBase {
 
     m_poseEstimator.update(getYaw(), m_swervePositions);
 
-    if (!DriverStation.isAutonomousEnabled())
-      PVCamera.get().updatePose(m_poseEstimator, getRobotRelativeSpeeds());
+    PVCamera.get().updatePose(m_poseEstimator, getRobotRelativeSpeeds());
 
     Logger.recordOutput("Pose", getPose()); 
 

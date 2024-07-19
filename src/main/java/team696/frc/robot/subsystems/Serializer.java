@@ -27,8 +27,8 @@ public class Serializer extends SubsystemBase {
   private Serializer() {
     _Serializer = new TalonFactory(15, Constants.canivoreName, Constants.configs.shooter.serializer, "Shooter Serializer");
 
-    _FrontBeam = new DigitalInput(1);
-    _BackBeam = new DigitalInput(0);
+    _FrontBeam = new DigitalInput(0);
+    _BackBeam = new DigitalInput(1);
 
     _PositionController = new PositionVoltage(0);
 

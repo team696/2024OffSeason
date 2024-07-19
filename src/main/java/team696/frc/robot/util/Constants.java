@@ -26,16 +26,16 @@ public final class Constants {
 		public static final Field2d sim = new Field2d();
         public static final class RED {
 		    public static final Translation2d Speaker = new Translation2d(16.57, 5.54);
-            public static final Pose2d Amp = new Pose2d(12, 8, new Rotation2d(-Math.PI/2));
+            public static final Pose2d Amp = new Pose2d(14.7, 7.6, new Rotation2d(Math.PI/2));
             public static final Pose2d Source = new Pose2d(1, 0.5, Rotation2d.fromDegrees(-135));
-			public static final Translation2d Corner = new Translation2d(16.71, 8.);
+			public static final Translation2d Corner = new Translation2d(14.57, 7.);
 
         }
         public static final class BLUE {
             public static final Translation2d Speaker = new Translation2d(-0.04, 5.54);
-            public static final Pose2d Amp = new Pose2d(4, 8, new Rotation2d(Math.PI/2));
+            public static final Pose2d Amp = new Pose2d(1.89, 7.6, new Rotation2d(Math.PI/2));
             public static final Pose2d Source = new Pose2d(15.15, 1.5, Rotation2d.fromDegrees(135)); 
-			public static final Translation2d Corner = new Translation2d(-0.21, 8.);
+			public static final Translation2d Corner = new Translation2d(2., 7.);
 
         }
 	}
@@ -66,7 +66,7 @@ public final class Constants {
 
 		public static final double wheelX = Units.inchesToMeters(13.0);
 		public static final double wheelY = Units.inchesToMeters(13.0);
-		public static final double wheelDiameter = Units.inchesToMeters(3.89);
+		public static final double wheelDiameter = Units.inchesToMeters(3.84);
 		public static final double wheelCircumference = wheelDiameter * Math.PI;
 
 		public static final double theoreticalMaxSpeed = Motors.Kraken.freeSpinRPM / 60 / driveGearRatio * wheelCircumference; // 5.13 mps way more resonable
@@ -91,8 +91,6 @@ public final class Constants {
 	}
 
 	public static class shooter {
-		public static final double kG = 0.042;
-
 		public static class state {
 			public double angle;
 
@@ -110,22 +108,26 @@ public final class Constants {
 		public static double rollerSpeedA = 3900;
 
 		public static final TreeMap<Double, state> distToState = new TreeMap<Double, state>(){{
-			put(1.5, new state(4.2, rollerSpeed, rollerSpeedA));
-			put(2.0, new state(3.1, rollerSpeed, rollerSpeedA));
-			put(2.5, new state(2.3, rollerSpeed, rollerSpeedA));
-			put(3.0, new state(1.6, rollerSpeed, rollerSpeedA));
+			put(1.5, new state(4.3, 3200, 3200));
+			put(2.0, new state(3.3, 3200, 3200));
+			put(2.5, new state(2.4, 3200, 3200));
+			put(3.0, new state(1.7, rollerSpeed, rollerSpeedA));
 			put(3.5, new state(1.2, rollerSpeed, rollerSpeedA));
-			put(4.0, new state(0.75, rollerSpeed, rollerSpeedA));
-			put(5.0, new state(0.6, rollerSpeed, rollerSpeedA));
-			put(12., new state(0.7, rollerSpeed, rollerSpeedA));
+			put(4.0, new state(0.83, rollerSpeed, rollerSpeedA));
+			put(4.5, new state(0.75, rollerSpeed, rollerSpeedA));
+			put(5.0, new state(0.7, rollerSpeed, rollerSpeedA));
+			put(6.0, new state(0.6, rollerSpeed, rollerSpeedA));
+
+			put(12., new state(0.4, rollerSpeed, rollerSpeedA));
 		}};
 
 		public static final TreeMap<Double, state> Pass = new TreeMap<Double, state>(){{
 			put(1.5, new state(0.0, 1800, 1800));
 			put(4.0, new state(0.0, 1800, 1800));
-			put(5.0, new state(0.3, 3000, 3000));
-			put(6.0, new state(1.5, 4200, 4200));
-			put(12., new state(3.0, 4200, 4200));
+			put(5.0, new state(0.0, 2500, 2500));
+			put(6.0, new state(0.0, 4200, 4200));
+			put(8.0, new state(0.0, 4200, 3800));
+			put(12., new state(2.0, 4200, 3800));
 		}};
 
 
@@ -134,10 +136,12 @@ public final class Constants {
         	Map.Entry<Double, state> lower = Constants.shooter.distToState.floorEntry(dist);
         	Map.Entry<Double, state> higher = Constants.shooter.distToState.ceilingEntry(dist);
 
+			double t = (dist - lower.getKey()) / (higher.getKey() - lower.getKey());
+
         	return new state(
-				Util.lerp((dist - lower.getKey()) / (higher.getKey() - lower.getKey()), lower.getValue().angle, higher.getValue().angle), 
-				higher.getValue().speed_l, 
-				higher.getValue().speed_r);
+				Util.lerp(t, lower.getValue().angle, higher.getValue().angle), 
+				Util.lerp(t, lower.getValue().speed_l, higher.getValue().speed_l), 
+				Util.lerp(t, lower.getValue().speed_r, higher.getValue().speed_r));
 		}
 
 		public static final state adjustedPassState(double dist) {
@@ -145,10 +149,12 @@ public final class Constants {
         	Map.Entry<Double, state> lower = Constants.shooter.Pass.floorEntry(dist);
         	Map.Entry<Double, state> higher = Constants.shooter.Pass.ceilingEntry(dist);
 
+			double t = (dist - lower.getKey()) / (higher.getKey() - lower.getKey());
+
         	return new state(
-				Util.lerp((dist - lower.getKey()) / (higher.getKey() - lower.getKey()), lower.getValue().angle, higher.getValue().angle), 
-				higher.getValue().speed_l, 
-				higher.getValue().speed_r);
+				Util.lerp(t, lower.getValue().angle, higher.getValue().angle), 
+				Util.lerp(t, lower.getValue().speed_l, higher.getValue().speed_l), 
+				Util.lerp(t, lower.getValue().speed_r, higher.getValue().speed_r));
 		}
 	}
 

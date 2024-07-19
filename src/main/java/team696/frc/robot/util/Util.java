@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import team696.frc.lib.Log.PLog;
 import team696.frc.robot.Robot;
 
@@ -28,6 +30,14 @@ public class Util {
             Thread.sleep(millis);
         } catch (Exception e) {
             PLog.fatalException("Sleep", "Failed To Sleep", e);
+        }
+    }
+
+    public static Alliance getAlliance() {
+        if (DriverStation.getAlliance().isPresent()) {
+            return DriverStation.getAlliance().get();
+        } else {
+            return Alliance.Blue;
         }
     }
 

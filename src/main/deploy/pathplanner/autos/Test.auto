@@ -32,7 +32,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left To Shot"
+            "pathName": "Shot To MidMidleft"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "nuts"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MidMidleft ToShot"
           }
         },
         {

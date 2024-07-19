@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import team696.frc.lib.Log.PLog;
 import team696.frc.robot.commands.GroundIntake;
+import team696.frc.robot.commands.ManualShot;
 import team696.frc.robot.commands.Rotate;
 import team696.frc.robot.commands.Shoot;
 import team696.frc.robot.subsystems.Swerve;
@@ -61,8 +62,12 @@ public class Auto {
             m_swerve
         );
 
-        NamedCommands.registerCommand("Shoot", (new Rotate()).andThen(new Shoot()));
-        NamedCommands.registerCommand("Intake", new GroundIntake());
+        NamedCommands.registerCommand("ShootIntakeShoot", ((((new Shoot()).andThen(new GroundIntake())).andThen(new Shoot())).asProxy()) );
+        NamedCommands.registerCommand("IntakeShoot", (((new GroundIntake()).andThen(new Shoot())).asProxy()) );
+        NamedCommands.registerCommand("ShootFree", ((new Shoot()).asProxy()) );
+        NamedCommands.registerCommand("Shoot", (new Rotate()).andThen( (new Shoot()).asProxy()) );
+        NamedCommands.registerCommand("Intake", (new GroundIntake()).asProxy());
+        NamedCommands.registerCommand("Drop", (new ManualShot(new Constants.shooter.state(0, 2500, 2500))).asProxy());
 
         PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
             Constants.Field.sim.getObject("Target").setPose(pose);
@@ -101,6 +106,22 @@ public class Auto {
 
     public static Command PathFind(Pose2d end) {
         return AutoBuilder.pathfindToPose(end, new PathConstraints(1, 1, Math.PI,Math.PI));
+    }
+
+    public Command PathFindToAutoBeginning() {
+        Pose2d initialPose;
+        try {
+            List<PathPlannerPath> paths = PathPlannerAuto.getPathGroupFromAutoFile(autoChooser.getSelected().getName());
+
+            if (paths.size() <= 0) return new WaitCommand(0);
+
+            initialPose = paths.get(0).getPreviewStartingHolonomicPose();
+        } catch (Exception e) {
+            PLog.fatalException("Auto", "Failed To Find Path", e);
+            return new WaitCommand(0);
+        }
+
+        return AutoBuilder.pathfindToPose(initialPose, new PathConstraints(1, 1, Math.PI, Math.PI));
     }
 
     public void visualize() {

@@ -41,7 +41,7 @@ public class Rotate extends Command {
 
   @Override
   public boolean isFinished() {
-    if(Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().getAngleToSpeaker().getDegrees()) < 6.)
+    if(Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().getAngleToSpeaker().getDegrees()) < 3.)
         return true;
     return false;
   }

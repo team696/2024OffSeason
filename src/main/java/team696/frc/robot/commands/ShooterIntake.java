@@ -6,6 +6,7 @@ package team696.frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import team696.frc.robot.subsystems.Hood;
+import team696.frc.robot.subsystems.LED;
 import team696.frc.robot.subsystems.Serializer;
 import team696.frc.robot.subsystems.Shooter;
 
@@ -15,7 +16,7 @@ public class ShooterIntake extends Command {
   boolean shouldEnd;
 
   public ShooterIntake() {
-    addRequirements(Shooter.get(), Serializer.get(), Hood.get());
+    addRequirements(Shooter.get(), Serializer.get(), Hood.get(), LED.get());
   }
 
   // Called when the command is initially scheduled.
@@ -51,6 +52,12 @@ public class ShooterIntake extends Command {
     } else {
       Shooter.get().stop();
       Serializer.get().setSpeed(0.2);
+    }
+
+    if (!Serializer.get().FrontBeam() || !Serializer.get().BackBeam()) {
+      LED.get().setColor(0,255,0);
+    } else {
+      LED.get().setColor(255,0,0);
     }
   }
 

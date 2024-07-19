@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -14,6 +15,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import team696.frc.robot.commands.Amp;
 import team696.frc.robot.commands.Drop;
@@ -24,6 +26,7 @@ import team696.frc.robot.commands.GroundIntake;
 import team696.frc.robot.commands.Pass;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Intake;
+import team696.frc.robot.subsystems.LED;
 import team696.frc.robot.subsystems.Serializer;
 import team696.frc.robot.subsystems.Shooter;
 import team696.frc.robot.subsystems.Swerve;
@@ -90,6 +93,7 @@ public class Robot extends LoggedRobot {
         SmartDashboard.putData(Intake.get());
         SmartDashboard.putData(Hood.get());
         SmartDashboard.putData(Serializer.get());
+        SmartDashboard.putData(LED.get());
 
         configureBinds();
         configureOperatorBinds();
@@ -101,6 +105,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
       CommandScheduler.getInstance().run();
+
+      Swerve.get().getVelocityAdjustedAngleToPos(new Translation2d(8., 4));
   }
 
   @Override
@@ -108,7 +114,9 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    Swerve.get().updateYawOffset();
+  }
 
   @Override
   public void disabledExit() {
@@ -163,21 +171,24 @@ public class Robot extends LoggedRobot {
       TeleopSwerve.config(Controls.leftJoyX, Controls.leftJoyY, Controls.rightJoyX, Controls.rightJoy, Constants.deadBand);
       Swerve.get().setDefaultCommand(new TeleopSwerve(()->Swerve.get().getAngleToSpeaker().getDegrees()));
       Controls.leftJoy.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
+      Controls.Left.onTrue(Commands.run(()->Swerve.get().updateYawOffset()));
     }
 
     @SuppressWarnings("unused") 
     private void configureOperatorBinds() {
       Controls.Amp.whileTrue(new Amp(Controls.Rollers).alongWith(new TeleopSwerve(
-        ()-> DriverStation.getAlliance().isPresent() ? (DriverStation.getAlliance().get() == Alliance.Red ? Constants.Field.RED.Amp.getRotation().getDegrees() : Constants.Field.BLUE.Amp.getRotation().getDegrees()) : Constants.Field.BLUE.Amp.getRotation().getDegrees(),
-        ()-> DriverStation.getAlliance().isPresent() ? (DriverStation.getAlliance().get() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation()           : Constants.Field.BLUE.Amp.getTranslation())           : Constants.Field.BLUE.Amp.getTranslation()
-        )));
+        ()-> Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getRotation().getDegrees() : Constants.Field.BLUE.Amp.getRotation().getDegrees()
+        ,()-> Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation()           : Constants.Field.BLUE.Amp.getTranslation()
+        )).alongWith(LED.get().LerpColor(()->Swerve.get().getDistToPos(Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation()           : Constants.Field.BLUE.Amp.getTranslation())*4)));
       Controls.Shoot.whileTrue(new Shoot());
       Controls.Drop.whileTrue(new Drop());
 
       Controls.Ground.whileTrue((new GroundIntake()).alongWith(new TeleopSwerve(()->Swerve.get().getPose().getRotation().getDegrees() + PVCamera.get().getBestTargetYaw())));
-      Controls.Source.whileTrue(new ShooterIntake());
+      Controls.Source.whileTrue((new ShooterIntake()).alongWith(new TeleopSwerve(()->Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Source.getRotation().getDegrees() : Constants.Field.BLUE.Source.getRotation().getDegrees())));
 
       Controls.Trap.whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner().getDegrees())));
+
+      //Controls.Right.whileTrue(Auto.get().PathFindToAutoBeginning());
     }
 
     @SuppressWarnings("unused") 
