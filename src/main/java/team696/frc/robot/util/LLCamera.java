@@ -4,6 +4,8 @@
 
 package team696.frc.robot.util;
 
+import java.util.Optional;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -24,6 +26,56 @@ public class LLCamera {
         }
         return m_Camera;
     }
+
+    private class LimeLightHolder {
+        public String name = "";
+        public static int LimeLightCount = 0;
+        
+        public LimeLightHolder(String name, int[] TagsToCheck) {
+            LimeLightCount++;
+
+            this.name = name;
+
+            if(TagsToCheck.length > 0) {
+                LimelightHelpers.SetFiducialIDFiltersOverride(name, TagsToCheck); 
+            }
+
+            for (int port = 5800; port <= 5809; port++) { 
+                PortForwarder.add(port + 10 * LimeLightCount, String.format("%s.local", this.name), port);
+            }
+        }
+
+        public LimeLightHolder(String name) {
+            this(name, new int[] {});
+        }
+
+        public LimeLightHolder() {
+            this(String.format("limeLight%i", LimeLightCount));
+        }
+
+        boolean hasTarget() {
+            return LimelightHelpers.getTargetCount(name) > 0;
+        }
+
+        double tX() {
+            return LimelightHelpers.getTX(name);
+        }
+
+        Optional<LimelightHelpers.PoseEstimate> getEstimate() {
+            LimelightHelpers.SetRobotOrientation(name, Swerve.get().getPose().getRotation().getDegrees(),0,0,0,0,0);
+            LimelightHelpers.PoseEstimate latestEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
+
+            if (latestEstimate == null) return null;
+
+            if (latestEstimate.tagCount == 0) return null;
+
+            return Optional.of(latestEstimate);
+        }
+    }
+
+    LimeLightHolder amp;
+    LimeLightHolder shooter;
+    LimeLightHolder note;
 
     private LLCamera() {
         for (int port = 5800; port <= 5809; port++) { // Need to do this for each limelight, check documentation

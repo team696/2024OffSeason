@@ -294,7 +294,7 @@ public class PVCamera {
         }
     };
 
-    public double getBestTargetYaw() {
+    public double getAngleForNote() {
         PhotonTrackedTarget best = m_NoteCamera
             .getLatestResult()
             .getBestTarget();

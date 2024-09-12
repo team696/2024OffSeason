@@ -34,6 +34,7 @@ import team696.frc.robot.util.Auto;
 import team696.frc.robot.util.PVCamera;
 import team696.frc.robot.util.Constants;
 import team696.frc.robot.util.Controls;
+import team696.frc.robot.util.LLCamera;
 import team696.frc.robot.util.Util;
 
 public class Robot extends LoggedRobot {
@@ -181,7 +182,7 @@ public class Robot extends LoggedRobot {
       Controls.Shoot.whileTrue(new Shoot());
       Controls.Drop.whileTrue(new Drop());
 
-      Controls.Ground.whileTrue((new GroundIntake()).alongWith(new TeleopSwerve(()->Swerve.get().getPose().getRotation().getDegrees() + PVCamera.get().getBestTargetYaw())));
+      Controls.Ground.whileTrue((new GroundIntake()).alongWith(new TeleopSwerve(()->Swerve.get().getPose().getRotation().getDegrees() + LLCamera.get().getAngleForNote())));
       Controls.Source.whileTrue((new ShooterIntake()).alongWith(new TeleopSwerve(()->Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Source.getRotation().getDegrees() : Constants.Field.BLUE.Source.getRotation().getDegrees())));
 
       Controls.ExtraA.whileTrue(new ManualShot(new Constants.shooter.state(4.7, 3800, 3900)));
