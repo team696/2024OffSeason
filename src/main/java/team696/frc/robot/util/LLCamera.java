@@ -26,10 +26,11 @@ public class LLCamera {
     private LLCamera() {
         for (int port = 5800; port <= 5809; port++) { // Need to do this for each limelight, check documentation
             PortForwarder.add(port, "limelight.local", port);
+            PortForwarder.add(port, "notechaser.local", port);
         }
 
-        //int[] validIDs = {3,4}; //Only look at these tags
-        //LimelightHelpers.SetFiducialIDFiltersOverride("limelight", validIDs);   
+        int[] validIDs = {5,6}; //Only look at these tags
+        LimelightHelpers.SetFiducialIDFiltersOverride("notechaser", validIDs);   
     }
 
     public void updatePose(
@@ -37,6 +38,17 @@ public class LLCamera {
         ChassisSpeeds vel
     ) {
         LimelightHelpers.SetRobotOrientation("limelight", Swerve.get().getPose().getRotation().getDegrees(),0,0,0,0,0);
+        LimelightHelpers.SetRobotOrientation("notechaser", Swerve.get().getPose().getRotation().getDegrees(),0,0,0,0,0);
+        
+        LimelightHelpers.PoseEstimate amp_mt=LimelightHelpers.getBotPoseEstimate_wpiBlue("notechaser");
+        estimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.007, 0.007, 0.01));
+        if(amp_mt != null && amp_mt.tagCount != 0)  {
+           estimator.addVisionMeasurement(amp_mt.pose, amp_mt.timestampSeconds);
+            return;
+        }
+        
+        
+        
         LimelightHelpers.PoseEstimate mt2;
         //if (Util.getAlliance() == Alliance.Blue) 
             mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
@@ -44,12 +56,16 @@ public class LLCamera {
         //    mt2 = LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2("limelight");
         
         if (mt2 == null) return;
-
+ 
         if (mt2.tagCount == 0) return; // No tags
 
         estimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,3));
         estimator.addVisionMeasurement(
             mt2.pose,
             mt2.timestampSeconds);
+
+
+        
     }
+
 }
