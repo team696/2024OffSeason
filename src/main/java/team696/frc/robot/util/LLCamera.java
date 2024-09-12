@@ -71,9 +71,9 @@ public class LLCamera {
     LimeLightHolder note;
 
     private LLCamera() {
-        amp = new LimeLightHolder("amp", new int[]{5,6});
-        shooter = new LimeLightHolder("shooter");
-        note = new LimeLightHolder("note");
+        amp = new LimeLightHolder("limelight-amp", new int[]{5,6});
+        shooter = new LimeLightHolder("limelight-shooter");
+        note = new LimeLightHolder("limelight-note");
     }
 
     public double getAngleForNote() {
