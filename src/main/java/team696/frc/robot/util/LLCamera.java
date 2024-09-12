@@ -29,8 +29,6 @@ public class LLCamera {
         public static int LimeLightCount = 0;
         
         public LimeLightHolder(String name, int[] TagsToCheck) {
-            LimeLightCount++;
-
             this.name = name;
 
             if(TagsToCheck.length > 0) {
@@ -40,6 +38,8 @@ public class LLCamera {
             for (int port = 5800; port <= 5809; port++) { 
                 PortForwarder.add(port + 10 * LimeLightCount, String.format("%s.local", this.name), port);
             }
+
+            LimeLightCount++;
         }
 
         public LimeLightHolder(String name) {
@@ -58,9 +58,9 @@ public class LLCamera {
             LimelightHelpers.SetRobotOrientation(name, Swerve.get().getPose().getRotation().getDegrees(),0,0,0,0,0);
             LimelightHelpers.PoseEstimate latestEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
 
-            if (latestEstimate == null) return null;
+            if (latestEstimate == null) return Optional.empty();
 
-            if (latestEstimate.tagCount == 0) return null;
+            if (latestEstimate.tagCount == 0) return Optional.empty();
 
             return Optional.of(latestEstimate);
         }
