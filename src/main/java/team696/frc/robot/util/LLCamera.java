@@ -8,6 +8,8 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import team696.frc.lib.LimeLight.LimelightHelpers;
 import team696.frc.robot.subsystems.Swerve;
@@ -33,6 +35,11 @@ public class LLCamera {
         LimelightHelpers.SetFiducialIDFiltersOverride("notechaser", validIDs);   
     }
 
+    /**
+     * Uses the limelight to update the pose of the robot
+     * @param estimator Pose estimator, will be mutated by this function
+     * @param vel Current Chassis speeds
+     */
     public void updatePose(
         SwerveDrivePoseEstimator estimator,
         ChassisSpeeds vel
@@ -67,5 +74,17 @@ public class LLCamera {
 
         
     }
+
+    /**
+     * Returns the ideal Yaw for absorbing the game peice
+     */
+    double getDesiredYawforGamePiece(){
+        NetworkTable notechaser=NetworkTableInstance.getDefault().getTable("notechaser");
+        boolean tv=notechaser.getValue("tv").getBoolean();
+        double tx=notechaser.getValue("tx").getDouble();
+        return tv?Swerve.get().getPose().getRotation().getDegrees()+tx:0;
+        
+    }
+
 
 }
