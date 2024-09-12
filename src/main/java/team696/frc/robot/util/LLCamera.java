@@ -46,10 +46,6 @@ public class LLCamera {
             this(name, new int[] {});
         }
 
-        public LimeLightHolder() {
-            this(String.format("limeLight%i", LimeLightCount));
-        }
-
         boolean hasTarget() {
             return LimelightHelpers.getTargetCount(name) > 0;
         }
@@ -75,7 +71,7 @@ public class LLCamera {
     LimeLightHolder note;
 
     private LLCamera() {
-        amp = new LimeLightHolder("amp");
+        amp = new LimeLightHolder("amp", new int[]{5,6});
         shooter = new LimeLightHolder("shooter");
         note = new LimeLightHolder("note");
     }
@@ -105,6 +101,8 @@ public class LLCamera {
 
         if (shooterEstimation.isEmpty()) return;
 
+        //TODO: Potential mess around with stardard deviations and alter based on the conditions we are reading with
+            // example: distance, velocity, ambiguity?, see PVCamera.java 
         estimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,3));
         estimator.addVisionMeasurement(
             shooterEstimation.get().pose,
