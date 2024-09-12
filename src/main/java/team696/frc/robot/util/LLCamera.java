@@ -10,9 +10,6 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.net.PortForwarder;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import team696.frc.lib.LimeLight.LimelightHelpers;
 import team696.frc.robot.subsystems.Swerve;
 
@@ -78,65 +75,39 @@ public class LLCamera {
     LimeLightHolder note;
 
     private LLCamera() {
-        for (int port = 5800; port <= 5809; port++) { // Need to do this for each limelight, check documentation
-            PortForwarder.add(port, "limelight.local", port);
-            PortForwarder.add(port, "notechaser.local", port);
-        }
-
-        int[] validIDs = {5,6}; //Only look at these tags
-        LimelightHelpers.SetFiducialIDFiltersOverride("notechaser", validIDs);   
+        amp = new LimeLightHolder("amp");
+        shooter = new LimeLightHolder("shooter");
+        note = new LimeLightHolder("note");
     }
 
-    /**
-     * Uses the limelight to update the pose of the robot
-     * @param estimator Pose estimator, will be mutated by this function
-     * @param vel Current Chassis speeds
-     */
+    public double getAngleForNote() {
+        if (note.hasTarget()){
+            return note.tX();
+        }
+        return 0;
+    }
+
     public void updatePose(
         SwerveDrivePoseEstimator estimator,
         ChassisSpeeds vel
     ) {
-        LimelightHelpers.SetRobotOrientation("limelight", Swerve.get().getPose().getRotation().getDegrees(),0,0,0,0,0);
-        LimelightHelpers.SetRobotOrientation("notechaser", Swerve.get().getPose().getRotation().getDegrees(),0,0,0,0,0);
+        Optional<LimelightHelpers.PoseEstimate> ampEstimation = amp.getEstimate();
         
-        LimelightHelpers.PoseEstimate amp_mt=LimelightHelpers.getBotPoseEstimate_wpiBlue("notechaser");
-        estimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.007, 0.007, 0.01));
-        if(amp_mt != null && amp_mt.tagCount != 0)  {
-           estimator.addVisionMeasurement(amp_mt.pose, amp_mt.timestampSeconds);
-            return;
+        if(ampEstimation.isPresent()) {
+            estimator.setVisionMeasurementStdDevs(VecBuilder.fill(.01,.01, .01));
+            estimator.addVisionMeasurement(
+                ampEstimation.get().pose,
+                ampEstimation.get().timestampSeconds);
+            return; // Don't even bother reading to
         }
-        
-        
-        
-        LimelightHelpers.PoseEstimate mt2;
-        //if (Util.getAlliance() == Alliance.Blue) 
-            mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
-        //else 
-        //    mt2 = LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2("limelight");
-        
-        if (mt2 == null) return;
- 
-        if (mt2.tagCount == 0) return; // No tags
+
+        Optional<LimelightHelpers.PoseEstimate> shooterEstimation = shooter.getEstimate();
+
+        if (shooterEstimation.isEmpty()) return;
 
         estimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,3));
         estimator.addVisionMeasurement(
-            mt2.pose,
-            mt2.timestampSeconds);
-
-
-        
+            shooterEstimation.get().pose,
+            shooterEstimation.get().timestampSeconds);
     }
-
-    /**
-     * Returns the ideal Yaw for absorbing the game peice
-     */
-    double getDesiredYawforGamePiece(){
-        NetworkTable notechaser=NetworkTableInstance.getDefault().getTable("notechaser");
-        boolean tv=notechaser.getValue("tv").getBoolean();
-        double tx=notechaser.getValue("tx").getDouble();
-        return tv?Swerve.get().getPose().getRotation().getDegrees()+tx:0;
-        
-    }
-
-
 }
