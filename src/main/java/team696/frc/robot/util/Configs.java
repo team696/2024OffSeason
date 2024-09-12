@@ -177,6 +177,8 @@ public final class Configs {
         intake.serializer.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         intake.serializer.CurrentLimits.StatorCurrentLimitEnable = false;
         intake.serializer.CurrentLimits.StatorCurrentLimit = 80;
+        intake.serializer.Voltage.PeakForwardVoltage = 12.;
+        intake.serializer.Voltage.PeakReverseVoltage = -12.;
         shooter.serializer.Slot0.kP = 12.;
     }
 }

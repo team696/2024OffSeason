@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team696.frc.robot.util.Constants;
+import team696.frc.robot.util.LLCamera;
 import team696.frc.robot.util.PVCamera;
 import team696.frc.robot.util.SwerveModule;
 import team696.frc.robot.util.Util;
@@ -181,7 +182,7 @@ public class Swerve extends SubsystemBase {
 
     m_poseEstimator.update(getYaw(), m_swervePositions);
 
-    PVCamera.get().updatePose(m_poseEstimator, getRobotRelativeSpeeds());
+    LLCamera.get().updatePose(m_poseEstimator, getRobotRelativeSpeeds());
 
     Logger.recordOutput("Pose", getPose()); 
 
@@ -189,7 +190,9 @@ public class Swerve extends SubsystemBase {
   }
 
   @Override 
-  public void simulationPeriodic() { }
+  public void simulationPeriodic() { 
+    
+  }
   
   @Override
   public void initSendable(SendableBuilder builder) {

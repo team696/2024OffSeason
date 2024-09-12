@@ -22,7 +22,7 @@ public class Drop extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Shooter.get().setShooterPercent(1,1);
+    Shooter.get().setShooterPercent(-1,-1);
     Serializer.get().setSpeed(-1);
     Intake.get().setSpeed(-1);
   }

@@ -4,7 +4,12 @@
 
 package team696.frc.robot.commands;
 
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.DoubleTopic;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import team696.frc.lib.Log.PLog;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Serializer;
 import team696.frc.robot.subsystems.Shooter;
@@ -15,8 +20,16 @@ public class ManualShot extends Command {
   boolean feed;
   Constants.shooter.state desiredState;
 
+  double extraadded = 0;
+
+  NetworkTableInstance inst = NetworkTableInstance.getDefault();
+  DoubleTopic dblTopic = inst.getDoubleTopic("Manual Adjustment");
+  DoubleSubscriber sub = dblTopic.subscribe(0);
+
   public ManualShot(Constants.shooter.state d) {
     desiredState = d;
+    
+    SmartDashboard.putNumber("Manual Adjustment", extraadded);
 
     addRequirements(Hood.get(), Serializer.get(), Shooter.get());
   }
@@ -28,11 +41,14 @@ public class ManualShot extends Command {
 
   @Override
   public void execute() {
-    Shooter.get().setShooter(desiredState);
-    Hood.get().setHood(desiredState);
+    extraadded = sub.get();
+    Constants.shooter.state adesiredState = new Constants.shooter.state(desiredState.angle + extraadded, desiredState.speed_l, desiredState.speed_r);
+    PLog.info("cock", String.format("%f",extraadded));
+    Shooter.get().setShooter(adesiredState);
+    Hood.get().setHood(adesiredState);
 
-    if (Shooter.get().upToSpeed(desiredState, 75) 
-        && Hood.get().atAngle(desiredState, 1)) {
+    if (Shooter.get().upToSpeed(adesiredState, 150) 
+        && Hood.get().atAngle(adesiredState, 1.5)) {
           feed = true;
     }
 
@@ -52,8 +68,8 @@ public class ManualShot extends Command {
 
   @Override
   public boolean isFinished() {
-    if (Serializer.get().FrontBeam())
-      return true;
+    //if (Serializer.get().FrontBeam())
+      //return true;
 
     return false;
   }

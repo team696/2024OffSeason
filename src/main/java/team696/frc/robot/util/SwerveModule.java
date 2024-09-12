@@ -15,7 +15,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 public class SwerveModule {
     public int moduleNumber;
     private double angleOffset;
-
+    
     private TalonFactory mAngleMotor;
     private TalonFactory mDriveMotor;
     private CANcoder angleEncoder;

@@ -68,6 +68,7 @@ public class Auto {
         NamedCommands.registerCommand("Shoot", (new Rotate()).andThen( (new Shoot()).asProxy()) );
         NamedCommands.registerCommand("Intake", (new GroundIntake()).asProxy());
         NamedCommands.registerCommand("Drop", (new ManualShot(new Constants.shooter.state(0, 2500, 2500))).asProxy());
+        NamedCommands.registerCommand("Subwoofer", (new ManualShot(new Constants.shooter.state(4.7, 3800, 3900))));
 
         PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
             Constants.Field.sim.getObject("Target").setPose(pose);

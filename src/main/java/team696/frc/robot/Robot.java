@@ -5,7 +5,6 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -23,6 +22,7 @@ import team696.frc.robot.commands.Shoot;
 import team696.frc.robot.commands.ShooterIntake;
 import team696.frc.robot.commands.TeleopSwerve;
 import team696.frc.robot.commands.GroundIntake;
+import team696.frc.robot.commands.ManualShot;
 import team696.frc.robot.commands.Pass;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Intake;
@@ -95,18 +95,16 @@ public class Robot extends LoggedRobot {
         SmartDashboard.putData(Serializer.get());
         SmartDashboard.putData(LED.get());
 
+        Auto.Initialize();
+
         configureBinds();
         configureOperatorBinds();
         //configureControllerBinds();
-
-        Auto.Initialize();
     }
 
   @Override
   public void robotPeriodic() {
       CommandScheduler.getInstance().run();
-
-      Swerve.get().getVelocityAdjustedAngleToPos(new Translation2d(8., 4));
   }
 
   @Override
@@ -186,7 +184,11 @@ public class Robot extends LoggedRobot {
       Controls.Ground.whileTrue((new GroundIntake()).alongWith(new TeleopSwerve(()->Swerve.get().getPose().getRotation().getDegrees() + PVCamera.get().getBestTargetYaw())));
       Controls.Source.whileTrue((new ShooterIntake()).alongWith(new TeleopSwerve(()->Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Source.getRotation().getDegrees() : Constants.Field.BLUE.Source.getRotation().getDegrees())));
 
+      Controls.ExtraA.whileTrue(new ManualShot(new Constants.shooter.state(4.7, 3800, 3900)));
+
       Controls.Trap.whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner().getDegrees())));
+
+      Controls.Rightest.whileTrue(Auto.PathFind(Constants.Field.BLUE.Amp));
 
       //Controls.Right.whileTrue(Auto.get().PathFindToAutoBeginning());
     }

@@ -49,7 +49,7 @@ public class Serializer extends SubsystemBase {
   }
 
   public void setSpeed(double speed) {
-    _Serializer.PercentOutput(speed);
+    _Serializer.VoltageOut(speed);
   }
 
   public void stop() {

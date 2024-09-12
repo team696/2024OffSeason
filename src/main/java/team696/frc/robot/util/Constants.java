@@ -74,6 +74,8 @@ public final class Constants {
 		public static final double maxSpeed = theoreticalMaxSpeed * 0.9; //MPS
 		public static final double maxAngularVelocity = 8; //MPS^2
 
+		
+
 		private static final SwerveModule frontLeft = new SwerveModule(0, Constants.configs.swerve.Mod0);
 		private static final SwerveModule frontRight = new SwerveModule(1, Constants.configs.swerve.Mod1);
 		private static final SwerveModule backLeft = new SwerveModule(2, Constants.configs.swerve.Mod2);

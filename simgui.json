@@ -5,6 +5,7 @@
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Intake": "Subsystem",
+      "/SmartDashboard/LED": "Subsystem",
       "/SmartDashboard/VisionSystemSim-visionSim/Sim Field": "Field2d"
     },
     "windows": {
@@ -25,10 +26,7 @@
         "left": 150,
         "right": 2961,
         "top": 79,
-        "width": 16.541748046875,
-        "window": {
-          "visible": true
-        }
+        "width": 16.541748046875
       }
     }
   },
@@ -48,12 +46,6 @@
       },
       "AdvantageKit": {
         "RealOutputs": {
-          "LoggedRobot": {
-            "open": true
-          },
-          "Logger": {
-            "open": true
-          },
           "Robot": {
             "open": true
           },
@@ -61,8 +53,7 @@
         },
         "SystemStats": {
           "open": true
-        },
-        "open": true
+        }
       },
       "LiveWindow": {
         ".status": {
@@ -76,8 +67,7 @@
           },
           "double[]##v_/SmartDashboard/Field/Unscented Pose": {
             "open": true
-          },
-          "open": true
+          }
         },
         "VisionSystemSim-visionSim": {
           "Sim Field": {

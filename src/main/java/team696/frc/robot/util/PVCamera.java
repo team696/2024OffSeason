@@ -129,6 +129,20 @@ public class PVCamera {
                 )
             )
         );
+        m_EstimationCameras.add(
+            new e_cam( 
+                "Amp",
+                "C",
+                new Transform3d(
+                    new Translation3d(
+                        Units.inchesToMeters(-6.135),
+                        Units.inchesToMeters(0),
+                        Units.inchesToMeters(9.5)
+                    ),
+                    new Rotation3d(Math.toRadians(-90.0), Math.toRadians(90-55.297), 0)
+                )
+            )
+        );
 
         for (e_cam camera : m_EstimationCameras) {
             camera.setLayout(m_atLayout);
