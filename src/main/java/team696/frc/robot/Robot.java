@@ -20,8 +20,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import team696.frc.lib.Auto;
 import team696.frc.lib.PLog;
 import team696.frc.lib.Util;
+import team696.frc.lib.Auto.NamedCommand;
 import team696.frc.robot.commands.Amp;
 import team696.frc.robot.commands.Drop;
 import team696.frc.robot.commands.Shoot;
@@ -30,15 +32,13 @@ import team696.frc.robot.commands.TeleopSwerve;
 import team696.frc.robot.commands.GroundIntake;
 import team696.frc.robot.commands.ManualShot;
 import team696.frc.robot.commands.Pass;
+import team696.frc.robot.commands.Rotate;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Intake;
 import team696.frc.robot.subsystems.LED;
 import team696.frc.robot.subsystems.Serializer;
 import team696.frc.robot.subsystems.Shooter;
 import team696.frc.robot.subsystems.Swerve;
-import team696.frc.robot.util.Auto;
-import team696.frc.robot.util.Constants;
-import team696.frc.robot.util.Controls;
 
 public class Robot extends LoggedRobot {
     private Command m_autonomousCommand;
@@ -99,7 +99,15 @@ public class Robot extends LoggedRobot {
         SmartDashboard.putData(Serializer.get());
         SmartDashboard.putData(LED.get());
 
-        Auto.Initialize();
+        Auto.Initialize(Swerve.get(), 
+          new NamedCommand("ShootIntakeShoot", ((((new Shoot()).andThen(new GroundIntake())).andThen(new Shoot())).asProxy())),
+          new NamedCommand("IntakeShoot", (((new GroundIntake()).andThen(new Shoot())).asProxy())),
+          new NamedCommand("ShootFree", ((new Shoot()).asProxy())),
+          new NamedCommand("Shoot", (new Rotate()).andThen( (new Shoot()).asProxy())),
+          new NamedCommand("Intake", (new GroundIntake()).asProxy()),
+          new NamedCommand("Drop", (new ManualShot(new Constants.shooter.state(0, 2500, 2500))).asProxy()),
+          new NamedCommand("Subwoofer", (new ManualShot(new Constants.shooter.state(4.7, 3800, 3900))))
+        );
 
         configureBinds();
         configureOperatorBinds();

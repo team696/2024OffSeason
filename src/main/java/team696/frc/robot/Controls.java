@@ -1,4 +1,4 @@
-package team696.frc.robot.util;
+package team696.frc.robot;
 
 import java.util.function.DoubleSupplier;
 

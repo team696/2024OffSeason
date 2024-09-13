@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team696.frc.lib.TalonFactory;
-import team696.frc.robot.util.Constants;
+import team696.frc.robot.Constants;
 
 public class Serializer extends SubsystemBase {
   private static Serializer m_Serializer;

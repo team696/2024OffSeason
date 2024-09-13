@@ -2,7 +2,7 @@ package team696.frc.lib.Swerve;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import team696.frc.robot.util.Constants.Motors;
+import team696.frc.robot.Constants.Motors;
 
 public class SwerveConstants {
 		public static final double drivekS = (0.667 / 12); 

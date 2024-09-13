@@ -1,4 +1,4 @@
-package team696.frc.robot.util;
+package team696.frc.robot;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;

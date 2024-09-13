@@ -7,10 +7,10 @@ package team696.frc.robot.commands;
 import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import team696.frc.robot.Constants;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Serializer;
 import team696.frc.robot.subsystems.Shooter;
-import team696.frc.robot.util.Constants;
 
 public class Amp extends Command {
 

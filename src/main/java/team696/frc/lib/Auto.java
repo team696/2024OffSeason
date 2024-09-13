@@ -1,4 +1,4 @@
-package team696.frc.robot.util;
+package team696.frc.lib;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,22 +22,32 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import team696.frc.lib.PLog;
 import team696.frc.lib.Swerve.SwerveConstants;
-import team696.frc.robot.commands.GroundIntake;
-import team696.frc.robot.commands.ManualShot;
-import team696.frc.robot.commands.Rotate;
-import team696.frc.robot.commands.Shoot;
-import team696.frc.robot.subsystems.Swerve;
+import team696.frc.lib.Swerve.SwerveDriveSubsystem;
+import team696.frc.robot.Constants;
 
 public class Auto {
+    public static class NamedCommand {
+        public String name;
+        public Command command;
+
+        public NamedCommand(String name, Command command) {
+            this.name = name;
+            this.command = command;
+        }
+
+        public void register() {
+            NamedCommands.registerCommand(name, command);
+        }
+    }
+
     public static Auto m_instance;
-    private Swerve m_swerve;
+    private SwerveDriveSubsystem _swerve;
 
     private final SendableChooser<Command> autoChooser;
 
-    private Auto () {
-        m_swerve = Swerve.get();
+    private Auto (SwerveDriveSubsystem swerve, NamedCommand... commandsToRegister) {
+        _swerve = swerve;
         
         final HolonomicPathFollowerConfig FollowConfig = new HolonomicPathFollowerConfig(
             new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
@@ -48,10 +58,10 @@ public class Auto {
         );
 
         AutoBuilder.configureHolonomic(
-            m_swerve::getPose, 
-            m_swerve::resetPose, 
-            m_swerve::getRobotRelativeSpeeds,
-            m_swerve::Drive, 
+            _swerve::getPose, 
+            _swerve::resetPose, 
+            _swerve::getRobotRelativeSpeeds,
+            _swerve::Drive, 
             FollowConfig,
             () -> {
                 Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
@@ -60,16 +70,12 @@ public class Auto {
                 }
                 return false;
             },
-            m_swerve
+            _swerve
         );
 
-        NamedCommands.registerCommand("ShootIntakeShoot", ((((new Shoot()).andThen(new GroundIntake())).andThen(new Shoot())).asProxy()) );
-        NamedCommands.registerCommand("IntakeShoot", (((new GroundIntake()).andThen(new Shoot())).asProxy()) );
-        NamedCommands.registerCommand("ShootFree", ((new Shoot()).asProxy()) );
-        NamedCommands.registerCommand("Shoot", (new Rotate()).andThen( (new Shoot()).asProxy()) );
-        NamedCommands.registerCommand("Intake", (new GroundIntake()).asProxy());
-        NamedCommands.registerCommand("Drop", (new ManualShot(new Constants.shooter.state(0, 2500, 2500))).asProxy());
-        NamedCommands.registerCommand("Subwoofer", (new ManualShot(new Constants.shooter.state(4.7, 3800, 3900))));
+        for (NamedCommand namedCommand : commandsToRegister) {
+            namedCommand.register();
+        }
 
         PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
             Constants.Field.sim.getObject("Target").setPose(pose);
@@ -88,10 +94,10 @@ public class Auto {
         });
     }
 
-    public static void Initialize(){
-        if (m_instance != null) throw new RuntimeException ("Can't Initialize Twice!");
-
-        m_instance = new Auto();
+    public static void Initialize(SwerveDriveSubsystem swerve, NamedCommand... commandsToRegister){
+        if (m_instance != null) throw new RuntimeException ("Don't Initialize Twice!");
+        
+        m_instance = new Auto(swerve, commandsToRegister);
     }
 
     public static Auto get(){

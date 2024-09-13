@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import team696.frc.lib.Util;
 import team696.frc.lib.Swerve.SwerveDriveSubsystem;
 import team696.frc.lib.Swerve.SwerveModule;
-import team696.frc.robot.util.Constants;
+import team696.frc.robot.Constants;
 
 public class Swerve extends SwerveDriveSubsystem {
   private static Swerve m_Swerve;
