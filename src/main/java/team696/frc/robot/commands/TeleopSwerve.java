@@ -8,9 +8,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import team696.frc.lib.Util;
+import team696.frc.lib.Swerve.SwerveConstants;
 import team696.frc.robot.subsystems.Swerve;
-import team696.frc.robot.util.Constants;
-import team696.frc.robot.util.Util;
 
 public class TeleopSwerve extends Command {
     private static DoubleSupplier translation = ()->0;
@@ -116,8 +116,8 @@ public class TeleopSwerve extends Command {
             }
         }
 
-        double rotation = rAxis * Constants.swerve.maxAngularVelocity;
-        Translation2d translation = new Translation2d(Math.pow(magnitude, 2), theta).times(Constants.swerve.maxSpeed).times(multiplier);
+        double rotation = rAxis * SwerveConstants.maxAngularVelocity;
+        Translation2d translation = new Translation2d(Math.pow(magnitude, 2), theta).times(SwerveConstants.maxSpeed).times(multiplier);
 
         Swerve.get().Drive(translation, rotation, fieldRelative, openLoop);
     }

@@ -1,17 +1,15 @@
-package team696.frc.robot.util;
+package team696.frc.lib;
 
 import java.io.IOException;
 import java.net.NetworkInterface;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import team696.frc.lib.Log.PLog;
-import team696.frc.robot.Robot;
 
+// Collection of Helpful Functions
 public class Util {
     public static double lerp(double t, double min, double max) {
         return (max - min) * t + min;
@@ -109,39 +107,4 @@ public class Util {
 		}
 		return builder.toString();
 	}
-
-    public static void setRobotType () {
-        if (Robot.isSimulation()) {
-            Constants.Robot.detected = Constants.Robot.Robots.SIM;
-            PLog.info("Robot", "Simulation Detected");
-            return;
-        }
-
-        List<byte[]> macAddresses;
-		try {
-			macAddresses = Util.getMacAddresses();
-		} catch (IOException e) {
-            PLog.fatalException("Robot", "Mac Address Attempt Unsuccessful", e);
-			macAddresses = List.of();
-		}
-
-		for (byte[] macAddress : macAddresses) {
-			if (Arrays.compare(Constants.Robot.COMP_MAC, macAddress) == 0) {
-				Constants.Robot.detected = Constants.Robot.Robots.COMP;
-                PLog.info("Robot", "Comp Bot Detected");
-				break;
-			} else if (Arrays.compare(Constants.Robot.BETA_MAC, macAddress) == 0) {
-				Constants.Robot.detected = Constants.Robot.Robots.BETA;
-                PLog.info("Robot", "Beta Bot Detected");
-				break;
-			}
-		}
-
-		if (Constants.Robot.detected == Constants.Robot.Robots.UNKNOWN) {
-            PLog.info("Robot", "Unknown MAC address!");
-            for (byte[] macAddress : macAddresses) {
-                PLog.info("    ", Util.macToString(macAddress));
-            }
-		}
-    }
 }

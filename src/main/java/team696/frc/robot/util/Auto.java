@@ -22,7 +22,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import team696.frc.lib.Log.PLog;
+import team696.frc.lib.PLog;
+import team696.frc.lib.Swerve.SwerveConstants;
 import team696.frc.robot.commands.GroundIntake;
 import team696.frc.robot.commands.ManualShot;
 import team696.frc.robot.commands.Rotate;
@@ -41,8 +42,8 @@ public class Auto {
         final HolonomicPathFollowerConfig FollowConfig = new HolonomicPathFollowerConfig(
             new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
             new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
-            Constants.swerve.maxSpeed, // Max module speed, in m/s
-            Math.sqrt(Math.pow(Constants.swerve.wheelX / 2, 2) + Math.pow(Constants.swerve.wheelY / 2, 2)), // Drive base radius in meters. Distance from robot center to furthest module.
+            SwerveConstants.maxSpeed, // Max module speed, in m/s
+            SwerveConstants.driveBaseRadM, // Drive base radius in meters. Distance from robot center to furthest module.
             new ReplanningConfig() // Default path replanning config. See the API for the options here
         );
 

@@ -8,9 +8,8 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import team696.frc.lib.Util;
 
 public final class Constants {
 	public static final Configs configs = new Configs();
@@ -54,44 +53,7 @@ public final class Constants {
             public static final double freeSpinA = 1.5;
         }
 	}
-	public static class swerve {
-		public static final double drivekS = (0.667 / 12); 
-		public static final double drivekV = (2.44 / 12);
-		public static final double drivekA = (0.27 / 12);
-
-		public static final double driveGearRatio = (5.36 / 1.0); // L3
-		public static final double angleGearRatio = (150.0/7.0 / 1.0); 
-
-		public static final double massKgs = Units.lbsToKilograms(70);
-
-		public static final double wheelX = Units.inchesToMeters(13.0);
-		public static final double wheelY = Units.inchesToMeters(13.0);
-		public static final double wheelDiameter = Units.inchesToMeters(3.84);
-		public static final double wheelCircumference = wheelDiameter * Math.PI;
-
-		public static final double theoreticalMaxSpeed = Motors.Kraken.freeSpinRPM / 60 / driveGearRatio * wheelCircumference; // 5.13 mps way more resonable
-		public static final double theoreticalMaxAcceleration = (4 * Motors.Kraken.stallTorqueNm * driveGearRatio) / (massKgs * wheelDiameter / 2);  // 66 mps^2 wtf
-		public static final double maxSpeed = theoreticalMaxSpeed * 0.9; //MPS
-		public static final double maxAngularVelocity = 8; //MPS^2
-
-		
-
-		private static final SwerveModule frontLeft = new SwerveModule(0, Constants.configs.swerve.Mod0);
-		private static final SwerveModule frontRight = new SwerveModule(1, Constants.configs.swerve.Mod1);
-		private static final SwerveModule backLeft = new SwerveModule(2, Constants.configs.swerve.Mod2);
-		private static final SwerveModule backRight = new SwerveModule(3, Constants.configs.swerve.Mod3);
-		public static final SwerveModule[] modules = { frontLeft, frontRight, backLeft, backRight };
-
-		public static final Translation2d[] modPositions = {
-			new Translation2d(wheelX / 2.0, wheelY / 2.0), // FL
-			new Translation2d(wheelX / 2.0, -wheelY / 2.0), // FR
-			new Translation2d(-wheelX / 2.0, wheelY / 2.0), // BL
-			new Translation2d(-wheelX / 2.0, -wheelY / 2.0) // BR  
-		};
-
-		public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(modPositions);
-	}
-
+	
 	public static class shooter {
 		public static class state {
 			public double angle;

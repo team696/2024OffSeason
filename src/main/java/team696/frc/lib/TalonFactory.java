@@ -14,7 +14,6 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.Timer;
-import team696.frc.lib.Log.PLog;
 
 public class TalonFactory { //TODO: Make this general for CAN devices
     private final double TIMEOUT = 0.05;
@@ -61,6 +60,7 @@ public class TalonFactory { //TODO: Make this general for CAN devices
 
         lastConfigure = Timer.getFPGATimestamp();
         StatusCode configCode = m_Motor.getConfigurator().apply(this.m_Config, TIMEOUT);
+
         if(configCode.isError()) {
             PLog.unusual(name, "Failed to configure");
         } else {

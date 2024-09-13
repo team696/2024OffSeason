@@ -7,8 +7,8 @@ package team696.frc.robot.commands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import team696.frc.lib.Swerve.SwerveConstants;
 import team696.frc.robot.subsystems.Swerve;
-import team696.frc.robot.util.Constants;
 
 public class Rotate extends Command {
 
@@ -31,7 +31,7 @@ public class Rotate extends Command {
         double pid = pidController.calculate(Swerve.get().getPose().getRotation().getDegrees(), Swerve.get().getAngleToSpeaker().getDegrees());
         rAxis = Math.abs(Math.pow(pid, 2)) * 0.7 * Math.signum(pid) + pid * 2;
 
-        Swerve.get().Drive(new Translation2d(), rAxis * Constants.swerve.maxAngularVelocity, true, true);
+        Swerve.get().Drive(new Translation2d(), rAxis * SwerveConstants.maxAngularVelocity, true, true);
   }
 
   @Override

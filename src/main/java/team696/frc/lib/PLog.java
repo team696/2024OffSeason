@@ -1,4 +1,4 @@
-package team696.frc.lib.Log;
+package team696.frc.lib;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -10,11 +10,11 @@ public class PLog {
 	 * @param category
 	 * @param message
 	 */
-	public static void fatal(String category, String message) {
-		log("Fatal", category, message);
+	public static <T> void fatal(String category, T message) {
+		log("Fatal", category, String.valueOf(message));
 
 		// make it show up on the DS as well
-		DriverStation.reportError("Fatal Error: " + message, true);
+		DriverStation.reportError("Fatal Error: " + String.valueOf(message), true);
 	}
 
 	/**
@@ -47,10 +47,10 @@ public class PLog {
 	 * @param category
 	 * @param message
 	 */
-	public static void recoverable(String category, String message) {
-		log("Recoverable", category, message);
+	public static <T> void recoverable(String category, T message) {
+		log("Recoverable", category, String.valueOf(message));
 
-		DriverStation.reportError("Error: " + (message == null ? "null" : message), true);
+		DriverStation.reportError("Error: " + String.valueOf(message), true);
 	}
 
 	/**
@@ -60,16 +60,16 @@ public class PLog {
 	 * @param category
 	 * @param message
 	 */
-	public static void unusual(String category, String message) {
-		log("Unusual", category, message);
+	public static <T> void unusual(String category, T message) {
+		log("Unusual", category, String.valueOf(message));
 	}
 
 	/**
 	 * Log a semi-important message which the user should probably see, but does not
 	 * indicate anything is broken.
 	 */
-	public static void info(String category, String message) {
-		log("Info", category, message);
+	public static <T> void info(String category, T message) {
+		log("Info", category, String.valueOf(message));
 	}
 
 	/**
@@ -79,12 +79,11 @@ public class PLog {
 	 * @param category
 	 * @param message 
 	 */
-	public static void debug(String category, String message) {
-		log("Debug", category, message);
+	public static <T> void debug(String category, T message) {
+		log("Debug", category, String.valueOf(message));
 	}
 
 	private static void log(String severity, String category, String message) {
 		System.out.println(String.format("[%s] [%s] %s", severity, category, message));
-        Logger.log(severity, String.format("[%s] %s", category, message));
 	}
 }
