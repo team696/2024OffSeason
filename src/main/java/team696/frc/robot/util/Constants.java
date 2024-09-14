@@ -115,12 +115,12 @@ public final class Constants {
 			put(2.5, new state(2.4, 3200, 3200));
 			put(3.0, new state(1.7, rollerSpeed, rollerSpeedA));
 			put(3.5, new state(1.2, rollerSpeed, rollerSpeedA));
-			put(4.0, new state(0.83, rollerSpeed, rollerSpeedA));
-			put(4.5, new state(0.75, rollerSpeed, rollerSpeedA));
-			put(5.0, new state(0.7, rollerSpeed, rollerSpeedA));
-			put(6.0, new state(0.6, rollerSpeed, rollerSpeedA));
+			put(4.0, new state(1.05, rollerSpeed, rollerSpeedA));
+			put(4.5, new state(0.95, rollerSpeed, rollerSpeedA));
+			put(5.0, new state(0.9, rollerSpeed, rollerSpeedA));
+			put(6.0, new state(0.8, rollerSpeed, rollerSpeedA));
 
-			put(12., new state(0.4, rollerSpeed, rollerSpeedA));
+			put(12., new state(0.6, rollerSpeed, rollerSpeedA));
 		}};
 
 		public static final TreeMap<Double, state> Pass = new TreeMap<Double, state>(){{

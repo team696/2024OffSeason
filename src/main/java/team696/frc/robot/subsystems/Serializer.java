@@ -75,7 +75,7 @@ public class Serializer extends SubsystemBase {
         if (!BackBeam()) {
           setSpeed(0.2);
         } else {
-          setSpeed(0.5);
+          setSpeed(/*0.5*/0.4);
         }
       }
   }

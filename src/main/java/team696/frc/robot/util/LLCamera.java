@@ -80,7 +80,7 @@ public class LLCamera {
         if (note.hasTarget()){
             return note.tX();
         }
-        return 0;
+        return 999;
     }
 
     public void updatePose(
@@ -104,8 +104,10 @@ public class LLCamera {
         //TODO: Potential mess around with stardard deviations and alter based on the conditions we are reading with
             // example: distance, velocity, ambiguity?, see PVCamera.java 
         estimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,3));
+        if(shooterEstimation.get().avgTagDist<4.5){
         estimator.addVisionMeasurement(
             shooterEstimation.get().pose,
             shooterEstimation.get().timestampSeconds);
+        }
     }
 }
