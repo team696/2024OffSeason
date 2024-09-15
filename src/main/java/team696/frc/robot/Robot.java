@@ -1,8 +1,6 @@
 package team696.frc.robot;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedHashMap;
 
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -21,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import team696.frc.lib.Auto;
-import team696.frc.lib.PLog;
 import team696.frc.lib.Util;
 import team696.frc.lib.Auto.NamedCommand;
 import team696.frc.robot.commands.Amp;
@@ -47,7 +44,7 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void robotInit() {
-        setRobotType();
+        Util.setRobotType(new LinkedHashMap<>() { }, true);
 
         Logger.recordMetadata("ProjectName", "2024OffSeason");
         Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
@@ -175,7 +172,7 @@ public class Robot extends LoggedRobot {
   @SuppressWarnings("unused") 
     private void configureBinds() {
       TeleopSwerve.config(Controls.leftJoyX, Controls.leftJoyY, Controls.rightJoyX, Controls.rightJoy, Constants.deadBand);
-      Swerve.get().setDefaultCommand(new TeleopSwerve(()->Swerve.get().getAngleToSpeaker().getDegrees()));
+      Swerve.get().setDefaultCommand(new TeleopSwerve(()->Swerve.get().getAngleToSpeaker()));
       Controls.leftJoy.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
       Controls.Left.onTrue(Commands.run(()->Swerve.get().updateYawOffset()));
     }
@@ -183,18 +180,18 @@ public class Robot extends LoggedRobot {
     @SuppressWarnings("unused") 
     private void configureOperatorBinds() {
       Controls.Amp.whileTrue(new Amp(Controls.Rollers).alongWith(new TeleopSwerve(
-        ()-> Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getRotation().getDegrees() : Constants.Field.BLUE.Amp.getRotation().getDegrees()
-        ,()-> Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation()           : Constants.Field.BLUE.Amp.getTranslation()
-        )).alongWith(LED.get().LerpColor(()->Swerve.get().getDistToPos(Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation()           : Constants.Field.BLUE.Amp.getTranslation())*4)));
+        () ->  Swerve.get().distTo(Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation() : Constants.Field.BLUE.Amp.getTranslation()),
+        ()-> Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getRotation() : Constants.Field.BLUE.Amp.getRotation()
+        )).alongWith(LED.get().LerpColor(()->Swerve.get().distTo(Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation()           : Constants.Field.BLUE.Amp.getTranslation())*4)));
       Controls.Shoot.whileTrue(new Shoot());
       Controls.Drop.whileTrue(new Drop());
 
-      //Controls.Ground.whileTrue((new GroundIntake()).alongWith(new TeleopSwerve(()->Swerve.get().getPose().getRotation().getDegrees() + LLCamera.get().getAngleForNote())));
-      Controls.Source.whileTrue((new ShooterIntake()).alongWith(new TeleopSwerve(()->Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Source.getRotation().getDegrees() : Constants.Field.BLUE.Source.getRotation().getDegrees())));
+      Controls.Ground.whileTrue((new GroundIntake()).alongWith(new TeleopSwerve(Swerve.get()::getAngleForNote)));
+      Controls.Source.whileTrue((new ShooterIntake()).alongWith(new TeleopSwerve(()->Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Source.getRotation() : Constants.Field.BLUE.Source.getRotation())));
 
       Controls.ExtraA.whileTrue(new ManualShot(new Constants.shooter.state(4.7, 3800, 3900)));
 
-      Controls.Trap.whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner().getDegrees())));
+      Controls.Trap.whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner())));
 
       Controls.Rightest.whileTrue(Auto.PathFind(Constants.Field.BLUE.Amp));
 
@@ -204,7 +201,7 @@ public class Robot extends LoggedRobot {
     @SuppressWarnings("unused") 
     private void configureControllerBinds() { 
       TeleopSwerve.config(Controls.Controller.leftJoyX, Controls.Controller.leftJoyY, Controls.Controller.rightJoyX, Controls.Controller.RB, 0.02);
-      Swerve.get().setDefaultCommand(new TeleopSwerve(()->Swerve.get().getAngleToSpeaker().getDegrees()));
+      Swerve.get().setDefaultCommand(new TeleopSwerve(()->Swerve.get().getAngleToSpeaker()));
       Controls.Controller.A.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
 
       Controls.Controller.RT.whileTrue(new Shoot());
@@ -215,41 +212,6 @@ public class Robot extends LoggedRobot {
 
       Controls.Controller.B.whileTrue(new GroundIntake());
 
-      Controls.Controller.LB.whileTrue(new Amp(Controls.Controller.LT).alongWith(new TeleopSwerve(()-> DriverStation.getAlliance().isPresent() ? (DriverStation.getAlliance().get() == Alliance.Red ? Constants.Field.RED.Amp.getRotation().getDegrees() : Constants.Field.BLUE.Amp.getRotation().getDegrees()) : Constants.Field.BLUE.Amp.getRotation().getDegrees())));
-    }
-
-    public void setRobotType () {
-        if (Robot.isSimulation()) {
-            Constants.Robot.detected = Constants.Robot.Robots.SIM;
-            PLog.info("Robot", "Simulation Detected");
-            return;
-        }
-
-        List<byte[]> macAddresses;
-		try {
-			macAddresses = Util.getMacAddresses();
-		} catch (IOException e) {
-            PLog.fatalException("Robot", "Mac Address Attempt Unsuccessful", e);
-			macAddresses = List.of();
-		}
-
-		for (byte[] macAddress : macAddresses) {
-			if (Arrays.compare(Constants.Robot.COMP_MAC, macAddress) == 0) {
-				Constants.Robot.detected = Constants.Robot.Robots.COMP;
-                PLog.info("Robot", "Comp Bot Detected");
-				break;
-			} else if (Arrays.compare(Constants.Robot.BETA_MAC, macAddress) == 0) {
-				Constants.Robot.detected = Constants.Robot.Robots.BETA;
-                PLog.info("Robot", "Beta Bot Detected");
-				break;
-			}
-		}
-
-		if (Constants.Robot.detected == Constants.Robot.Robots.UNKNOWN) {
-            PLog.info("Robot", "Unknown MAC address!");
-            for (byte[] macAddress : macAddresses) {
-                PLog.info("    ", Util.macToString(macAddress));
-            }
-		}
+      Controls.Controller.LB.whileTrue(new Amp(Controls.Controller.LT).alongWith(new TeleopSwerve(()-> Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getRotation() : Constants.Field.BLUE.Amp.getRotation())));
     }
 }

@@ -3,10 +3,14 @@ package team696.frc.lib;
 import java.io.IOException;
 import java.net.NetworkInterface;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 // Collection of Helpful Functions
@@ -107,4 +111,51 @@ public class Util {
 		}
 		return builder.toString();
 	}
+
+    /* Returns the current detected robot based on map of robot name to mac address
+     * 
+     * -1 is simulation
+     *  0 is unknown
+     *  1 is first item in map... etc.
+     * 
+     *  verbose will print to console, which robot connected, or the MAC if unknown
+     */
+    public static int setRobotType(LinkedHashMap<String, byte[]> nameToMac, boolean verbose) {
+        if (RobotBase.isSimulation()) {
+            if (verbose) {
+                PLog.info("Robot", "Simulation Detected");
+            }
+            return -1;
+        }
+
+        List<byte[]> macAddresses;
+		try {
+			macAddresses = Util.getMacAddresses();
+		} catch (IOException e) {
+            PLog.fatalException("Robot", "Mac Address Attempt Unsuccessful", e);
+			macAddresses = List.of();
+            return 0;
+		}
+
+        for (byte[] macAddress : macAddresses) {
+            int i = 1;
+            for (Map.Entry<String, byte[]> robotEntry : nameToMac.entrySet()) {
+                if (Arrays.compare(robotEntry.getValue(), macAddress) == 0) {
+                    if (verbose) {
+                        PLog.info("Robot", String.format("%s Detected", robotEntry.getKey()));
+                    }
+                    return i;
+                }
+                i++;
+            }
+        }
+
+		if (verbose) {
+            PLog.info("Robot", "Unknown Robot Detected");
+            for (byte[] macAddress : macAddresses) {
+                PLog.info("    ", Util.macToString(macAddress));
+            }		
+        }     
+        return 0;
+    }
 }

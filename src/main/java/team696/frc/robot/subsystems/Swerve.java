@@ -8,12 +8,17 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import team696.frc.lib.Util;
+import team696.frc.lib.Cameras.LimeLightCam;
 import team696.frc.lib.Swerve.SwerveDriveSubsystem;
 import team696.frc.lib.Swerve.SwerveModule;
 import team696.frc.robot.Constants;
 
 public class Swerve extends SwerveDriveSubsystem {
   private static Swerve m_Swerve;
+
+  private LimeLightCam shooterCam;
+  private LimeLightCam intakeCam;
+  private LimeLightCam ampCam;
 
   public static Swerve get() {
     if (m_Swerve == null) {
@@ -23,8 +28,11 @@ public class Swerve extends SwerveDriveSubsystem {
   }
   
   private Swerve() {
-    super();
+    shooterCam = new LimeLightCam("limelight-shooter");
+    intakeCam = new LimeLightCam("limelight-note");
+    ampCam = new LimeLightCam("limelight-amp");
 
+    ampCam.setStdDeviations(0.01, 0.01, 0.01);
   }
 
   public Rotation2d getAngleToSpeaker() {
@@ -41,15 +49,9 @@ public class Swerve extends SwerveDriveSubsystem {
     return getVelocityAdjustedAngleToPos(Constants.Field.BLUE.Corner);
   }
 
-  public Rotation2d getAngleToPos(Translation2d position) {
-      Translation2d delta = getPose().getTranslation().minus(position);
-      Rotation2d rot = Rotation2d.fromRadians(Math.atan2(delta.getY(), delta.getX()));
-      return rot;
-  }
-
   public Rotation2d getVelocityAdjustedAngleToPos(Translation2d position) {
-    double dist = getPose().getTranslation().getDistance(position);
-    Translation2d adjustment = (new Translation2d(0, 1.0/12.0 * getRobotRelativeSpeeds().vyMetersPerSecond * dist)).rotateBy(getAngleToPos(position)).plus(getPose().getTranslation()).minus(position);
+    double dist = distTo(position);
+    Translation2d adjustment = (new Translation2d(0, 1.0/12.0 * getRobotRelativeSpeeds().vyMetersPerSecond * dist)).rotateBy(angleTo(position)).plus(getPose().getTranslation()).minus(position);
     Rotation2d rot = Rotation2d.fromRadians(Math.atan2(adjustment.getY(), adjustment.getX()));
 
     return rot;
@@ -61,24 +63,29 @@ public class Swerve extends SwerveDriveSubsystem {
 
   public double getDistToSpeaker() {
     if (Util.getAlliance() == Alliance.Red) 
-        return getDistToPos(Constants.Field.RED.Speaker);
+        return distTo(Constants.Field.RED.Speaker);
    
-    return getDistToPos(Constants.Field.BLUE.Speaker);
+    return distTo(Constants.Field.BLUE.Speaker);
   }
 
   public double getDistToCorner() {
     if (Util.getAlliance() == Alliance.Red) 
-        return getDistToPos(Constants.Field.RED.Corner);
+        return distTo(Constants.Field.RED.Corner);
     
-    return getDistToPos(Constants.Field.BLUE.Corner);
+    return distTo(Constants.Field.BLUE.Corner);
   }
 
-  public double getDistToPos(Translation2d position) {
-    return getPose().getTranslation().getDistance(position);
+  public Rotation2d getAngleForNote() {
+    if (intakeCam.hasTargets()) {
+      return getPose().getRotation().minus(Rotation2d.fromDegrees(intakeCam.tX()));
+    }
+    return null;
   }
 
   @Override
   public void onUpdate() { 
+    shooterCam.updateEstimator(getYaw(), getEstimator());
+    ampCam.updateEstimator(getYaw(), getEstimator(), (latestResult)->{return true;});
 
     Logger.recordOutput("Pose", getPose()); 
 

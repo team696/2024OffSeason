@@ -2,13 +2,20 @@ package team696.frc.lib.Cameras;
 
 import java.util.Optional;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import team696.frc.lib.LimeLight.LimelightHelpers;
-import team696.frc.robot.subsystems.Swerve;
+
+/* Maybe in future remove limelightHelpers Dependency,
+    really just copy pasting but I'm lazy */
 
 public class LimeLightCam extends BaseCam {
     public String name = "";
     public static int LimeLightCount = 0;
+    
+    private NetworkTable _ntTable;
     
     public LimeLightCam(String name, int[] TagsToCheck) {
         this.name = name;
@@ -21,6 +28,10 @@ public class LimeLightCam extends BaseCam {
             PortForwarder.add(port + 10 * LimeLightCount, String.format("%s.local", this.name), port);
         }
 
+        _ntTable = NetworkTableInstance.getDefault().getTable(name);
+
+        _ntTable.getEntry("ledMode").setNumber(1); // Example of how to use -> This turns off LEDS on the front
+
         LimeLightCount++;
     }
 
@@ -28,16 +39,25 @@ public class LimeLightCam extends BaseCam {
         this(name, new int[] {});
     }
 
-    boolean hasTarget() {
-        return LimelightHelpers.getTargetCount(name) > 0;
+    public int targetCount() {
+        double[] t2d = _ntTable.getEntry("t2d").getDoubleArray(new double[0]);
+        if(t2d.length == 17)
+        {
+          return (int)t2d[1];
+        }
+        return 0;    
     }
 
-    double tX() {
-        return LimelightHelpers.getTX(name);
+    public boolean hasTargets() {
+        return targetCount() > 0;
     }
 
-    public Optional<AprilTagResult> getEstimate() {
-        LimelightHelpers.SetRobotOrientation(name, Swerve.get().getPose().getRotation().getDegrees(),0,0,0,0,0);
+    public double tX() {
+        return _ntTable.getEntry("tx").getDouble(0);
+    }
+
+    public Optional<AprilTagResult> getEstimate(Rotation2d curYaw) {
+        LimelightHelpers.SetRobotOrientation(name, curYaw.getDegrees(),0,0,0,0,0);
         LimelightHelpers.PoseEstimate latestEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
 
         if (latestEstimate == null) return Optional.empty();

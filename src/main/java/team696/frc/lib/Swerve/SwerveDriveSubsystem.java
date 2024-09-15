@@ -16,10 +16,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team696.frc.lib.Util;
 
-// Must call super() at the top of the constructor -> maybe theres a better way, idk
-
 public abstract class SwerveDriveSubsystem extends SubsystemBase {
-    
     private SwerveModulePosition[] _swervePositions = new SwerveModulePosition[4];
     private SwerveDrivePoseEstimator _poseEstimator;
 
@@ -53,6 +50,10 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
 
     public Pose2d getPose() {
         return _poseEstimator.getEstimatedPosition();
+    }
+
+    public SwerveDrivePoseEstimator getEstimator() {
+        return _poseEstimator;
     }
 
     public void resetPose(Pose2d newPose) {
@@ -126,6 +127,24 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
 
     public SwerveModule[] getModules() {
         return _modules;
+    }
+
+    public double distTo(Translation2d position) {
+        return getPose().getTranslation().getDistance(position);
+    }
+
+    public double distTo(Pose2d position) {
+        return distTo(position.getTranslation());
+    }
+
+    public Rotation2d angleTo(Translation2d position) {
+        Translation2d delta = getPose().getTranslation().minus(position);
+        Rotation2d rot = Rotation2d.fromRadians(Math.atan2(delta.getY(), delta.getX()));
+        return rot;
+    }
+
+    public Rotation2d angleTo(Pose2d position) {
+        return angleTo(position.getTranslation());
     }
 
     @Override

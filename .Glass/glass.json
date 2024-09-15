@@ -6,6 +6,20 @@
     "Transitory Values": {
       "open": false
     },
+    "retained": {
+      "limelight-a": {
+        "double[]##v_/limelight-a/camerapose_robotspace": {
+          "open": true
+        },
+        "double[]##v_/limelight-a/camerapose_targetspace": {
+          "open": true
+        },
+        "double[]##v_/limelight-a/tc": {
+          "open": true
+        },
+        "open": true
+      }
+    },
     "transitory": {
       "SmartDashboard": {
         "Shooter": {
@@ -19,10 +33,14 @@
     },
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/SmartDashboard/Auto Chooser": "String Chooser",
+      "/Shuffleboard/SmartDashboard/Field": "Field2d",
+      "/Shuffleboard/SmartDashboard/Reverse Shooter": "Command",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Intake": "Subsystem",
       "/SmartDashboard/LED": "Subsystem",
+      "/SmartDashboard/Reset FOC": "Command",
       "/SmartDashboard/VisionSystemSim-visionSim/Sim Field": "Field2d"
     },
     "windows": {
@@ -45,6 +63,6 @@
   "NetworkTables Settings": {
     "dsClient": false,
     "mode": "Client (NT4)",
-    "serverTeam": "696"
+    "serverTeam": "1148"
   }
 }
