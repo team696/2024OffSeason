@@ -68,15 +68,12 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     }
 
     public SwerveDriveState getState() {
-        SwerveDriveState returnedState;
         try {
            this._stateLock.readLock().lock();
-           returnedState = this._cachedState;
+           return this._cachedState;
         } finally {
            this._stateLock.readLock().unlock();
         }
-  
-        return returnedState;
     }
 
     public Pose2d getPose() {

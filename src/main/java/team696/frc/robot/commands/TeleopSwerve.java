@@ -79,7 +79,7 @@ public class TeleopSwerve extends Command {
 
         if (lockRotation != null && lockRotation.getAsBoolean() && goalRotation.get() != null) { // Rotation Lock To Angle TODO: REWORK THIS PID
             double pid = pidController.calculate(Swerve.get().getPose().getRotation().getDegrees(), goalRotation.get().getDegrees());
-            rAxis = pidController.atSetpoint() ? Math.abs(Math.pow(pid, 2)) * 1.1 * Math.signum(pid) + pid * 2.2 : 0;
+            rAxis = Math.abs(pidController.getPositionError()) > 1 ? Math.abs(Math.pow(pid, 2)) * 1.1 * Math.signum(pid) + pid * 2.2 : 0;
         } else {
             rAxis = (Math.abs(rAxis) > deadband) ? Util.map(rAxis * rAxis, deadband, 1, 0, 1) * Math.signum(rAxis) : 0;
         }
