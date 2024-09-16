@@ -9,7 +9,6 @@ import edu.wpi.first.networktables.DoubleTopic;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import team696.frc.lib.PLog;
 import team696.frc.robot.Constants;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Serializer;
@@ -43,7 +42,6 @@ public class ManualShot extends Command {
   public void execute() {
     extraadded = sub.get();
     Constants.shooter.state adesiredState = new Constants.shooter.state(desiredState.angle + extraadded, desiredState.speed_l, desiredState.speed_r);
-    PLog.info("cock", String.format("%f",extraadded));
     Shooter.get().setShooter(adesiredState);
     Hood.get().setHood(adesiredState);
 
