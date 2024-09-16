@@ -10,6 +10,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.wpilibj.DriverStation;
 import team696.frc.lib.LimeLight.LimelightHelpers;
 import team696.frc.robot.subsystems.Swerve;
 
@@ -88,8 +89,9 @@ public class LLCamera {
         ChassisSpeeds vel
     ) {
         Optional<LimelightHelpers.PoseEstimate> ampEstimation = amp.getEstimate();
-        
+
         if(ampEstimation.isPresent()) {
+
             estimator.setVisionMeasurementStdDevs(VecBuilder.fill(.01,.01, .01));
             estimator.addVisionMeasurement(
                 ampEstimation.get().pose,
@@ -104,7 +106,7 @@ public class LLCamera {
         //TODO: Potential mess around with stardard deviations and alter based on the conditions we are reading with
             // example: distance, velocity, ambiguity?, see PVCamera.java 
         estimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,3));
-        if(shooterEstimation.get().avgTagDist<4.5){
+        if(shooterEstimation.get().avgTagDist<3.){
         estimator.addVisionMeasurement(
             shooterEstimation.get().pose,
             shooterEstimation.get().timestampSeconds);

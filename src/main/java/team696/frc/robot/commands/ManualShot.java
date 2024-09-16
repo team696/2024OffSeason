@@ -43,7 +43,6 @@ public class ManualShot extends Command {
   public void execute() {
     extraadded = sub.get();
     Constants.shooter.state adesiredState = new Constants.shooter.state(desiredState.angle + extraadded, desiredState.speed_l, desiredState.speed_r);
-    PLog.info("cock", String.format("%f",extraadded));
     Shooter.get().setShooter(adesiredState);
     Hood.get().setHood(adesiredState);
 
