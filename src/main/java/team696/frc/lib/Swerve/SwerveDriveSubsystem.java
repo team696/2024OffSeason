@@ -23,20 +23,20 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team696.frc.lib.Util;
 
 public abstract class SwerveDriveSubsystem extends SubsystemBase {
-    private SwerveModulePosition[] _swervePositions = new SwerveModulePosition[4];
-    private SwerveDrivePoseEstimator _poseEstimator;
+    private final SwerveModulePosition[] _swervePositions = new SwerveModulePosition[4];
+    private final SwerveDrivePoseEstimator _poseEstimator;
 
-    private SwerveModule[] _modules;
-    private SwerveDriveKinematics _kinematics;
+    private final SwerveModule[] _modules;
+    private final SwerveDriveKinematics _kinematics;
 
-    protected Pigeon2 _pigeon; 
+    protected final Pigeon2 _pigeon; 
 
     protected Rotation2d yawOffset = new Rotation2d(0);
 
     protected final ReadWriteLock _stateLock;
-    protected SwerveDriveState _cachedState;
+    protected final SwerveDriveState _cachedState;
 
-    private final odometryThread _odometryThread;
+    private final odometryThread _odometryThread = null;
 
     public SwerveDriveSubsystem() {
         this._stateLock = new ReentrantReadWriteLock();
@@ -63,8 +63,8 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     
         zeroYaw();
 
-        _odometryThread = new odometryThread(this);
-        _odometryThread.start();
+        //_odometryThread = new odometryThread(this);
+        //_odometryThread.start();
     }
 
     public SwerveDriveState getState() {
@@ -189,6 +189,22 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
         if (DriverStation.isDisabled()) {
             this.updateYawOffset();
         }
+
+        try {
+            this._stateLock.writeLock().lock();
+
+            for (int i = 0; i < 4; ++i) {
+                _swervePositions[i] = _modules[i].getPosition();
+            }
+
+            this._cachedState.robotRelativeSpeeds = _kinematics.toChassisSpeeds(getModuleStates());
+
+            this._cachedState.timeStamp = Timer.getFPGATimestamp();
+
+            this._cachedState.pose = _poseEstimator.updateWithTime(this._cachedState.timeStamp, getYaw(), _swervePositions);
+        } finally {
+            this._stateLock.writeLock().unlock();
+        }
       
         onUpdate();
     }
@@ -217,15 +233,15 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
             while (true) {
                 try {
                     this.this0._stateLock.writeLock().lock();
-                    
+
                     for (int i = 0; i < 4; ++i) {
                         _swervePositions[i] = _modules[i].getPosition();
                     }
-                
+
                     this.this0._cachedState.robotRelativeSpeeds = _kinematics.toChassisSpeeds(getModuleStates());
-                
+
                     this.this0._cachedState.timeStamp = Timer.getFPGATimestamp();
-                
+
                     this.this0._cachedState.pose = _poseEstimator.updateWithTime(this.this0._cachedState.timeStamp, getYaw(), _swervePositions);
                 } finally {
                     this.this0._stateLock.writeLock().unlock();

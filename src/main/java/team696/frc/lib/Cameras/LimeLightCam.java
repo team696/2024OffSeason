@@ -72,7 +72,6 @@ public class LimeLightCam extends BaseCam {
                 latestEstimate.timestampSeconds, 
                 latestEstimate.avgTagDist, 
                 latestEstimate.tagCount,
-                latestEstimate.rawFiducials[0].ambiguity)); // Probably not the best but good enough for now
+                latestEstimate.rawFiducials[0].ambiguity)); // Probably not the best but good enough for now           
     }
-
 }
