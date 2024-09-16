@@ -3,6 +3,7 @@ package team696.frc.lib.Swerve;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.ParentDevice;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -42,6 +43,13 @@ public class SwerveModule {
 
         /* Drive Motor Config */
         mDriveMotor = new TalonFactory(moduleConstants.DriveMotorId, SwerveConfigs.drive, "Swerve Drive " + moduleNumber);
+
+        angleEncoder.getAbsolutePosition().setUpdateFrequency(100);
+        mAngleMotor.get().getPosition().setUpdateFrequency(100);
+        mDriveMotor.get().getPosition().setUpdateFrequency(100);
+        mDriveMotor.get().getVelocity().setUpdateFrequency(100);
+
+        ParentDevice.optimizeBusUtilizationForAll(angleEncoder, mAngleMotor.get(), mDriveMotor.get());
 
         m_lastAngle = getState().angle.getRotations();
     }

@@ -56,8 +56,11 @@ public class LimeLightCam extends BaseCam {
         return _ntTable.getEntry("tx").getDouble(0);
     }
 
-    public Optional<AprilTagResult> getEstimate(Rotation2d curYaw) {
+    public void SetRobotOrientation(Rotation2d curYaw) {
         LimelightHelpers.SetRobotOrientation(name, curYaw.getDegrees(),0,0,0,0,0);
+    }
+
+    public Optional<AprilTagResult> getEstimate() {
         LimelightHelpers.PoseEstimate latestEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
 
         if (latestEstimate == null) return Optional.empty();

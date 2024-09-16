@@ -1,5 +1,8 @@
 package team696.frc.lib.Swerve;
 
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.VecBuilder;
@@ -12,22 +15,31 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team696.frc.lib.Util;
 
 public abstract class SwerveDriveSubsystem extends SubsystemBase {
-    private SwerveModulePosition[] _swervePositions = new SwerveModulePosition[4];
-    private SwerveDrivePoseEstimator _poseEstimator;
+    protected SwerveModulePosition[] _swervePositions = new SwerveModulePosition[4];
+    protected SwerveDrivePoseEstimator _poseEstimator;
 
     private SwerveModule[] _modules;
     private SwerveDriveKinematics _kinematics;
 
-    private Pigeon2 _pigeon; 
+    protected Pigeon2 _pigeon; 
 
-    private Rotation2d yawOffset = new Rotation2d(0);
+    protected Rotation2d yawOffset = new Rotation2d(0);
+
+    protected final ReadWriteLock _stateLock;
+    protected SwerveDriveState _cachedState;
+
+    private final odometryThread _odometryThread;
 
     public SwerveDriveSubsystem() {
+        this._stateLock = new ReentrantReadWriteLock();
+        this._cachedState = new SwerveDriveState();
+
 		SwerveModule frontLeft = new SwerveModule(0, SwerveConfigs.Mod0);
 		SwerveModule frontRight = new SwerveModule(1,SwerveConfigs.Mod1);
 		SwerveModule backLeft = new SwerveModule(2,  SwerveConfigs.Mod2);
@@ -42,22 +54,37 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
 
         _pigeon = new Pigeon2(0);
         _pigeon.getConfigurator().apply(SwerveConfigs.pigeon);
+        _pigeon.getYaw().setUpdateFrequency(100);
+        _pigeon.optimizeBusUtilization();
 
         _poseEstimator = new SwerveDrivePoseEstimator(_kinematics, getYaw(), _swervePositions, new Pose2d(0,0,new Rotation2d(0)), VecBuilder.fill(0.1, 0.1, 0.01), VecBuilder.fill(0.3, 0.3, 0.6)); 
     
         zeroYaw();
+
+        _odometryThread = new odometryThread(this);
+        _odometryThread.start();
+    }
+
+    public SwerveDriveState getState() {
+        SwerveDriveState returnedState;
+        try {
+           this._stateLock.readLock().lock();
+           returnedState = this._cachedState;
+        } finally {
+           this._stateLock.readLock().unlock();
+        }
+  
+        return returnedState;
     }
 
     public Pose2d getPose() {
-        return _poseEstimator.getEstimatedPosition();
-    }
-
-    public SwerveDrivePoseEstimator getEstimator() {
-        return _poseEstimator;
+        return getState().pose;
     }
 
     public void resetPose(Pose2d newPose) {
+        this._stateLock.writeLock().lock();
         _poseEstimator.resetPosition(getYaw(), _swervePositions, newPose);
+        this._stateLock.writeLock().unlock();
     }
 
     public void resetPose() {
@@ -81,13 +108,13 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
-        return _kinematics.toChassisSpeeds(getStates());
+        return getState().robotRelativeSpeeds;
     }
 
-    private SwerveModuleState[] getStates() { 
+    private SwerveModuleState[] getModuleStates() { 
         SwerveModuleState[] states = new SwerveModuleState[4]; 
         for(SwerveModule mod : _modules) { 
-        states[mod.moduleNumber] = mod.getState(); 
+            states[mod.moduleNumber] = mod.getState(); 
         } 
         return states; 
     }
@@ -152,13 +179,38 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
         if (DriverStation.isDisabled()) {
             this.updateYawOffset();
         }
-
-        for (int i = 0; i < 4; ++i) {
-            _swervePositions[i] = _modules[i].getPosition();
-        }
-      
-        _poseEstimator.update(getYaw(), _swervePositions);
       
         onUpdate();
+    }
+
+    class odometryThread extends Thread {
+        private SwerveDriveSubsystem this0;
+
+        odometryThread(SwerveDriveSubsystem this0) {
+            this.this0 = this0;
+
+            this.setDaemon(true);
+            this.setPriority(1);
+        }
+
+        public void run() {
+            while (true) {
+                this.this0._stateLock.writeLock().lock();
+
+                for (int i = 0; i < 4; ++i) {
+                    _swervePositions[i] = _modules[i].getPosition();
+                }
+
+                this.this0._cachedState.robotRelativeSpeeds = _kinematics.toChassisSpeeds(getModuleStates());
+
+                this.this0._cachedState.timeStamp = Timer.getFPGATimestamp();
+
+                this.this0._cachedState.pose = _poseEstimator.updateWithTime(this.this0._cachedState.timeStamp, getYaw(), _swervePositions);
+
+                this.this0._stateLock.writeLock().unlock();
+
+                Timer.delay(1.0 / 100);
+            }
+        }
     }
 }
