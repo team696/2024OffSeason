@@ -12,8 +12,8 @@ public final class Controls {
     public static final Joystick operatorPanel = new Joystick(1);
     public static final Joystick operatorPanelB = new Joystick(2);
 
-    public static final JoystickButton leftJoy = new JoystickButton(joystickPanel, 1);
-    public static final JoystickButton rightJoy = new JoystickButton(joystickPanel, 2);
+    public static final JoystickButton leftJoyB = new JoystickButton(joystickPanel, 1);
+    public static final JoystickButton rightJoyB = new JoystickButton(joystickPanel, 2);
 
     public static final DoubleSupplier leftJoyY = ()->-joystickPanel.getRawAxis(1);
     public static final DoubleSupplier leftJoyX = ()->joystickPanel.getRawAxis(0);

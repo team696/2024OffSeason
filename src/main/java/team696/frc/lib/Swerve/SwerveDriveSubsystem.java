@@ -36,7 +36,7 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     protected final ReadWriteLock _stateLock;
     protected final SwerveDriveState _cachedState;
 
-    private final odometryThread _odometryThread = null;
+    private final odometryThread _odometryThread;
 
     public SwerveDriveSubsystem() {
         this._stateLock = new ReentrantReadWriteLock();
@@ -63,8 +63,8 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     
         zeroYaw();
 
-        //_odometryThread = new odometryThread(this);
-        //_odometryThread.start();
+        _odometryThread = new odometryThread(this);
+        _odometryThread.start();
     }
 
     public SwerveDriveState getState() {
@@ -188,22 +188,6 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     public final void periodic() {
         if (DriverStation.isDisabled()) {
             this.updateYawOffset();
-        }
-
-        try {
-            this._stateLock.writeLock().lock();
-
-            for (int i = 0; i < 4; ++i) {
-                _swervePositions[i] = _modules[i].getPosition();
-            }
-
-            this._cachedState.robotRelativeSpeeds = _kinematics.toChassisSpeeds(getModuleStates());
-
-            this._cachedState.timeStamp = Timer.getFPGATimestamp();
-
-            this._cachedState.pose = _poseEstimator.updateWithTime(this._cachedState.timeStamp, getYaw(), _swervePositions);
-        } finally {
-            this._stateLock.writeLock().unlock();
         }
       
         onUpdate();

@@ -171,9 +171,9 @@ public class Robot extends LoggedRobot {
 
   @SuppressWarnings("unused") 
     private void configureBinds() {
-      TeleopSwerve.config(Controls.leftJoyX, Controls.leftJoyY, Controls.rightJoyX, Controls.rightJoy, Constants.deadBand);
+      TeleopSwerve.config(Controls.leftJoyX, Controls.leftJoyY, Controls.rightJoyX, Controls.rightJoyB, Constants.deadBand);
       Swerve.get().setDefaultCommand(new TeleopSwerve(()->Swerve.get().getAngleToSpeaker()));
-      Controls.leftJoy.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
+      Controls.leftJoyB.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
       Controls.Left.onTrue(Commands.run(()->Swerve.get().updateYawOffset()));
     }
 
