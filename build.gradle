@@ -4,11 +4,6 @@ plugins {
     id "com.peterabeles.gversion" version "1.10"
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
-
 def ROBOT_MAIN_CLASS = "team696.frc.robot.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
