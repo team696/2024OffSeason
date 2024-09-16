@@ -33,8 +33,6 @@ public final class Configs {
         shooter.serializer = new TalonFXConfiguration();
 
         intake.serializer = new TalonFXConfiguration();
-    
-
 
         hood.left.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         hood.left.MotorOutput.NeutralMode = NeutralModeValue.Brake;

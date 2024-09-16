@@ -2,9 +2,6 @@ package team696.frc.robot.subsystems;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain.OdometryThread;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -24,9 +21,6 @@ public class Swerve extends SwerveDriveSubsystem {
   private LimeLightCam shooterCam;
   private LimeLightCam intakeCam;
   private LimeLightCam ampCam;
-
-  SwerveDrivetrain b;
-  OdometryThread a;
 
   public static Swerve get() {
     if (m_Swerve == null) {
@@ -93,7 +87,7 @@ public class Swerve extends SwerveDriveSubsystem {
   @Override
   public void onUpdate() { 
     /* this is kinda ugly and messy, but it beats doing it inside and taking in a extra useless parameter, shit limelight shouldn't even need to do this anyway. */
-    shooterCam.addVisionEstimate((x,y,r)->{shooterCam.SetRobotOrientation(getPose().getRotation());_poseEstimator.addVisionMeasurement(x,y,r);}, (latestResult)-> {
+    shooterCam.addVisionEstimate((x,y,r)->{shooterCam.SetRobotOrientation(getPose().getRotation());this.addVisionMeasurement(x,y,r);}, (latestResult)-> {
         if (latestResult.ambiguity > 0.17) return false; // Too Ambiguous, Ignore
         if (getState().angularVelocity() > 1.5) return false; // Rotating too fast, ignore
         if (getState().velocity() > SwerveConstants.maxSpeed * 0.6)
@@ -112,7 +106,7 @@ public class Swerve extends SwerveDriveSubsystem {
         shooterCam.setStdDeviations(deviationRatio, deviationRatio, deviationRatio);
         return true;
     });
-    ampCam.addVisionEstimate((x,y,r)->{shooterCam.SetRobotOrientation(getPose().getRotation());_poseEstimator.addVisionMeasurement(x,y,r);});
+    ampCam.addVisionEstimate((x,y,r)->{shooterCam.SetRobotOrientation(getPose().getRotation());this.addVisionMeasurement(x,y,r);});
 
     Logger.recordOutput("Pose", getPose()); 
 

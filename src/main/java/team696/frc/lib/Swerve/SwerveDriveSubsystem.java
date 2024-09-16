@@ -6,6 +6,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -14,6 +15,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -21,8 +23,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team696.frc.lib.Util;
 
 public abstract class SwerveDriveSubsystem extends SubsystemBase {
-    protected SwerveModulePosition[] _swervePositions = new SwerveModulePosition[4];
-    protected SwerveDrivePoseEstimator _poseEstimator;
+    private SwerveModulePosition[] _swervePositions = new SwerveModulePosition[4];
+    private SwerveDrivePoseEstimator _poseEstimator;
 
     private SwerveModule[] _modules;
     private SwerveDriveKinematics _kinematics;
@@ -82,9 +84,12 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     }
 
     public void resetPose(Pose2d newPose) {
-        this._stateLock.writeLock().lock();
-        _poseEstimator.resetPosition(getYaw(), _swervePositions, newPose);
-        this._stateLock.writeLock().unlock();
+        try {
+            this._stateLock.writeLock().lock();
+            _poseEstimator.resetPosition(getYaw(), _swervePositions, newPose);
+        } finally {
+            this._stateLock.writeLock().unlock();
+        }
     }
 
     public void resetPose() {
@@ -174,6 +179,11 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
         return angleTo(position.getTranslation());
     }
 
+
+    /*
+     * Don't override periodic, override onUpdate()
+     * 
+     */
     @Override
     public final void periodic() {
         if (DriverStation.isDisabled()) {
@@ -181,6 +191,16 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
         }
       
         onUpdate();
+    }
+
+    public void addVisionMeasurement(Pose2d visionPose, double visionTimestamp, Vector<N3> stdDeviations) {
+        try {
+            this._stateLock.writeLock().lock();
+        
+            _poseEstimator.addVisionMeasurement(visionPose, visionTimestamp, stdDeviations);
+        } finally {
+            this._stateLock.writeLock().unlock();
+        }
     }
 
     class odometryThread extends Thread {
@@ -195,20 +215,21 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
 
         public void run() {
             while (true) {
-                this.this0._stateLock.writeLock().lock();
-
-                for (int i = 0; i < 4; ++i) {
-                    _swervePositions[i] = _modules[i].getPosition();
+                try {
+                    this.this0._stateLock.writeLock().lock();
+                    
+                    for (int i = 0; i < 4; ++i) {
+                        _swervePositions[i] = _modules[i].getPosition();
+                    }
+                
+                    this.this0._cachedState.robotRelativeSpeeds = _kinematics.toChassisSpeeds(getModuleStates());
+                
+                    this.this0._cachedState.timeStamp = Timer.getFPGATimestamp();
+                
+                    this.this0._cachedState.pose = _poseEstimator.updateWithTime(this.this0._cachedState.timeStamp, getYaw(), _swervePositions);
+                } finally {
+                    this.this0._stateLock.writeLock().unlock();
                 }
-
-                this.this0._cachedState.robotRelativeSpeeds = _kinematics.toChassisSpeeds(getModuleStates());
-
-                this.this0._cachedState.timeStamp = Timer.getFPGATimestamp();
-
-                this.this0._cachedState.pose = _poseEstimator.updateWithTime(this.this0._cachedState.timeStamp, getYaw(), _swervePositions);
-
-                this.this0._stateLock.writeLock().unlock();
-
                 Timer.delay(1.0 / 100);
             }
         }

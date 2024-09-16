@@ -9,15 +9,15 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
-public class SwerveConfigs {
-        public static TalonFXConfiguration angle = null;
-        public static TalonFXConfiguration drive = null;
-        public static CANcoderConfiguration canCoder = null;
-        public static Pigeon2Configuration pigeon = null;
-        public static SwerveModuleConstants Mod0 = null;
-        public static SwerveModuleConstants Mod1 = null;
-        public static SwerveModuleConstants Mod2 = null;
-        public static SwerveModuleConstants Mod3 = null;
+public final class SwerveConfigs {
+        public final static TalonFXConfiguration angle;
+        public final static TalonFXConfiguration drive;
+        public final static CANcoderConfiguration canCoder;
+        public final static Pigeon2Configuration pigeon;
+        public final static SwerveModuleConstants Mod0;
+        public final static SwerveModuleConstants Mod1;
+        public final static SwerveModuleConstants Mod2;
+        public final static SwerveModuleConstants Mod3;
         static {
                 angle = new TalonFXConfiguration();
                 drive = new TalonFXConfiguration();
@@ -28,6 +28,7 @@ public class SwerveConfigs {
                 Mod1 = new SwerveModuleConstants();
                 Mod2 = new SwerveModuleConstants();
                 Mod3 = new SwerveModuleConstants();
+                
                 /** Swerve CANCoder Configuration */
                 canCoder.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
                 canCoder.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
