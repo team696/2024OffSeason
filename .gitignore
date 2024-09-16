@@ -5,6 +5,15 @@
 # Prerequisites
 *.d
 
+.Glass/
+
+.vscode/
+
+networktables.json
+simgui-ds.json
+simgui.json
+simgui-window.json
+
 # Compiled Object files
 *.slo
 *.lo
