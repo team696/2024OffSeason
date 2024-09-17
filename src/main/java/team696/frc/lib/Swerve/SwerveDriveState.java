@@ -14,9 +14,7 @@ public class SwerveDriveState {
     public double timeStamp;
 
     public SwerveDriveState(Pose2d pose, ChassisSpeeds speeds, double time) {
-        this.pose = pose;
-        this.robotRelativeSpeeds = speeds;
-        this.timeStamp = time;
+        update(pose, speeds, time);
     }
 
     public SwerveDriveState(SwerveDriveState other) {
@@ -35,5 +33,11 @@ public class SwerveDriveState {
 
     public double angularVelocity() {
         return Math.abs(robotRelativeSpeeds.omegaRadiansPerSecond);
+    }
+
+    public void update(Pose2d pose, ChassisSpeeds speeds, double time) {
+        this.pose = pose;
+        this.robotRelativeSpeeds = speeds;
+        this.timeStamp = time;
     }
 }

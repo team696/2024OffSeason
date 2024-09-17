@@ -2,10 +2,15 @@ package team696.frc.robot.subsystems;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain.OdometryThread;
+
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import team696.frc.lib.Util;
@@ -21,6 +26,8 @@ public class Swerve extends SwerveDriveSubsystem {
   private LimeLightCam shooterCam;
   private LimeLightCam intakeCam;
   private LimeLightCam ampCam;
+
+  OdometryThread a;
 
   public static Swerve get() {
     if (m_Swerve == null) {
@@ -115,7 +122,7 @@ public class Swerve extends SwerveDriveSubsystem {
 
   @Override 
   public void simulationPeriodic() { 
-    
+    this.addVisionMeasurement(new Pose2d(1,1,Rotation2d.fromDegrees(90)), Timer.getFPGATimestamp(), VecBuilder.fill(0.1,0.1,0.1)); // fake estimate to check for crashes
   }
   
   @Override

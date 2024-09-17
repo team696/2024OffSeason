@@ -1,5 +1,6 @@
 package team696.frc.lib.Swerve;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -16,83 +17,91 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 
 public class SwerveModule {
     public int moduleNumber;
-    private double angleOffset;
+    private double _angleOffset;
     
-    private TalonFactory mAngleMotor;
-    private TalonFactory mDriveMotor;
-    private CANcoder angleEncoder;
+    private TalonFactory _angleMotor;
+    private TalonFactory _driveMotor;
+    private CANcoder _encoder;
 
-    private double m_lastAngle;
+    private double _lastAngle;
 
-    private final SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(SwerveConstants.drivekS, SwerveConstants.drivekV, SwerveConstants.drivekA);
+    private final SimpleMotorFeedforward _driveFeedForward = new SimpleMotorFeedforward(SwerveConstants.drivekS, SwerveConstants.drivekV, SwerveConstants.drivekA);
     
-    private final VelocityVoltage driveVelocity = new VelocityVoltage(0);
+    private final VelocityVoltage _driveVelocity = new VelocityVoltage(0);
 
-    private final PositionVoltage anglePosition = new PositionVoltage(0);
+    private final PositionVoltage _anglePosition = new PositionVoltage(0);
 
     public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants){
         this.moduleNumber = moduleNumber;
-        this.angleOffset = moduleConstants.CANcoderOffset; 
+        this._angleOffset = moduleConstants.CANcoderOffset; 
         /* Angle Encoder Config */
-        angleEncoder = new CANcoder(moduleConstants.CANcoderId);
-        angleEncoder.getConfigurator().apply(SwerveConfigs.canCoder);
+        _encoder = new CANcoder(moduleConstants.CANcoderId);
+        _encoder.getConfigurator().apply(SwerveConfigs.canCoder);
 
         /* Angle Motor Config */
-        mAngleMotor = new TalonFactory(moduleConstants.SteerMotorId, SwerveConfigs.angle, "Swerve Angle " + moduleNumber);
+        _angleMotor = new TalonFactory(moduleConstants.SteerMotorId, SwerveConfigs.angle, "Swerve Angle " + moduleNumber);
         resetToAbsolute();
 
         /* Drive Motor Config */
-        mDriveMotor = new TalonFactory(moduleConstants.DriveMotorId, SwerveConfigs.drive, "Swerve Drive " + moduleNumber);
+        _driveMotor = new TalonFactory(moduleConstants.DriveMotorId, SwerveConfigs.drive, "Swerve Drive " + moduleNumber);
 
-        angleEncoder.getAbsolutePosition().setUpdateFrequency(100);
-        mAngleMotor.get().getPosition().setUpdateFrequency(100);
-        mDriveMotor.get().getPosition().setUpdateFrequency(100);
-        mDriveMotor.get().getVelocity().setUpdateFrequency(100);
+        _encoder.getAbsolutePosition().setUpdateFrequency(100);
+        _angleMotor.get().getPosition().setUpdateFrequency(100);
+        _angleMotor.get().getVelocity().setUpdateFrequency(100);
+        _driveMotor.get().getPosition().setUpdateFrequency(100);
+        _driveMotor.get().getVelocity().setUpdateFrequency(100);
 
-        ParentDevice.optimizeBusUtilizationForAll(angleEncoder, mAngleMotor.get(), mDriveMotor.get());
+        ParentDevice.optimizeBusUtilizationForAll(_encoder, _angleMotor.get(), _driveMotor.get());
 
-        m_lastAngle = getState().angle.getRotations();
+        _lastAngle = getState().angle.getRotations();
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
         desiredState = SwerveModuleState.optimize(desiredState, getState().angle); 
-        double angle = ((Math.abs(desiredState.speedMetersPerSecond) <= (SwerveConstants.maxSpeed * 0.01)) ? m_lastAngle : desiredState.angle.getRotations());
-        mAngleMotor.setControl(anglePosition.withPosition(angle));
+        double angle = ((Math.abs(desiredState.speedMetersPerSecond) <= (SwerveConstants.maxSpeed * 0.01)) ? _lastAngle : desiredState.angle.getRotations());
+        _angleMotor.setControl(_anglePosition.withPosition(angle));
         setSpeed(desiredState, isOpenLoop);
-        m_lastAngle = angle;
+        _lastAngle = angle;
     }
 
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop){
         double ratio = Math.cos(desiredState.angle.getRadians() - getState().angle.getRadians()); 
         if(isOpenLoop){
-            mDriveMotor.VoltageOut(desiredState.speedMetersPerSecond / SwerveConstants.maxSpeed * ratio);
+            _driveMotor.VoltageOut(desiredState.speedMetersPerSecond / SwerveConstants.maxSpeed * ratio);
         } else {
-            driveVelocity.Velocity = Util.MPSToRPS(desiredState.speedMetersPerSecond * ratio, SwerveConstants.wheelCircumference);
-            driveVelocity.FeedForward = driveFeedForward.calculate(desiredState.speedMetersPerSecond);
-            mDriveMotor.setControl(driveVelocity);
+            _driveVelocity.Velocity = Util.MPSToRPS(desiredState.speedMetersPerSecond * ratio, SwerveConstants.wheelCircumference);
+            _driveVelocity.FeedForward = _driveFeedForward.calculate(desiredState.speedMetersPerSecond);
+            _driveMotor.setControl(_driveVelocity);
         }
     }
 
     public Rotation2d getCANCoderAngle(){
-        return Rotation2d.fromRotations(angleEncoder.getAbsolutePosition().getValue());
+        return Rotation2d.fromRotations(_encoder.getAbsolutePosition().getValue());
     }
 
     public void resetToAbsolute(){
-        double absolutePosition = getCANCoderAngle().getRotations() - angleOffset;
-        mAngleMotor.setPosition(absolutePosition);
+        double absolutePosition = getCANCoderAngle().getRotations() - _angleOffset;
+        _angleMotor.setPosition(absolutePosition);
     }
 
     public SwerveModuleState getState(){
         return new SwerveModuleState(
-            Util.RPSToMPS(mDriveMotor.getVelocity(), SwerveConstants.wheelCircumference), 
-            Rotation2d.fromRotations(mAngleMotor.getPosition())
+            Util.RPSToMPS(_driveMotor.getVelocity(), SwerveConstants.wheelCircumference), 
+            Rotation2d.fromRotations(getAngleMotorPosition())
         );
     }
 
     public SwerveModulePosition getPosition(){
         return new SwerveModulePosition(
-            Util.rotationsToMeters(mDriveMotor.getPosition(), SwerveConstants.wheelCircumference), 
-            Rotation2d.fromRotations(mAngleMotor.getPosition())
+            Util.rotationsToMeters(getDriveMotorPosition(), SwerveConstants.wheelCircumference), 
+            Rotation2d.fromRotations(getAngleMotorPosition())
         );
+    }
+
+    public double getDriveMotorPosition() {
+        return BaseStatusSignal.getLatencyCompensatedValue(_driveMotor.get().getPosition(), _driveMotor.get().getVelocity());
+    }
+    public double getAngleMotorPosition() {
+        return BaseStatusSignal.getLatencyCompensatedValue(_angleMotor.get().getPosition(), _angleMotor.get().getVelocity());
     }
 }

@@ -3,6 +3,7 @@ package team696.frc.lib.Swerve;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.VecBuilder;
@@ -57,6 +58,7 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
         _pigeon = new Pigeon2(0);
         _pigeon.getConfigurator().apply(SwerveConfigs.pigeon);
         _pigeon.getYaw().setUpdateFrequency(100);
+        _pigeon.getAngularVelocityZWorld().setUpdateFrequency(100);
         _pigeon.optimizeBusUtilization();
 
         _poseEstimator = new SwerveDrivePoseEstimator(_kinematics, getYaw(), _swervePositions, new Pose2d(0,0,new Rotation2d(0)), VecBuilder.fill(0.1, 0.1, 0.01), VecBuilder.fill(0.3, 0.3, 0.6)); 
@@ -101,7 +103,11 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     public abstract void onUpdate();
 
     public Rotation2d getYaw() {
-        return Rotation2d.fromDegrees(-1 * _pigeon.getAngle()); 
+        return Rotation2d.fromDegrees(-1 * _pigeon.getYaw().getValueAsDouble()); 
+    }
+
+    public Rotation2d latencyAdjustedYaw() {
+        return Rotation2d.fromDegrees(-1 * BaseStatusSignal.getLatencyCompensatedValue(_pigeon.getYaw(), _pigeon.getAngularVelocityZWorld()));
     }
 
     public void zeroYaw() {
@@ -219,15 +225,21 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
                         _swervePositions[i] = _modules[i].getPosition();
                     }
 
-                    this.this0._cachedState.robotRelativeSpeeds = _kinematics.toChassisSpeeds(getModuleStates());
+                    ChassisSpeeds speeds = _kinematics.toChassisSpeeds(getModuleStates());
 
-                    this.this0._cachedState.timeStamp = Timer.getFPGATimestamp();
+                    double time = Timer.getFPGATimestamp();
 
-                    this.this0._cachedState.pose = _poseEstimator.updateWithTime(this.this0._cachedState.timeStamp, getYaw(), _swervePositions);
+                    Pose2d newPose = _poseEstimator.updateWithTime(this.this0._cachedState.timeStamp, latencyAdjustedYaw(), _swervePositions);
+
+                    this.this0._cachedState.update(
+                        newPose,
+                        speeds,
+                        time
+                    );
                 } finally {
                     this.this0._stateLock.writeLock().unlock();
                 }
-                Timer.delay(1.0 / 100);
+                Timer.delay(1.0 / 100.0);
             }
         }
     }
