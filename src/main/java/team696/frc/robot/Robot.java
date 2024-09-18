@@ -21,6 +21,7 @@ import team696.frc.robot.commands.Drop;
 import team696.frc.robot.commands.Shoot;
 import team696.frc.robot.commands.ShooterIntake;
 import team696.frc.robot.commands.TeleopSwerve;
+import team696.frc.robot.commands.driveToTarget;
 import team696.frc.robot.commands.GroundIntake;
 import team696.frc.robot.commands.ManualShot;
 import team696.frc.robot.commands.Pass;
@@ -187,7 +188,8 @@ public class Robot extends LoggedRobot {
 
       Controls.ExtraA.whileTrue(new ManualShot(new Constants.shooter.state(4.7, 3800, 3900)));
 
-      Controls.Trap.whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner().getDegrees())));
+      //Controls.Trap.whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner().getDegrees())));
+      Controls.Trap.whileTrue(new driveToTarget().alongWith(new GroundIntake()));
 
       Controls.Rightest.whileTrue(Auto.PathFind(Constants.Field.BLUE.Amp));
 

@@ -98,7 +98,12 @@ public final class Constants {
 
 			public double speed_l;
 			public double speed_r;
-
+			/**
+			 * Creates a new Shooter State
+			 * @param a The shooter's angle 
+			 * @param l The speed of the bottom roller in Rotations per second
+			 * @param r The speed of the top roller in rotations per second
+			 */
 			public state(double a, double l, double r) {
 				angle = a;
 				speed_l = l;
@@ -106,8 +111,8 @@ public final class Constants {
 			}
 		}
 
-		public static double rollerSpeed = 3800;
-		public static double rollerSpeedA = 3900;
+		public static double rollerSpeed = /*3800*/4000;
+		public static double rollerSpeedA = /*3900*/4100;
 
 		public static final TreeMap<Double, state> distToState = new TreeMap<Double, state>(){{
 			put(1.5, new state(4.3, 3200, 3200));
@@ -118,7 +123,8 @@ public final class Constants {
 			put(4.0, new state(1.15, rollerSpeed, rollerSpeedA));
 			put(4.5, new state(1.05, rollerSpeed, rollerSpeedA));
 			put(5.0, new state(1., rollerSpeed, rollerSpeedA));
-			put(6.0, new state(0.9, rollerSpeed, rollerSpeedA));
+			put(5.5, new state(.9, rollerSpeed, rollerSpeedA));
+			put(6.0, new state(/*0.9*/0.85, rollerSpeed, rollerSpeedA));
 
 			put(12., new state(0.7, rollerSpeed, rollerSpeedA));
 		}};

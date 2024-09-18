@@ -38,7 +38,7 @@ public class Intake extends SubsystemBase {
   public Command spin(double speed) {
     return this.runEnd(()->setSpeed(speed), ()->_serializer.stop());
   }
-
+  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

@@ -112,4 +112,7 @@ public class LLCamera {
             shooterEstimation.get().timestampSeconds);
         }
     }
+    public boolean seesNote(){
+        return note.hasTarget();
+    }
 }
