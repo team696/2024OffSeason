@@ -35,9 +35,11 @@ public class SwerveDriveState {
         return Math.abs(robotRelativeSpeeds.omegaRadiansPerSecond);
     }
 
-    public void update(Pose2d pose, ChassisSpeeds speeds, double time) {
+    public SwerveDriveState update(Pose2d pose, ChassisSpeeds speeds, double time) {
         this.pose = pose;
         this.robotRelativeSpeeds = speeds;
         this.timeStamp = time;
+
+        return this;
     }
 }

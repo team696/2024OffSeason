@@ -13,10 +13,10 @@ import team696.frc.lib.Swerve.SwerveConstants;
 import team696.frc.robot.subsystems.Swerve;
 
 public class TeleopSwerve extends Command {
-    private static DoubleSupplier translation = ()->0;
-    private static DoubleSupplier strafe = ()->0;
-    private static DoubleSupplier rotation = ()->0;
-    private static double deadband = 1; // deadband for controller -> defaulted to 1 so you must config swerve
+    protected static DoubleSupplier translation = ()->0;
+    protected static DoubleSupplier strafe = ()->0;
+    protected static DoubleSupplier rotation = ()->0;
+    protected static double deadband = 1; // deadband for controller -> defaulted to 1 so you must config swerve
     private static PIDController pidController = new PIDController(0.0056, 0.00, 0); 
     static {
         pidController.enableContinuousInput(-180, 180);

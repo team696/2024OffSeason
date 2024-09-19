@@ -6,6 +6,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -103,11 +104,11 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     public abstract void onUpdate();
 
     public Rotation2d getYaw() {
-        return Rotation2d.fromDegrees(-1 * _pigeon.getYaw().getValueAsDouble()); 
+        return Rotation2d.fromDegrees( MathUtil.inputModulus(_pigeon.getYaw().getValueAsDouble(),-180,180)); 
     }
 
     public Rotation2d latencyAdjustedYaw() {
-        return Rotation2d.fromDegrees(-1 * BaseStatusSignal.getLatencyCompensatedValue(_pigeon.getYaw(), _pigeon.getAngularVelocityZWorld()));
+        return Rotation2d.fromDegrees(BaseStatusSignal.getLatencyCompensatedValue(_pigeon.getYaw(), _pigeon.getAngularVelocityZWorld()));
     }
 
     public void zeroYaw() {
@@ -139,8 +140,8 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
                                 translation.getX(), 
                                 translation.getY(), 
                                 rotation));
-
-      setModuleStates(swerveModuleStates, isOpenLoop);
+                               
+        setModuleStates(swerveModuleStates, isOpenLoop);
     }
 
     public void Drive(ChassisSpeeds c) {

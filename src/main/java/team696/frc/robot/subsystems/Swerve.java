@@ -1,7 +1,5 @@
 package team696.frc.robot.subsystems;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain.OdometryThread;
 
 import edu.wpi.first.math.VecBuilder;
@@ -23,9 +21,9 @@ import team696.frc.robot.Constants;
 public class Swerve extends SwerveDriveSubsystem {
   private static Swerve m_Swerve;
 
-  private LimeLightCam shooterCam;
-  private LimeLightCam intakeCam;
-  private LimeLightCam ampCam;
+  public final LimeLightCam shooterCam;
+  public final LimeLightCam intakeCam;
+  public final LimeLightCam ampCam;
 
   OdometryThread a;
 
@@ -95,27 +93,27 @@ public class Swerve extends SwerveDriveSubsystem {
   public void onUpdate() { 
     /* this is kinda ugly and messy, but it beats doing it inside and taking in a extra useless parameter, shit limelight shouldn't even need to do this anyway. */
     shooterCam.addVisionEstimate((x,y,r)->{shooterCam.SetRobotOrientation(getPose().getRotation());this.addVisionMeasurement(x,y,r);}, (latestResult)-> {
-        if (latestResult.ambiguity > 0.17) return false; // Too Ambiguous, Ignore
+        if (latestResult.ambiguity > 0.6) return false; // Too Ambiguous, Ignore
         if (getState().angularVelocity() > 1.5) return false; // Rotating too fast, ignore
         if (getState().velocity() > SwerveConstants.maxSpeed * 0.6)
             return false; // Moving Too fast, ignore
         double deviationRatio;
-        if (latestResult.ambiguity < 1 / 100.0) {
-            deviationRatio = 0.01; // Tag estimation very good -> Use it
+        if (latestResult.ambiguity < 3 / 100.0) {
+            deviationRatio = 0.001; // Tag estimation very good -> Use it
         } else {
-          deviationRatio = Math.pow(latestResult.distToTag, 2) / 2; // Trust Less With Distance
+          deviationRatio = Math.pow(latestResult.distToTag, 1) / 4 * (1 / latestResult.ambiguity); // Trust Less With Distance
         }
         if(DriverStation.isAutonomousEnabled()) {
             if (latestResult.distToTag > 4.) return false; // Tag Too far, Ignore --> comment for know becuase deviation ratio sort of fixes this.
         
             deviationRatio *= 2;
         }
-        shooterCam.setStdDeviations(deviationRatio, deviationRatio, deviationRatio);
+        shooterCam.setStdDeviations(deviationRatio / 3, deviationRatio / 3, deviationRatio / 3);
         return true;
     });
     ampCam.addVisionEstimate((x,y,r)->{shooterCam.SetRobotOrientation(getPose().getRotation());this.addVisionMeasurement(x,y,r);});
 
-    Logger.recordOutput("Pose", getPose()); 
+    //Logger.recordOutput("Pose", getPose()); 
 
     Constants.Field.sim.setRobotPose(getPose());
   }

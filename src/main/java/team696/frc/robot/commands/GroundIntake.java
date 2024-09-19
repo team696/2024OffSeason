@@ -21,14 +21,14 @@ public class GroundIntake extends Command {
 
   @Override
   public void execute() {
-    Hood.get().setHood(6);
+    Hood.get().setHood(7);
     Serializer.get().serialize();
 
     if (Hood.get().getPosition() > 5) {
       if ( Serializer.get().BackBeam() ) {
         Intake.get().setSpeed(0.87);
       } else {
-        Intake.get().setSpeed(0.35);
+        Intake.get().setSpeed(0.23);
       }
     } else {
       Intake.get().stop();
