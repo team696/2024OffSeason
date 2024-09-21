@@ -20,7 +20,7 @@ public final class Constants {
 
 	public static final String canivoreName = "vore";
 
-	public static final double deadBand = 0.03;
+	public static final double deadBand = 0.05;
 	public static final class Field {
 		public static final Field2d sim = new Field2d();
         public static final class RED {
@@ -71,7 +71,7 @@ public final class Constants {
 		public static final double rollerSpeed = 3800;
 		public static final double rollerSpeedA = 3900;
 
-		public static final double globalOffset = 0.3;
+		public static final double globalOffset = -0.15;
 
 		public static final TreeMap<Double, state> distToState = new TreeMap<Double, state>(){{
 			put(1.5, new state(4.30 + globalOffset, 3200, 3200));

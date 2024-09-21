@@ -17,6 +17,7 @@ public class TeleopSwerve extends Command {
     protected static DoubleSupplier strafe = ()->0;
     protected static DoubleSupplier rotation = ()->0;
     protected static double deadband = 1; // deadband for controller -> defaulted to 1 so you must config swerve
+    protected static double rotationDeadband = 1;
     private static PIDController pidController = new PIDController(0.0056, 0.00, 0); 
     static {
         pidController.enableContinuousInput(-180, 180);
@@ -37,6 +38,7 @@ public class TeleopSwerve extends Command {
         lockRotation = rotationLock;
 
         deadband = deadBand;
+        rotationDeadband = Math.sqrt(2 * Math.pow(deadband, 2));
     }
     
     public TeleopSwerve(DoubleSupplier multiplier, Supplier<Rotation2d> goal, boolean fieldRelative, boolean openLoop) {
@@ -81,7 +83,7 @@ public class TeleopSwerve extends Command {
             double pid = pidController.calculate(Swerve.get().getPose().getRotation().getDegrees(), goalRotation.get().getDegrees());
             rAxis = Math.abs(pidController.getPositionError()) > 1 ? Math.abs(Math.pow(pid, 2)) * 1.1 * Math.signum(pid) + pid * 2.2 : 0;
         } else {
-            rAxis = (Math.abs(rAxis) > deadband) ? Util.map(rAxis * rAxis, deadband, 1, 0, 1) * Math.signum(rAxis) : 0;
+            rAxis = (Math.abs(rAxis) > rotationDeadband) ? Util.map(rAxis * rAxis, rotationDeadband, 1, 0, 1) * Math.signum(rAxis) : 0;
         }
 
         double rotation = rAxis * SwerveConstants.maxAngularVelocity;
