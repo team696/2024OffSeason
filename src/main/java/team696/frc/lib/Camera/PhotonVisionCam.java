@@ -1,4 +1,4 @@
-package team696.frc.lib.Cameras;
+package team696.frc.lib.Camera;
 
 import java.util.Optional;
 
@@ -66,5 +66,7 @@ public class PhotonVisionCam extends BaseCam {
         }
 
         PortForwarder.add(5800, "photonvision.local", 5800);
+
+        PhotonCamera.setVersionCheckEnabled(false);
     }
 }

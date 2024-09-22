@@ -12,7 +12,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import team696.frc.lib.Util;
-import team696.frc.lib.Cameras.LimeLightCam;
+import team696.frc.lib.Camera.LimeLightCam;
+import team696.frc.lib.Dashboards.ShuffleDashboard;
 import team696.frc.lib.Swerve.SwerveConstants;
 import team696.frc.lib.Swerve.SwerveDriveSubsystem;
 import team696.frc.lib.Swerve.SwerveModule;
@@ -40,6 +41,8 @@ public class Swerve extends SwerveDriveSubsystem {
     ampCam = new LimeLightCam("limelight-amp");
 
     ampCam.setStdDeviations(0.01, 0.01, 0.01);
+
+    ShuffleDashboard.addObject(Constants.Field.sim);
   }
 
   public Rotation2d getAngleToSpeaker() {

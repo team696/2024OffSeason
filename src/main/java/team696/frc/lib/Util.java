@@ -27,14 +27,6 @@ public class Util {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
 
-    public static void sleep(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (Exception e) {
-            PLog.fatalException("Sleep", "Failed To Sleep", e);
-        }
-    }
-
     public static Alliance getAlliance() {
         if (DriverStation.getAlliance().isPresent()) {
             return DriverStation.getAlliance().get();

@@ -1,4 +1,4 @@
-package team696.frc.lib.Cameras;
+package team696.frc.lib.Camera;
 
 import java.util.Optional;
 
@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import team696.frc.lib.LimeLight.LimelightHelpers;
 
 /* Maybe in future remove limelightHelpers Dependency,
     really just copy pasting but I'm lazy */

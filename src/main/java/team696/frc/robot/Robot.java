@@ -18,9 +18,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import team696.frc.lib.Auto;
+import team696.frc.lib.PLog;
 import team696.frc.lib.Util;
 import team696.frc.lib.Auto.NamedCommand;
+import team696.frc.lib.Dashboards.WebDashboard;
+import team696.frc.lib.Dashboards.WebDashboard.Verbosity;
 import team696.frc.robot.commands.Amp;
 import team696.frc.robot.commands.Drop;
 import team696.frc.robot.commands.Shoot;
@@ -42,8 +46,17 @@ public class Robot extends LoggedRobot {
 
     private PowerDistribution m_PDH;
 
+  boolean returnTrue() {
+    return true;
+  }
+
+  public Trigger test;
+
     @Override
     public void robotInit() {
+        WebDashboard.Start(Verbosity.verbose);
+        WebDashboard.getKey("w").whileTrue(new InstantCommand(()->PLog.info("test", "hi")));
+
         Util.setRobotType(new LinkedHashMap<>() { }, true);
 
         Logger.recordMetadata("ProjectName", "2024OffSeason");
