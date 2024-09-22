@@ -68,8 +68,8 @@ public final class Constants {
 			}
 		}
 
-		public static final double rollerSpeed = 3800;
-		public static final double rollerSpeedA = 3900;
+		public static final double rollerSpeed = 3800 + 100;
+		public static final double rollerSpeedA = 3900 + 100;
 
 		public static final double globalOffset = -0.15;
 
@@ -80,11 +80,12 @@ public final class Constants {
 			put(3.0, new state(1.70 + globalOffset, rollerSpeed, rollerSpeedA));
 			put(3.5, new state(1.20 + globalOffset, rollerSpeed, rollerSpeedA));
 			put(4.0, new state(1.05 + globalOffset, rollerSpeed, rollerSpeedA));
-			put(4.5, new state(0.90 + globalOffset, rollerSpeed, rollerSpeedA));
+			put(4.5, new state(0.80 + globalOffset, rollerSpeed, rollerSpeedA));
 			put(5.0, new state(0.70 + globalOffset, rollerSpeed, rollerSpeedA));
-			put(6.0, new state(0.65 + globalOffset, rollerSpeed, rollerSpeedA));
+			put(5.5, new state(0.60 + globalOffset, rollerSpeed, rollerSpeedA));
+			put(6.0, new state(0.60 + globalOffset, rollerSpeed, rollerSpeedA));
 
-			put(12., new state(0.60, rollerSpeed, rollerSpeedA));
+			put(12., new state(0.4, rollerSpeed, rollerSpeedA));
 		}};
 
 		public static final TreeMap<Double, state> Pass = new TreeMap<Double, state>(){{

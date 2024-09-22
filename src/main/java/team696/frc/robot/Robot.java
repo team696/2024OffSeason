@@ -18,9 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import team696.frc.lib.Auto;
-import team696.frc.lib.PLog;
 import team696.frc.lib.Util;
 import team696.frc.lib.Auto.NamedCommand;
 import team696.frc.lib.Dashboards.WebDashboard;
@@ -46,16 +44,9 @@ public class Robot extends LoggedRobot {
 
     private PowerDistribution m_PDH;
 
-  boolean returnTrue() {
-    return true;
-  }
-
-  public Trigger test;
-
     @Override
     public void robotInit() {
-        WebDashboard.Start(Verbosity.verbose);
-        WebDashboard.getKey("w").whileTrue(new InstantCommand(()->PLog.info("test", "hi")));
+        WebDashboard.Start(Verbosity.minimal);
 
         Util.setRobotType(new LinkedHashMap<>() { }, true);
 
@@ -121,8 +112,10 @@ public class Robot extends LoggedRobot {
 
         configureBinds();
         configureOperatorBinds();
+        
         //configureControllerBinds();
-    }
+        //configureWebControlsBinds();
+      }
 
   @Override
   public void robotPeriodic() {
@@ -226,5 +219,11 @@ public class Robot extends LoggedRobot {
       Controls.Controller.B.whileTrue(new GroundIntake());
 
       Controls.Controller.LB.whileTrue(new Amp(Controls.Controller.LT).alongWith(new TeleopSwerve(()-> Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getRotation() : Constants.Field.BLUE.Amp.getRotation())));
+    }
+
+    @SuppressWarnings("unused")
+    private void configureWebControlsBinds() {
+      TeleopSwerve.config(WebDashboard.getData("inputX")::getDouble, WebDashboard.getData("inputY")::getDouble, ()->0, null, 0.05);
+      Swerve.get().setDefaultCommand(new TeleopSwerve(()->Swerve.get().getAngleToSpeaker()));
     }
 }

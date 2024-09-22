@@ -3,7 +3,7 @@ package team696.frc.lib.Dashboards;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
-import java.util.function.Consumer;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import org.java_websocket.WebSocket;
@@ -14,6 +14,8 @@ import org.json.simple.JSONObject;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.event.BooleanEvent;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import team696.frc.lib.PLog;
 
@@ -27,7 +29,7 @@ public class WebDashboard extends WebSocketServer {
 
     private static HashMap<String, Supplier<Object>> _outgoingValues = new HashMap<String, Supplier<Object>>();
     private static HashMap<String, KeyInfo> _keyboardInputs = new HashMap<String, KeyInfo>();
-    private static HashMap<String, Consumer<String>> _incomingValues = new HashMap<String, Consumer<String>>();
+    private static HashMap<String, IncomingInfo> _incomingValues = new HashMap<String, IncomingInfo>();
 
     /** Used to add values to send to dashboard. */
     public static void push(String name, Supplier<Object> value) { 
@@ -35,8 +37,13 @@ public class WebDashboard extends WebSocketServer {
     }
 
     /** Register Functions to run based off of incoming values */
-    public static void register(String name, Consumer<String> value) {
-        _incomingValues.put(name, value);
+    public static IncomingInfo getData(String name) {
+        return _incomingValues.getOrDefault(name, new IncomingInfo());
+    }
+
+    public static double timeSinceLastUpdate(String name) {
+        if (!_incomingValues.containsKey(name)) return -1;
+        return Timer.getFPGATimestamp() - _incomingValues.get(name).timestamp;
     }
 
     public static boolean getKeyValue(String name, boolean defaultValue) {
@@ -44,7 +51,6 @@ public class WebDashboard extends WebSocketServer {
             Timer.getFPGATimestamp() - _keyboardInputs.get(name).timestamp > 0.05) {
             return defaultValue;
         }
-        
         return _keyboardInputs.get(name).pressed;
     }
 
@@ -52,8 +58,9 @@ public class WebDashboard extends WebSocketServer {
         return getKeyValue(name, false);
     }
 
+    // ex: WebDashboard.getKey("w").whileTrue(new InstantCommand(()->PLog.info("test", "hi")));
     public static Trigger getKey(String name) {
-        return new Trigger(()->{return getKeyValue(name);});
+        return new BooleanEvent(CommandScheduler.getInstance().getDefaultButtonLoop(), (BooleanSupplier)(()->{return getKeyValue(name);}) ).castTo(Trigger::new);
     }
 
     private WebDashboard(int port) throws UnknownHostException   {
@@ -97,8 +104,7 @@ public class WebDashboard extends WebSocketServer {
                 break;
             }
             default: {           
-                if (_incomingValues.containsKey(key))
-                    _incomingValues.get(key).accept(value);
+                    _incomingValues.putIfAbsent(key, new IncomingInfo()).update(value);
                 break;
             }
         }
@@ -206,6 +212,33 @@ public class WebDashboard extends WebSocketServer {
         public KeyInfo(boolean p, double t) {
             pressed = p;
             timestamp = t;
+        }
+    }
+
+    public static class IncomingInfo {
+        public String latestValue;
+        public double timestamp;
+
+        public IncomingInfo() {
+            this.latestValue = "";
+            this.timestamp = 0;
+        }
+
+        public void update(String value) {
+            this.latestValue = value;
+            this.timestamp = Timer.getFPGATimestamp();
+        }
+
+        public String get() {
+            if (latestValue == "" || Timer.getFPGATimestamp() - timestamp > 0.05) return "";
+
+            return latestValue;
+        }
+
+        public Double getDouble() {
+            if (latestValue == "" || Timer.getFPGATimestamp() - timestamp > 0.05) return 0.0;
+
+            return Double.parseDouble(latestValue);
         }
     }
 }
