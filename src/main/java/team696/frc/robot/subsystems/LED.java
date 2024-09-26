@@ -11,6 +11,9 @@ import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.CANdleConfiguration;
+import com.ctre.phoenix.led.LarsonAnimation;
+import com.ctre.phoenix.led.SingleFadeAnimation;
+import com.ctre.phoenix.led.StrobeAnimation;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -52,7 +55,7 @@ public class LED extends SubsystemBase {
       _candle.clearAnimation(i);
     }
 
-    this.setDefaultCommand(MatchRSL()); // LarsonAnimation( 255,  50, 60, 255, 0.3, _numLed, BounceMode.Front, 6, _ledOffset )
+    this.setDefaultCommand(HasNote()); // LarsonAnimation( 255,  50, 60, 255, 0.3, _numLed, BounceMode.Front, 6, _ledOffset )
   }
 
   @Override
@@ -81,7 +84,15 @@ public class LED extends SubsystemBase {
   public Command Animate(Animation anim) {
     return (this.startEnd(()->setAnimation(anim),()->{})).ignoringDisable(true);
   }
-
+  public Command HasNote(){
+    return this.run(()->{
+      if(!Serializer.get().BackBeam()){
+        setAnimation(new SingleFadeAnimation(0, 255, 0));
+      }else{
+        if(RobotController.getRSLState()) { setColor(255,20,0); } else { setColor(0,0,0);}
+      }
+    });
+ }
   public Command MatchRSL() {
     return (this.run(()-> {if(RobotController.getRSLState()) { setColor(255,20,0); } else { setColor(0,0,0);}})).ignoringDisable(true);
   }
