@@ -52,7 +52,7 @@ public class LimeLightCam extends BaseCam {
     }
 
     public double tX() {
-        return _ntTable.getEntry("tx").getDouble(0);
+        return -1 * _ntTable.getEntry("tx").getDouble(0);
     }
 
     public void SetRobotOrientation(Rotation2d curYaw) {

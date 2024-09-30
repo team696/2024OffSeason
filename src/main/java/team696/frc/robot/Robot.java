@@ -22,6 +22,7 @@ import team696.frc.lib.Auto;
 import team696.frc.lib.Util;
 import team696.frc.lib.Auto.NamedCommand;
 import team696.frc.lib.Dashboards.WebDashboard;
+import team696.frc.lib.Dashboards.WebpageServer;
 import team696.frc.lib.Dashboards.WebDashboard.Verbosity;
 import team696.frc.robot.commands.Amp;
 import team696.frc.robot.commands.Drop;
@@ -29,6 +30,7 @@ import team696.frc.robot.commands.Shoot;
 import team696.frc.robot.commands.ShooterIntake;
 import team696.frc.robot.commands.TeleopSwerve;
 import team696.frc.robot.commands.GroundIntake;
+import team696.frc.robot.commands.HoldPosition;
 import team696.frc.robot.commands.ManualShot;
 import team696.frc.robot.commands.Pass;
 import team696.frc.robot.commands.Rotate;
@@ -46,9 +48,6 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void robotInit() {
-        WebDashboard.Start(Verbosity.minimal);
-
-        Util.setRobotType(new LinkedHashMap<>() { }, true);
 
         Logger.recordMetadata("ProjectName", "2024OffSeason");
         Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
@@ -185,10 +184,11 @@ public class Robot extends LoggedRobot {
 
     @SuppressWarnings("unused") 
     private void configureOperatorBinds() {
-      Controls.Amp.whileTrue(new Amp(Controls.Rollers).alongWith(new TeleopSwerve(
+      Controls.Amp.whileTrue(new Amp(Controls.Rollers)
+      /* .alongWith(new TeleopSwerve(
         () ->  Swerve.get().distTo(Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation() : Constants.Field.BLUE.Amp.getTranslation()),
         ()-> Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getRotation() : Constants.Field.BLUE.Amp.getRotation()
-        )).alongWith(LED.get().LerpColor(()->Swerve.get().distTo(Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation()           : Constants.Field.BLUE.Amp.getTranslation())*4)));
+        )).alongWith(LED.get().LerpColor(()->Swerve.get().distTo(Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation()           : Constants.Field.BLUE.Amp.getTranslation())*4))*/);
       Controls.Shoot.whileTrue(new Shoot());
       Controls.Drop.whileTrue(new Drop());
 
@@ -200,6 +200,8 @@ public class Robot extends LoggedRobot {
       Controls.Trap.whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner())));
 
       Controls.Rightest.whileTrue(Auto.PathFind(Constants.Field.BLUE.Amp));
+
+      Controls.Right.whileTrue(new HoldPosition(Constants.Field.BLUE.Amp));
 
       //Controls.Right.whileTrue(Auto.get().PathFindToAutoBeginning());
     }
@@ -223,7 +225,7 @@ public class Robot extends LoggedRobot {
 
     @SuppressWarnings("unused")
     private void configureWebControlsBinds() {
-      TeleopSwerve.config(WebDashboard.getData("inputX")::getDouble, WebDashboard.getData("inputY")::getDouble, ()->0, null, 0.05);
+      TeleopSwerve.config(()->WebDashboard.getData("inputX").getDouble(), ()->WebDashboard.getData("inputY").getDouble(), ()->0, null, 0.05);
       Swerve.get().setDefaultCommand(new TeleopSwerve(()->Swerve.get().getAngleToSpeaker()));
     }
 }

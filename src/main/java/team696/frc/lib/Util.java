@@ -111,6 +111,9 @@ public class Util {
      *  1 is first item in map... etc.
      * 
      *  verbose will print to console, which robot connected, or the MAC if unknown
+     * 
+     *  ex (RobotInit()):  Util.setRobotType(new LinkedHashMap<>() { }, true);
+
      */
     public static int setRobotType(LinkedHashMap<String, byte[]> nameToMac, boolean verbose) {
         if (RobotBase.isSimulation()) {

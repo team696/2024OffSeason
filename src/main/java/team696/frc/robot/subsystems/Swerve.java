@@ -124,6 +124,8 @@ public class Swerve extends SwerveDriveSubsystem {
   @Override 
   public void simulationPeriodic() { 
     this.addVisionMeasurement(new Pose2d(1,1,Rotation2d.fromDegrees(90)), Timer.getFPGATimestamp(), VecBuilder.fill(0.1,0.1,0.1)); // fake estimate to check for crashes
+  
+    
   }
   
   @Override

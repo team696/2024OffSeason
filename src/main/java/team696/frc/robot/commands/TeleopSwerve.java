@@ -8,7 +8,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import team696.frc.lib.PLog;
 import team696.frc.lib.Util;
 import team696.frc.lib.Swerve.SwerveConstants;
 import team696.frc.robot.subsystems.Swerve;
@@ -75,9 +74,6 @@ public class TeleopSwerve extends Command {
         double yAxis = translation.getAsDouble();
         double xAxis = strafe.getAsDouble();
         double rAxis = rotation.getAsDouble();
-
-        PLog.info("SwerveY", yAxis);
-        PLog.info("SwerveX", xAxis);
 
         Rotation2d theta = new Rotation2d(yAxis, xAxis);
         double magnitude = Math.min(Math.sqrt((xAxis * xAxis) + (yAxis * yAxis)), 1);

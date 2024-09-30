@@ -23,7 +23,7 @@ public class WebDashboard extends WebSocketServer {
 
     private static WebDashboard _dashboard;
 
-    private final static int UPDATERATE = 40; // update in ms
+    private final static int UPDATERATE = 20; // update in ms
     private final static int PORT = 5805;
     private static Verbosity VERBOSITY = Verbosity.minimal;
 
@@ -104,7 +104,8 @@ public class WebDashboard extends WebSocketServer {
                 break;
             }
             default: {           
-                    _incomingValues.putIfAbsent(key, new IncomingInfo()).update(value);
+                    _incomingValues.putIfAbsent(key, new IncomingInfo());
+                    _incomingValues.get(key).update(value);
                 break;
             }
         }

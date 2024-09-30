@@ -32,7 +32,7 @@ public final class Constants {
         }
         public static final class BLUE {
             public static final Translation2d Speaker = new Translation2d(-0.04, 5.54);
-            public static final Pose2d Amp = new Pose2d(1.89, 7.6, new Rotation2d(Math.PI/2));
+            public static final Pose2d Amp = new Pose2d(1.79, 7.71, new Rotation2d(Math.PI/2));
             public static final Pose2d Source = new Pose2d(15.15, 1.5, Rotation2d.fromDegrees(135)); 
 			public static final Translation2d Corner = new Translation2d(2., 7.);
 
