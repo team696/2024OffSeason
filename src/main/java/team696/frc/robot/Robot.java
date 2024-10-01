@@ -1,7 +1,5 @@
 package team696.frc.robot;
 
-import java.util.LinkedHashMap;
-
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -22,9 +20,8 @@ import team696.frc.lib.Auto;
 import team696.frc.lib.Util;
 import team696.frc.lib.Auto.NamedCommand;
 import team696.frc.lib.Dashboards.WebDashboard;
-import team696.frc.lib.Dashboards.WebpageServer;
-import team696.frc.lib.Dashboards.WebDashboard.Verbosity;
 import team696.frc.robot.commands.Amp;
+import team696.frc.robot.commands.AutoDriveTowardsNote;
 import team696.frc.robot.commands.Drop;
 import team696.frc.robot.commands.Shoot;
 import team696.frc.robot.commands.ShooterIntake;
@@ -106,7 +103,8 @@ public class Robot extends LoggedRobot {
           new NamedCommand("Shoot", (new Rotate()).andThen( (new Shoot()).asProxy())),
           new NamedCommand("Intake", (new GroundIntake()).asProxy()),
           new NamedCommand("Drop", (new ManualShot(new Constants.shooter.state(0, 2500, 2500))).asProxy()),
-          new NamedCommand("Subwoofer", (new ManualShot(new Constants.shooter.state(4.7, 3800, 3900))))
+          new NamedCommand("Subwoofer", (new ManualShot(new Constants.shooter.state(4.7, 3800, 3900)))),
+          new NamedCommand("NotePickup", (new GroundIntake().asProxy()).raceWith(new AutoDriveTowardsNote(false)))
         );
 
         configureBinds();
