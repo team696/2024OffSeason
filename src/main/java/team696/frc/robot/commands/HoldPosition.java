@@ -10,8 +10,8 @@ public class HoldPosition extends Command{
  
     Pose2d desired;
 
-    static PIDController x = new PIDController(3, 0, 0);
-    static PIDController y = new PIDController(3, 0, 0);
+    static PIDController x = new PIDController(2., 0, 0);
+    static PIDController y = new PIDController(2., 0, 0);
     static PIDController r = new PIDController(0.1, 0, 0);
 
     static {

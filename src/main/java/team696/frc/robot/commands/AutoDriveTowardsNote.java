@@ -15,7 +15,11 @@ import team696.frc.robot.subsystems.Swerve;
 
 public class AutoDriveTowardsNote extends Command {
 
-    private static PIDController rotationController = new PIDController(0.014, 0, 0);
+    private static PIDController rotationController = new PIDController(0.02, 0, 0);
+
+    static {
+      rotationController.setSetpoint(0);
+    }
 
     private boolean goingSideways = false;
 
@@ -36,7 +40,7 @@ public class AutoDriveTowardsNote extends Command {
   @Override
   public void execute() {
 
-      Swerve.get().Drive(new Translation2d(0.2 * SwerveConstants.maxSpeed, 0), 
+      Swerve.get().Drive(new Translation2d(0.4 * SwerveConstants.maxSpeed, 0), 
                 rotationController.calculate(Swerve.get().intakeCam.tX()), 
                 false, true); 
   
@@ -45,17 +49,18 @@ public class AutoDriveTowardsNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    Swerve.get().doNothing();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Serializer.get().BackBeam()) return true; 
+    if (!Serializer.get().BackBeam()) return true; 
   
     if (!goingSideways) {
-      if (Util.getAlliance() == Alliance.Blue &&  Swerve.get().getPose().getX() > 8.3 - 0.3) return true;
+      if (Util.getAlliance() == Alliance.Blue &&  Swerve.get().getPose().getX() > 8.3 - 0.1) return true;
 
-      if (Util.getAlliance() == Alliance.Red  &&  Swerve.get().getPose().getY() < 8.3 + 0.3) return true;
+      if (Util.getAlliance() == Alliance.Red  &&  Swerve.get().getPose().getX() < 8.3 + 0.1) return true;
     }
 
     return false;

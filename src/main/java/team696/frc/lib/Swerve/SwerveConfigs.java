@@ -80,22 +80,22 @@ public final class SwerveConfigs {
                 Mod0.CANcoderId = 0;  
                 Mod0.DriveMotorId = 3; 
                 Mod0.SteerMotorId = 6;
-                Mod0.CANcoderOffset = -0.307;
+                Mod0.CANcoderOffset = -0.313;
         
                 Mod1.CANcoderId = 3; 
                 Mod1.DriveMotorId = 4;
                 Mod1.SteerMotorId = 7;
-                Mod1.CANcoderOffset = 0.268;
+                Mod1.CANcoderOffset = 0.272;
 
                 Mod2.CANcoderId = 2; 
                 Mod2.DriveMotorId = 2;
                 Mod2.SteerMotorId = 1;
-                Mod2.CANcoderOffset = 0.371;
+                Mod2.CANcoderOffset = 0.372;
 
                 Mod3.CANcoderId = 1; 
                 Mod3.DriveMotorId = 5;
                 Mod3.SteerMotorId = 0;
-                Mod3.CANcoderOffset = 0.357;
+                Mod3.CANcoderOffset = 0.359;
 
                 /** Pigeon Configuration */ 
                 pigeon.MountPose.MountPoseYaw = 0;

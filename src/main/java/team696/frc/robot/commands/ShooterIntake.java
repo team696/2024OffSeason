@@ -38,6 +38,7 @@ public class ShooterIntake extends Command {
     }
     if(hasSeenFront && hasUnSeenFront && !Serializer.get().FrontBeam()) {
       shouldEnd = true;
+      Hood.get().setHood(0);
       return;
     }
 

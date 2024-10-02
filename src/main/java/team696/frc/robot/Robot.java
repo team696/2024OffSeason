@@ -104,7 +104,7 @@ public class Robot extends LoggedRobot {
           new NamedCommand("Intake", (new GroundIntake()).asProxy()),
           new NamedCommand("Drop", (new ManualShot(new Constants.shooter.state(0, 2500, 2500))).asProxy()),
           new NamedCommand("Subwoofer", (new ManualShot(new Constants.shooter.state(4.7, 3800, 3900)))),
-          new NamedCommand("NotePickup", (new GroundIntake().asProxy()).raceWith(new AutoDriveTowardsNote(false)))
+          new NamedCommand("NotePickup", new AutoDriveTowardsNote(false))
         );
 
         configureBinds();
@@ -199,7 +199,7 @@ public class Robot extends LoggedRobot {
 
       Controls.Rightest.whileTrue(Auto.PathFind(Constants.Field.BLUE.Amp));
 
-      Controls.Right.whileTrue(new HoldPosition(Constants.Field.BLUE.Amp));
+      Controls.Right.whileTrue((new HoldPosition(Constants.Field.BLUE.Amp)).alongWith(LED.get().LerpColor(()->Swerve.get().getState().velocity()*3)));
 
       //Controls.Right.whileTrue(Auto.get().PathFindToAutoBeginning());
     }

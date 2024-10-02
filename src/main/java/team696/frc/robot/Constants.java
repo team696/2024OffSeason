@@ -25,14 +25,14 @@ public final class Constants {
 		public static final Field2d sim = new Field2d();
         public static final class RED {
 		    public static final Translation2d Speaker = new Translation2d(16.57, 5.54);
-            public static final Pose2d Amp = new Pose2d(14.7, 7.6, new Rotation2d(Math.PI/2));
+            public static final Pose2d Amp = new Pose2d(14.7, 7.8, new Rotation2d(Math.PI/2));
             public static final Pose2d Source = new Pose2d(1, 0.5, Rotation2d.fromDegrees(-135));
 			public static final Translation2d Corner = new Translation2d(14.57, 7.);
 
         }
         public static final class BLUE {
             public static final Translation2d Speaker = new Translation2d(-0.04, 5.54);
-            public static final Pose2d Amp = new Pose2d(1.79, 7.71, new Rotation2d(Math.PI/2));
+            public static final Pose2d Amp = new Pose2d(1.79, 7.8, new Rotation2d(Math.PI/2));
             public static final Pose2d Source = new Pose2d(15.15, 1.5, Rotation2d.fromDegrees(135)); 
 			public static final Translation2d Corner = new Translation2d(2., 7.);
 
@@ -77,9 +77,9 @@ public final class Constants {
 			put(1.5, new state(4.30 + globalOffset, 3200, 3200));
 			put(2.0, new state(3.30 + globalOffset, 3200, 3200));
 			put(2.5, new state(2.40 + globalOffset, 3200, 3200));
-			put(3.0, new state(1.70 + globalOffset, rollerSpeed, rollerSpeedA));
-			put(3.5, new state(1.20 + globalOffset, rollerSpeed, rollerSpeedA));
-			put(4.0, new state(1.05 + globalOffset, rollerSpeed, rollerSpeedA));
+			put(3.0, new state(1.60 + globalOffset, rollerSpeed, rollerSpeedA));
+			put(3.5, new state(1.10 + globalOffset, rollerSpeed, rollerSpeedA));
+			put(4.0, new state(0.90 + globalOffset, rollerSpeed, rollerSpeedA));
 			put(4.5, new state(0.80 + globalOffset, rollerSpeed, rollerSpeedA));
 			put(5.0, new state(0.70 + globalOffset, rollerSpeed, rollerSpeedA));
 			put(5.5, new state(0.60 + globalOffset, rollerSpeed, rollerSpeedA));
@@ -92,9 +92,9 @@ public final class Constants {
 			put(1.5, new state(0.0, 1800, 1800));
 			put(4.0, new state(0.0, 1800, 1800));
 			put(5.0, new state(0.0, 2500, 2500));
-			put(6.0, new state(0.0, 4200, 4200));
-			put(8.0, new state(0.0, 4200, 3800));
-			put(12., new state(2.0, 4200, 3800));
+			put(6.0, new state(3.3, 3200, 3200));
+			put(8.0, new state(3.3, 3200, 3200));
+			put(12., new state(3.3, 4200, 3800));
 		}};
 
 

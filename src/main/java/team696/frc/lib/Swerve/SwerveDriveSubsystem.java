@@ -148,6 +148,10 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
         SwerveModuleState[] swerveModuleStates = _kinematics.toSwerveModuleStates(c);
         setModuleStates(swerveModuleStates);
     } 
+
+    public void doNothing() {
+        Drive(new ChassisSpeeds());
+    }
     
     public void setModuleStates(SwerveModuleState[] desiredStates, boolean openLoop) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, SwerveConstants.maxSpeed);

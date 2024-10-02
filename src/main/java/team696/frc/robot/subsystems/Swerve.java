@@ -61,7 +61,7 @@ public class Swerve extends SwerveDriveSubsystem {
 
   public Rotation2d getVelocityAdjustedAngleToPos(Translation2d position) {
     double dist = distTo(position);
-    Translation2d adjustment = (new Translation2d(0, 1.0/12.0 * getRobotRelativeSpeeds().vyMetersPerSecond * dist)).rotateBy(angleTo(position)).plus(getPose().getTranslation()).minus(position);
+    Translation2d adjustment = (new Translation2d(0, 1.0/11.0 * getRobotRelativeSpeeds().vyMetersPerSecond * dist)).rotateBy(angleTo(position)).plus(getPose().getTranslation()).minus(position);
     Rotation2d rot = Rotation2d.fromRadians(Math.atan2(adjustment.getY(), adjustment.getX()));
 
     return rot;
