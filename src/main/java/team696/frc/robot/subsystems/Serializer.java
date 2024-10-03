@@ -27,8 +27,8 @@ public class Serializer extends SubsystemBase {
   private Serializer() {
     _Serializer = new TalonFactory(15, Constants.canivoreName, Constants.configs.shooter.serializer, "Shooter Serializer");
 
-    _FrontBeam = new DigitalInput(0);
-    _BackBeam = new DigitalInput(1);
+    _FrontBeam = new DigitalInput(3);
+    _BackBeam = new DigitalInput(4);
 
     _PositionController = new PositionVoltage(0);
 
@@ -92,5 +92,7 @@ public class Serializer extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
     builder.addBooleanProperty("Front Beam Break", ()->FrontBeam(), null);
     builder.addBooleanProperty("Back Beam Break", ()->BackBeam(), null);
+
+    builder.addDoubleProperty("Serializer Position", _Serializer::getPosition, null);
   }
 }

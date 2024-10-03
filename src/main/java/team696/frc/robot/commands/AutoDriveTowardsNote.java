@@ -15,7 +15,7 @@ import team696.frc.robot.subsystems.Swerve;
 
 public class AutoDriveTowardsNote extends Command {
 
-    private static PIDController rotationController = new PIDController(0.02, 0, 0);
+    private static PIDController rotationController = new PIDController(0.015, 0, 0);
 
     static {
       rotationController.setSetpoint(0);

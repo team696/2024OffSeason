@@ -4,6 +4,10 @@
 
 package team696.frc.robot.commands;
 
+import java.util.Optional;
+
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import team696.frc.robot.Constants;
@@ -28,6 +32,8 @@ public class Shoot extends Command {
   public void initialize() {
     feed = false;
 
+    PPHolonomicDriveController.setRotationTargetOverride(()->Optional.of(Swerve.get().getAngleToSpeaker()));
+
     didSeeFront = false;
     didUnseeFront = 0;
   }
@@ -42,9 +48,9 @@ public class Shoot extends Command {
 
     if (Shooter.get().upToSpeed(desiredState, 100) 
         && Hood.get().atAngle(desiredState, 1.5)
-        && Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().getAngleToSpeaker().getDegrees()) < 6
+        && Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().getAngleToSpeaker().getDegrees()) < 5
         && Math.abs(Swerve.get().getRobotRelativeSpeeds().omegaRadiansPerSecond) < 1
-        && Math.abs(Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond) < 1.5
+        && Math.abs(Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond) < 1.
         && Math.abs(Swerve.get().getRobotRelativeSpeeds().vyMetersPerSecond) < 3) {
           feed = true;
     }
@@ -77,6 +83,7 @@ public class Shoot extends Command {
     Shooter.get().stop();
     Serializer.get().stop();
     Hood.get().stop();
+    PPHolonomicDriveController.setRotationTargetOverride(()->Optional.empty());
   }
 
   @Override

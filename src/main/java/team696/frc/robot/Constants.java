@@ -68,10 +68,10 @@ public final class Constants {
 			}
 		}
 
-		public static final double rollerSpeed = 3800 + 100;
-		public static final double rollerSpeedA = 3900 + 100;
+		public static final double rollerSpeed = 4100;
+		public static final double rollerSpeedA = 3700;
 
-		public static final double globalOffset = -0.15;
+		public static final double globalOffset = -0.05;
 
 		public static final TreeMap<Double, state> distToState = new TreeMap<Double, state>(){{
 			put(1.5, new state(4.30 + globalOffset, 3200, 3200));
@@ -80,10 +80,10 @@ public final class Constants {
 			put(3.0, new state(1.60 + globalOffset, rollerSpeed, rollerSpeedA));
 			put(3.5, new state(1.10 + globalOffset, rollerSpeed, rollerSpeedA));
 			put(4.0, new state(0.90 + globalOffset, rollerSpeed, rollerSpeedA));
-			put(4.5, new state(0.80 + globalOffset, rollerSpeed, rollerSpeedA));
-			put(5.0, new state(0.70 + globalOffset, rollerSpeed, rollerSpeedA));
-			put(5.5, new state(0.60 + globalOffset, rollerSpeed, rollerSpeedA));
-			put(6.0, new state(0.60 + globalOffset, rollerSpeed, rollerSpeedA));
+			put(4.5, new state(0.70 + globalOffset, rollerSpeed, rollerSpeedA));
+			put(5.0, new state(0.40 + globalOffset, rollerSpeed, rollerSpeedA));
+			put(5.5, new state(0.30 + globalOffset, rollerSpeed, rollerSpeedA));
+			put(6.0, new state(0.30 + globalOffset, rollerSpeed, rollerSpeedA));
 
 			put(12., new state(0.4, rollerSpeed, rollerSpeedA));
 		}};
@@ -94,7 +94,7 @@ public final class Constants {
 			put(5.0, new state(0.0, 2500, 2500));
 			put(6.0, new state(3.3, 3200, 3200));
 			put(8.0, new state(3.3, 3200, 3200));
-			put(12., new state(3.3, 4200, 3800));
+			put(12., new state(3.3, 3800, 3800));
 		}};
 
 

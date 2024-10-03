@@ -97,21 +97,21 @@ public class Swerve extends SwerveDriveSubsystem {
     /* this is kinda ugly and messy, but it beats doing it inside and taking in a extra useless parameter, shit limelight shouldn't even need to do this anyway. */
     shooterCam.addVisionEstimate((x,y,r)->{shooterCam.SetRobotOrientation(getPose().getRotation());this.addVisionMeasurement(x,y,r);}, (latestResult)-> {
         if (latestResult.ambiguity > 0.6) return false; // Too Ambiguous, Ignore
-        if (getState().angularVelocity() > 1.5) return false; // Rotating too fast, ignore
+        if (getState().angularVelocity() > 2.5) return false; // Rotating too fast, ignore
         if (getState().velocity() > SwerveConstants.maxSpeed * 0.6)
             return false; // Moving Too fast, ignore
         double deviationRatio;
         if (latestResult.ambiguity < 3 / 100.0) {
             deviationRatio = 0.001; // Tag estimation very good -> Use it
         } else {
-          deviationRatio = Math.pow(latestResult.distToTag, 1) / 4 * (1 / latestResult.ambiguity); // Trust Less With Distance
+          deviationRatio = Math.pow(latestResult.distToTag, 1) / 6 * (1 / latestResult.ambiguity); // Trust Less With Distance
         }
         if(DriverStation.isAutonomousEnabled()) {
-            if (latestResult.distToTag > 4.) return false; // Tag Too far, Ignore --> comment for know becuase deviation ratio sort of fixes this.
+          if (latestResult.distToTag > 4.5) return false; // Tag Too far, Ignore --> comment for know becuase deviation ratio sort of fixes this.
         
-            deviationRatio *= 2;
+           deviationRatio *= 2;
         }
-        shooterCam.setStdDeviations(deviationRatio / 3, deviationRatio / 3, deviationRatio / 3);
+        shooterCam.setStdDeviations(deviationRatio / 5  , deviationRatio / 5, deviationRatio / 5);
         return true;
     });
     ampCam.addVisionEstimate((x,y,r)->{shooterCam.SetRobotOrientation(getPose().getRotation());this.addVisionMeasurement(x,y,r);});

@@ -4,11 +4,16 @@
 
 package team696.frc.robot.commands;
 
+import java.util.Optional;
+
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Intake;
 import team696.frc.robot.subsystems.LED;
 import team696.frc.robot.subsystems.Serializer;
+import team696.frc.robot.subsystems.Swerve;
 
 public class GroundIntake extends Command {
   
@@ -17,7 +22,9 @@ public class GroundIntake extends Command {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    PPHolonomicDriveController.setRotationTargetOverride(()->Swerve.get().getAngleForNote() == null ? Optional.empty() : Optional.of(Swerve.get().getAngleForNote()));
+  }
 
   @Override
   public void execute() {
@@ -48,6 +55,8 @@ public class GroundIntake extends Command {
     Hood.get().stop();
     Intake.get().stop();
     Serializer.get().stop();
+    PPHolonomicDriveController.setRotationTargetOverride(()->Optional.empty());
+
   }
 
   @Override

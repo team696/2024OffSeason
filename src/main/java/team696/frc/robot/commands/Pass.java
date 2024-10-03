@@ -41,7 +41,7 @@ public class Pass extends Command {
 
     if (Shooter.get().upToSpeed(desiredState, 250) 
         && Hood.get().atAngle(desiredState, 1.5)
-        && Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().getAngleToCorner().getDegrees()) < 12
+        && Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().getAngleToCorner().getDegrees()) < 5
         && Math.abs(Swerve.get().getRobotRelativeSpeeds().omegaRadiansPerSecond) < 0.3) {
           feed = true;
     }

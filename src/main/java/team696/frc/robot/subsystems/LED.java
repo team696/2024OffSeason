@@ -90,7 +90,7 @@ public class LED extends SubsystemBase {
       }else{
         if(RobotController.getRSLState()) { setColor(255,20,0); } else { setColor(0,0,0);}
       }
-    });
+    }).ignoringDisable(true);
   }
 
   public Command MatchRSL() {
