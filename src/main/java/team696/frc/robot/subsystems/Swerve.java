@@ -1,5 +1,7 @@
 package team696.frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain.OdometryThread;
 
 import edu.wpi.first.math.VecBuilder;
@@ -16,7 +18,6 @@ import team696.frc.lib.Camera.LimeLightCam;
 import team696.frc.lib.Dashboards.ShuffleDashboard;
 import team696.frc.lib.Swerve.SwerveConstants;
 import team696.frc.lib.Swerve.SwerveDriveSubsystem;
-import team696.frc.lib.Swerve.SwerveModule;
 import team696.frc.robot.Constants;
 
 public class Swerve extends SwerveDriveSubsystem {
@@ -116,9 +117,11 @@ public class Swerve extends SwerveDriveSubsystem {
     });
     ampCam.addVisionEstimate((x,y,r)->{shooterCam.SetRobotOrientation(getPose().getRotation());this.addVisionMeasurement(x,y,r);});
 
-    //Logger.recordOutput("Pose", getPose()); 
+    Logger.recordOutput("Pose", getPose()); 
 
     Constants.Field.sim.setRobotPose(getPose());
+
+    getState().publish();
   }
 
   @Override 
@@ -131,10 +134,6 @@ public class Swerve extends SwerveDriveSubsystem {
   @Override
   public void initSendable(SendableBuilder builder) {
     if (Constants.DEBUG) {
-      for(SwerveModule mod : getModules()){
-        builder.addDoubleProperty("Mod " + mod.moduleNumber + " Cancoder", ()->mod.getCANCoderAngle().getRotations(), null);
-        builder.addDoubleProperty("Mod " + mod.moduleNumber + " Motor", ()->mod.getState().angle.getRotations(), null);
-      }
       builder.addDoubleProperty("Gyro", ()->getYaw().getDegrees(), null);
       builder.addDoubleProperty("DistToSpeaker",()->getDistToSpeaker(),null);
     }

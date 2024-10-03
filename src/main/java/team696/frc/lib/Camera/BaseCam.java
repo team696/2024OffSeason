@@ -2,6 +2,8 @@ package team696.frc.lib.Camera;
 
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -53,10 +55,13 @@ public abstract class BaseCam {
             AprilTagResult estimation = oEstimation.get();
             try {
                 if (!checkEstimation.test(estimation)) {
+                    Logger.recordOutput("696/Vision/Rejected Pose", estimation.pose);
                     return false;
+                } else {
+                    Logger.recordOutput("696/Vision/Accepted Pose", estimation.pose);
                 }
             } catch (Exception e) {
-                PLog.fatalException("LimeLightCam", e.getMessage(), e);
+                PLog.fatalException("Camera", e.getMessage(), e);
             }
             addVisionMeasurement.accept(
                 estimation.pose,

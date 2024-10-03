@@ -18,6 +18,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -39,6 +41,13 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     protected final SwerveDriveState _cachedState;
 
     private final odometryThread _odometryThread;
+
+    private final StructArrayPublisher<SwerveModuleState> swerveModuleDesiredStatePublisher = NetworkTableInstance.getDefault()
+.getStructArrayTopic("696/Swerve/DesiredStates", SwerveModuleState.struct).publish();
+
+    private final StructArrayPublisher<SwerveModuleState> swerveModuleStatePublisher = NetworkTableInstance.getDefault()
+.getStructArrayTopic("696/Swerve/MeasuredStates", SwerveModuleState.struct).publish();
+
 
     public SwerveDriveSubsystem() {
         this._stateLock = new ReentrantReadWriteLock();
@@ -73,7 +82,7 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     public SwerveDriveState getState() {
         try {
            this._stateLock.readLock().lock();
-           return this._cachedState;
+           return new SwerveDriveState(this._cachedState);
         } finally {
            this._stateLock.readLock().unlock();
         }
@@ -159,6 +168,8 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
         for(SwerveModule mod : _modules) {
           mod.setDesiredState(desiredStates[mod.moduleNumber], openLoop);
         }
+
+        swerveModuleDesiredStatePublisher.set(desiredStates);
     } 
     
     public void setModuleStates(SwerveModuleState[] desiredStates) {
@@ -197,6 +208,8 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
         if (DriverStation.isDisabled()) {
             this.updateYawOffset();
         }
+
+        swerveModuleStatePublisher.set(getModuleStates());
       
         onUpdate();
     }

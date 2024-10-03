@@ -78,8 +78,7 @@ public class Auto {
         }
 
         PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
-            Constants.Field.sim.getObject("Target").setPose(pose);
-            Logger.recordOutput("Auto/Desired", pose);
+            Logger.recordOutput("696/Auto/Desired", pose);
         });
 
         PathPlannerLogging.setLogActivePathCallback((poses) -> {
