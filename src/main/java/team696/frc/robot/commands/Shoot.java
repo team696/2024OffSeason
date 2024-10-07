@@ -43,15 +43,17 @@ public class Shoot extends Command {
     double dist = Swerve.get().getDistToSpeaker();
     Constants.shooter.state desiredState = Constants.shooter.adjustedState(dist);
 
+    desiredState.angle -= Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond * dist * 0.05;
+
     Shooter.get().setShooter(desiredState);
     Hood.get().setHood(desiredState);
 
     if (Shooter.get().upToSpeed(desiredState, 100) 
         && Hood.get().atAngle(desiredState, 1.5)
         && Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().getAngleToSpeaker().getDegrees()) < 5
-        && Math.abs(Swerve.get().getRobotRelativeSpeeds().omegaRadiansPerSecond) < 1
-        && Math.abs(Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond) < 1.
-        && Math.abs(Swerve.get().getRobotRelativeSpeeds().vyMetersPerSecond) < 3) {
+        && Math.abs(Swerve.get().getRobotRelativeSpeeds().omegaRadiansPerSecond) < 1.
+        && Math.abs(Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond) < 2.
+        && Math.abs(Swerve.get().getRobotRelativeSpeeds().vyMetersPerSecond) < 3.5) {
           feed = true;
     }
 
@@ -61,11 +63,11 @@ public class Shoot extends Command {
       Serializer.get().stop();
     }
 
-    if (feed) {
       if (!Serializer.get().FrontBeam()) {
         didSeeFront = true;
       }
 
+    if (feed) {
       if (didSeeFront && didUnseeFront == 0 && Serializer.get().FrontBeam()) {
         didUnseeFront = Timer.getFPGATimestamp();
       }

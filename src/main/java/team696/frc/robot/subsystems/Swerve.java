@@ -1,7 +1,5 @@
 package team696.frc.robot.subsystems;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain.OdometryThread;
 
 import edu.wpi.first.math.VecBuilder;
@@ -37,9 +35,9 @@ public class Swerve extends SwerveDriveSubsystem {
   }
   
   private Swerve() {
-    shooterCam = new LimeLightCam("limelight-shooter");
+    shooterCam = new LimeLightCam("limelight-shooter",true);
     intakeCam = new LimeLightCam("limelight-note");
-    ampCam = new LimeLightCam("limelight-amp");
+    ampCam = new LimeLightCam("limelight-amp", false);
 
     ampCam.setStdDeviations(0.01, 0.01, 0.01);
 
@@ -93,13 +91,18 @@ public class Swerve extends SwerveDriveSubsystem {
     return null;
   }
 
+  Pose2d oldPose = new Pose2d();
+
   @Override
   public void onUpdate() { 
+    shooterCam.SetRobotOrientation(getYaw().plus(yawOffset));
+    ampCam.SetRobotOrientation(getYaw().plus(yawOffset));
+
     /* this is kinda ugly and messy, but it beats doing it inside and taking in a extra useless parameter, shit limelight shouldn't even need to do this anyway. */
-    shooterCam.addVisionEstimate((x,y,r)->{shooterCam.SetRobotOrientation(getPose().getRotation());this.addVisionMeasurement(x,y,r);}, (latestResult)-> {
-        if (latestResult.ambiguity > 0.6) return false; // Too Ambiguous, Ignore
+    shooterCam.addVisionEstimate(this::addVisionMeasurement, (latestResult)-> {
+        if (latestResult.ambiguity > 0.4) return false; // Too Ambiguous, Ignore
         if (getState().angularVelocity() > 2.5) return false; // Rotating too fast, ignore
-        if (getState().velocity() > SwerveConstants.maxSpeed * 0.6)
+        if (getState().velocity() > SwerveConstants.maxSpeed * 0.3)
             return false; // Moving Too fast, ignore
         double deviationRatio;
         if (latestResult.ambiguity < 3 / 100.0) {
@@ -108,18 +111,12 @@ public class Swerve extends SwerveDriveSubsystem {
           deviationRatio = Math.pow(latestResult.distToTag, 1) / 6 * (1 / latestResult.ambiguity); // Trust Less With Distance
         }
         if(DriverStation.isAutonomousEnabled()) {
-          if (latestResult.distToTag > 4.5) return false; // Tag Too far, Ignore --> comment for know becuase deviation ratio sort of fixes this.
-        
-           deviationRatio *= 2;
+          //if (latestResult.distToTag > 4.5) return false; // Tag Too far, Ignore --> comment for know becuase deviation ratio sort of fixes this.
         }
         shooterCam.setStdDeviations(deviationRatio / 5  , deviationRatio / 5, deviationRatio / 5);
         return true;
     });
-    ampCam.addVisionEstimate((x,y,r)->{shooterCam.SetRobotOrientation(getPose().getRotation());this.addVisionMeasurement(x,y,r);});
-
-    Logger.recordOutput("Pose", getPose()); 
-
-    Constants.Field.sim.setRobotPose(getPose());
+    ampCam.addVisionEstimate(this::addVisionMeasurement);
 
     getState().publish();
   }
@@ -127,8 +124,6 @@ public class Swerve extends SwerveDriveSubsystem {
   @Override 
   public void simulationPeriodic() { 
     this.addVisionMeasurement(new Pose2d(1,1,Rotation2d.fromDegrees(90)), Timer.getFPGATimestamp(), VecBuilder.fill(0.1,0.1,0.1)); // fake estimate to check for crashes
-  
-    
   }
   
   @Override

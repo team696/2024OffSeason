@@ -28,6 +28,7 @@ public class SwerveDriveState {
 
     public SwerveDriveState(SwerveDriveState other) {
         this(other.pose, other.robotRelativeSpeeds, other.timeStamp);
+        this.timeSinceLastUpdate = other.timeSinceLastUpdate;
     }
 
     public SwerveDriveState() {

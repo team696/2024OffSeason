@@ -101,6 +101,7 @@ public class SwerveModule {
     public double getDriveMotorPosition() {
         return BaseStatusSignal.getLatencyCompensatedValue(_driveMotor.get().getPosition(), _driveMotor.get().getVelocity());
     }
+
     public double getAngleMotorPosition() {
         return BaseStatusSignal.getLatencyCompensatedValue(_angleMotor.get().getPosition(), _angleMotor.get().getVelocity());
     }

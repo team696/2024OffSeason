@@ -31,7 +31,7 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     private final SwerveDrivePoseEstimator _poseEstimator;
 
     private final SwerveModule[] _modules;
-    private final SwerveDriveKinematics _kinematics;
+    protected final SwerveDriveKinematics _kinematics;
 
     protected final Pigeon2 _pigeon; 
 
@@ -129,10 +129,18 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
         return getState().robotRelativeSpeeds;
     }
 
-    private SwerveModuleState[] getModuleStates() { 
+    protected SwerveModuleState[] getModuleStates() { 
         SwerveModuleState[] states = new SwerveModuleState[4]; 
         for(SwerveModule mod : _modules) { 
             states[mod.moduleNumber] = mod.getState(); 
+        } 
+        return states; 
+    }
+
+    protected SwerveModulePosition[] getModulePositions() { 
+        SwerveModulePosition[] states = new SwerveModulePosition[4]; 
+        for(SwerveModule mod : _modules) { 
+            states[mod.moduleNumber] = mod.getPosition(); 
         } 
         return states; 
     }
@@ -245,9 +253,9 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
 
                     ChassisSpeeds speeds = _kinematics.toChassisSpeeds(getModuleStates());
 
-                    double time = Timer.getFPGATimestamp();
+                    double time = System.currentTimeMillis();
 
-                    Pose2d newPose = _poseEstimator.updateWithTime(this.this0._cachedState.timeStamp, latencyAdjustedYaw(), _swervePositions);
+                    Pose2d newPose = _poseEstimator.update(latencyAdjustedYaw(), _swervePositions);
 
                     this.this0._cachedState.update(
                         newPose,

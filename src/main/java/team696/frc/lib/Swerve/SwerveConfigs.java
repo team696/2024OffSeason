@@ -44,7 +44,7 @@ public final class SwerveConfigs {
                 angle.CurrentLimits.SupplyTimeThreshold = 0.1;
                 angle.CurrentLimits.StatorCurrentLimitEnable = true;
                 angle.CurrentLimits.StatorCurrentLimit = 40;
-                angle.Slot0.kP = 128.0;
+                angle.Slot0.kP = 250.0;
                 angle.Slot0.kI = 0.0;
                 angle.Slot0.kD = 0.0;
 
@@ -71,8 +71,8 @@ public final class SwerveConfigs {
                 drive.Slot0.kP = 2.;
                 drive.Slot0.kI = 0.0;
                 drive.Slot0.kD = 0.0;
-                drive.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.1;
-                drive.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;
+                drive.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.2;
+                drive.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.2;
                 drive.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.02;
                 drive.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.02;
 

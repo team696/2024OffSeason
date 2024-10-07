@@ -38,7 +38,7 @@ public final class Configs {
         hood.left.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         hood.left.CurrentLimits.StatorCurrentLimitEnable = true;
         hood.left.CurrentLimits.StatorCurrentLimit = 80;
-        hood.left.Slot0.kP = 4.; 
+        hood.left.Slot0.kP = 5.; 
         hood.left.Slot0.kS = 0.6;
         hood.left.Slot0.kV = 0;
         hood.left.Slot0.kA = 0;

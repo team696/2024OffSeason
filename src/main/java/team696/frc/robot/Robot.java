@@ -100,7 +100,7 @@ public class Robot extends LoggedRobot {
           new NamedCommand("ShootIntakeShoot", ((((new Shoot()).andThen(new GroundIntake())).andThen(new Shoot())).asProxy())),
           new NamedCommand("IntakeShoot", (((new GroundIntake()).andThen(new Shoot())).asProxy())),
           new NamedCommand("ShootFree", ((new Shoot()).asProxy())),
-          new NamedCommand("Shoot", (new Rotate()).andThen( (new Shoot()).asProxy())),
+          new NamedCommand("Shoot", (new Shoot()).asProxy().deadlineWith(new Rotate())),
           new NamedCommand("Intake", (new GroundIntake()).asProxy()),
           new NamedCommand("Drop", (new ManualShot(new Constants.shooter.state(0, 2500, 2500))).asProxy()),
           new NamedCommand("Subwoofer", (new ManualShot(new Constants.shooter.state(4.7, 3800, 3900)))),
@@ -145,13 +145,14 @@ public class Robot extends LoggedRobot {
 
   @Override 
   public void autonomousExit() {
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
+    }
   }
 
   @Override
   public void teleopInit() {
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
+
   }
 
   @Override
@@ -183,10 +184,10 @@ public class Robot extends LoggedRobot {
     @SuppressWarnings("unused") 
     private void configureOperatorBinds() {
       Controls.Amp.whileTrue(new Amp(Controls.Rollers)
-      /* .alongWith(new TeleopSwerve(
+       .alongWith(new TeleopSwerve(
         () ->  Swerve.get().distTo(Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation() : Constants.Field.BLUE.Amp.getTranslation()),
         ()-> Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getRotation() : Constants.Field.BLUE.Amp.getRotation()
-        )).alongWith(LED.get().LerpColor(()->Swerve.get().distTo(Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation()           : Constants.Field.BLUE.Amp.getTranslation())*4))*/);
+        )).alongWith(LED.get().LerpColor(()->Swerve.get().distTo(Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation()           : Constants.Field.BLUE.Amp.getTranslation())*4)));
       Controls.Shoot.whileTrue(new Shoot());
       Controls.Drop.whileTrue(new Drop());
 

@@ -38,7 +38,7 @@ public class Shooter extends SubsystemBase {
 
     _BangBangController = new BangBangController(100);
 
-    this.setDefaultCommand(this.spinShooter(0.12));
+    this.setDefaultCommand(this.spinShooter(0.05));
   }
 
   public static Shooter get() {

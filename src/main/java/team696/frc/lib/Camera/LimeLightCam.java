@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 
 /* Maybe in future remove limelightHelpers Dependency,
     really just copy pasting but I'm lazy */
@@ -15,8 +16,10 @@ public class LimeLightCam extends BaseCam {
     public static int LimeLightCount = 0;
     
     private NetworkTable _ntTable;
+
+    private boolean useMegaTag2 = false;
     
-    public LimeLightCam(String name, int[] TagsToCheck) {
+    public LimeLightCam(String name, int[] TagsToCheck, boolean useMegaTag2) {
         this.name = name;
 
         if(TagsToCheck.length > 0) {
@@ -31,11 +34,17 @@ public class LimeLightCam extends BaseCam {
 
         _ntTable.getEntry("ledMode").setNumber(1); // Example of how to use -> This turns off LEDS on the front
 
+        this.useMegaTag2 = useMegaTag2;
+
         LimeLightCount++;
     }
 
     public LimeLightCam(String name) {
-        this(name, new int[] {});
+        this(name, new int[] {}, false);
+    }
+
+    public LimeLightCam(String name, boolean useMegaTag2) {
+        this(name, new int[]{}, useMegaTag2);
     }
 
     public int targetCount() {
@@ -55,12 +64,19 @@ public class LimeLightCam extends BaseCam {
         return -1 * _ntTable.getEntry("tx").getDouble(0);
     }
 
+    /* Used with MegaTag2, don't know how that thing works tho */
     public void SetRobotOrientation(Rotation2d curYaw) {
         LimelightHelpers.SetRobotOrientation(name, curYaw.getDegrees(),0,0,0,0,0);
     }
 
     public Optional<AprilTagResult> getEstimate() {
-        LimelightHelpers.PoseEstimate latestEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
+        LimelightHelpers.PoseEstimate latestEstimate;
+        if (!useMegaTag2 || DriverStation.isDisabled()) {
+            latestEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
+        } else {
+            latestEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+        }
+        
 
         if (latestEstimate == null) return Optional.empty();
 
