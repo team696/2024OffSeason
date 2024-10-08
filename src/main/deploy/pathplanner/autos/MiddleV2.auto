@@ -43,9 +43,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Shoot"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootFree"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.4
+                }
+              }
+            ]
           }
         },
         {
@@ -71,12 +84,6 @@
           "type": "path",
           "data": {
             "pathName": "MiddleV23"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootFree"
           }
         },
         {
@@ -108,12 +115,6 @@
           "type": "path",
           "data": {
             "pathName": "MiddleV25"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootFree"
           }
         }
       ]

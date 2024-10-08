@@ -43,7 +43,7 @@ public class GroundIntake extends Command {
     }
     if(Constants.nearEndPath){
           PPHolonomicDriveController.setRotationTargetOverride(()->Swerve.get().getAngleForNote() == null ? Optional.empty() : Optional.of(Swerve.get().getAngleForNote()));
-          Constants.nearEndPath=false;
+          //Constants.nearEndPath=false;
     }
 
     if (!Serializer.get().FrontBeam()) {

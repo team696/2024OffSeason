@@ -39,7 +39,7 @@ public class Shooter extends SubsystemBase {
 
     _BangBangController = new BangBangController(100);
 
-    this.setDefaultCommand(this.spinShooter(DriverStation.isAutonomous()?0.25:0.05));
+    this.setDefaultCommand(this.spinShooter(DriverStation.isAutonomous()?0.5:0.05));
   }
 
   public static Shooter get() {
