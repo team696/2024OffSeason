@@ -99,7 +99,7 @@ public class Robot extends LoggedRobot {
         Auto.Initialize(Swerve.get(), 
           new NamedCommand("ShootIntakeShoot", ((((new Shoot()).andThen(new GroundIntake())).andThen(new Shoot())).asProxy())),
           new NamedCommand("IntakeShoot", (((new GroundIntake()).andThen(new Shoot())).asProxy())),
-          new NamedCommand("ShootFree", ((new Shoot()).asProxy()).withTimeout(5)),
+          new NamedCommand("ShootFree", ((new Shoot()).asProxy()).withTimeout(7)),
           new NamedCommand("Shoot", (new Shoot()).asProxy().deadlineWith(new Rotate())),
           new NamedCommand("Intake", (new GroundIntake()).asProxy()/*.raceWith(new AutoDriveTowardsNote(false) )*/),
           new NamedCommand("IntakeND", (new GroundIntake()).asProxy().alongWith(new AutoDriveTowardsNote(false) ).withTimeout(3)),

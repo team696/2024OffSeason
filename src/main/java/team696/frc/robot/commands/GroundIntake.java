@@ -34,7 +34,7 @@ public class GroundIntake extends Command {
 
     if (Hood.get().getPosition() > 5) {
       if ( Serializer.get().BackBeam() ) {
-        Intake.get().setSpeed(0.6);
+        Intake.get().setSpeed(0.88);
       } else {
         Intake.get().setSpeed(0.2);
       }
