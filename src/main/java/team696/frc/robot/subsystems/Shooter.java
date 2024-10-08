@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 
 import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,7 +39,7 @@ public class Shooter extends SubsystemBase {
 
     _BangBangController = new BangBangController(100);
 
-    this.setDefaultCommand(this.spinShooter(0.05));
+    this.setDefaultCommand(this.spinShooter(DriverStation.isAutonomous()?0.25:0.05));
   }
 
   public static Shooter get() {

@@ -9,6 +9,7 @@ import java.util.Optional;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import team696.frc.robot.Constants;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Intake;
 import team696.frc.robot.subsystems.LED;
@@ -23,7 +24,7 @@ public class GroundIntake extends Command {
 
   @Override
   public void initialize() {
-    PPHolonomicDriveController.setRotationTargetOverride(()->Swerve.get().getAngleForNote() == null ? Optional.empty() : Optional.of(Swerve.get().getAngleForNote()));
+    //PPHolonomicDriveController.setRotationTargetOverride(()->Swerve.get().getAngleForNote() == null ? Optional.empty() : Optional.of(Swerve.get().getAngleForNote()));
   }
 
   @Override
@@ -39,6 +40,10 @@ public class GroundIntake extends Command {
       }
     } else {
       Intake.get().stop();
+    }
+    if(Constants.nearEndPath){
+          PPHolonomicDriveController.setRotationTargetOverride(()->Swerve.get().getAngleForNote() == null ? Optional.empty() : Optional.of(Swerve.get().getAngleForNote()));
+          Constants.nearEndPath=false;
     }
 
     if (!Serializer.get().FrontBeam()) {
@@ -56,12 +61,12 @@ public class GroundIntake extends Command {
     Intake.get().stop();
     Serializer.get().stop();
     PPHolonomicDriveController.setRotationTargetOverride(()->Optional.empty());
-
+    Constants.nearEndPath=false;
   }
 
   @Override
   public boolean isFinished() {
-    if (!Serializer.get().FrontBeam() && !Serializer.get().BackBeam())
+    if (!Serializer.get().FrontBeam() /*&& !Serializer.get().BackBeam()*/)
       return true;
 
     return false;

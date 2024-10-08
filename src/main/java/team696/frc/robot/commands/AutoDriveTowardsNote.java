@@ -40,7 +40,8 @@ public class AutoDriveTowardsNote extends Command {
   @Override
   public void execute() {
 
-      Swerve.get().Drive(new Translation2d(0.4 * SwerveConstants.maxSpeed, 0), 
+      Swerve.get().Drive(new Translation2d(0.2
+       * SwerveConstants.maxSpeed, 0), 
                 rotationController.calculate(Swerve.get().intakeCam.tX()), 
                 false, true); 
   
