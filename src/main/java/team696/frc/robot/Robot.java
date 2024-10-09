@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import team696.frc.lib.Auto;
 import team696.frc.lib.Util;
 import team696.frc.lib.Auto.NamedCommand;
+import team696.frc.lib.Dashboards.ShuffleDashboard;
 import team696.frc.lib.Dashboards.WebDashboard;
 import team696.frc.robot.commands.Amp;
 import team696.frc.robot.commands.AutoDriveTowardsNote;
@@ -45,6 +46,7 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void robotInit() {
+        ShuffleDashboard.initialize();
 
         Logger.recordMetadata("ProjectName", "2024OffSeason");
         Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);

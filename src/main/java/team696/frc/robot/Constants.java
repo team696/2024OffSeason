@@ -8,7 +8,6 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import team696.frc.lib.Util;
 
 public final class Constants {
@@ -22,7 +21,6 @@ public final class Constants {
 
 	public static final double deadBand = 0.05;
 	public static final class Field {
-		public static final Field2d sim = new Field2d();
         public static final class RED {
 		    public static final Translation2d Speaker = new Translation2d(16.57, 5.54);
             public static final Pose2d Amp = new Pose2d(14.7, 7.8, new Rotation2d(Math.PI/2));

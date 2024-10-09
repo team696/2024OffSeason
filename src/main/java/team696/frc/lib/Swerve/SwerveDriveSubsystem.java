@@ -3,6 +3,8 @@ package team696.frc.lib.Swerve;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
@@ -41,6 +43,8 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     protected final SwerveDriveState _cachedState;
 
     private final odometryThread _odometryThread;
+
+    private SwerveModuleState[] swerveModuleDesiredStates = {new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState(), new SwerveModuleState()};
 
     private final StructArrayPublisher<SwerveModuleState> swerveModuleDesiredStatePublisher = NetworkTableInstance.getDefault()
 .getStructArrayTopic("696/Swerve/DesiredStates", SwerveModuleState.struct).publish();
@@ -82,7 +86,7 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     public SwerveDriveState getState() {
         try {
            this._stateLock.readLock().lock();
-           return new SwerveDriveState(this._cachedState);
+           return this._cachedState;
         } finally {
            this._stateLock.readLock().unlock();
         }
@@ -173,11 +177,10 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     public void setModuleStates(SwerveModuleState[] desiredStates, boolean openLoop) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, SwerveConstants.maxSpeed);
         
-        for(SwerveModule mod : _modules) {
+        for(SwerveModule mod : _modules) 
           mod.setDesiredState(desiredStates[mod.moduleNumber], openLoop);
-        }
-
-        swerveModuleDesiredStatePublisher.set(desiredStates);
+        
+        this.swerveModuleDesiredStates = desiredStates;
     } 
     
     public void setModuleStates(SwerveModuleState[] desiredStates) {
@@ -219,6 +222,10 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
 
         swerveModuleStatePublisher.set(getModuleStates());
       
+        swerveModuleDesiredStatePublisher.set(swerveModuleDesiredStates);
+
+        Logger.recordOutput("Slippage", _kinematics.toChassisSpeeds(getModuleStates()).omegaRadiansPerSecond - _kinematics.toChassisSpeeds(swerveModuleDesiredStates).omegaRadiansPerSecond);
+
         onUpdate();
     }
 

@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package team696.frc.lib.Swerve;
+package team696.test;
 
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
@@ -23,7 +23,7 @@ public class TestStateEstimation {
         if (_estimate == null) {
             _estimate = new TestStateEstimation();
         }
-        return _estimate;
+        return null;//_estimate; Force a crash so people don't use this useless 
     }
 
     private static double time = 0;

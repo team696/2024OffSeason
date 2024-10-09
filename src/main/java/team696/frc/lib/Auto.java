@@ -19,12 +19,11 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import team696.frc.lib.Dashboards.ShuffleDashboard;
 import team696.frc.lib.Swerve.SwerveConstants;
 import team696.frc.lib.Swerve.SwerveDriveSubsystem;
-import team696.frc.robot.Constants;
 
 public class Auto {
     public static class NamedCommand {
@@ -82,11 +81,11 @@ public class Auto {
         });
 
         PathPlannerLogging.setLogActivePathCallback((poses) -> {
-            Constants.Field.sim.getObject("Path").setPoses(poses);
+            ShuffleDashboard.field.getObject("Path").setPoses(poses);
         });
 
         autoChooser = AutoBuilder.buildAutoChooser();
-        SmartDashboard.putData("Auto Chooser", autoChooser);
+        ShuffleDashboard.addAutoChooser(autoChooser);
 
         autoChooser.onChange((command)-> {
             visualize();
@@ -146,6 +145,6 @@ public class Auto {
                 path = path.flipPath();
             pathPoses.addAll(path.getPathPoses());
         }
-        Constants.Field.sim.getObject("traj").setPoses(pathPoses);
+        ShuffleDashboard.field.getObject("traj").setPoses(pathPoses);
     }
 }

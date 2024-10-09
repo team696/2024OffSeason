@@ -10,7 +10,6 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import team696.frc.lib.Util;
 import team696.frc.lib.Camera.LimeLightCam;
 import team696.frc.lib.Dashboards.ShuffleDashboard;
@@ -40,8 +39,6 @@ public class Swerve extends SwerveDriveSubsystem {
     ampCam = new LimeLightCam("limelight-amp", false);
 
     ampCam.setStdDeviations(0.01, 0.01, 0.01);
-
-    ShuffleDashboard.addObject(Constants.Field.sim);
   }
 
   public Rotation2d getAngleToSpeaker() {
@@ -119,6 +116,8 @@ public class Swerve extends SwerveDriveSubsystem {
     ampCam.addVisionEstimate(this::addVisionMeasurement);
 
     getState().publish();
+
+    ShuffleDashboard.field.setRobotPose(getState().pose);
   }
 
   @Override 
@@ -132,7 +131,5 @@ public class Swerve extends SwerveDriveSubsystem {
       builder.addDoubleProperty("Gyro", ()->getYaw().getDegrees(), null);
       builder.addDoubleProperty("DistToSpeaker",()->getDistToSpeaker(),null);
     }
-
-    SmartDashboard.putData("Field", Constants.Field.sim);
   }
 }
