@@ -99,14 +99,15 @@ public class Robot extends LoggedRobot {
         SmartDashboard.putData(LED.get());
 
         Auto.Initialize(Swerve.get(), 
-          new NamedCommand("ShootIntakeShoot", ((((new Shoot()).andThen(new GroundIntake())).andThen(new Shoot())).asProxy())),
+          new NamedCommand("ShootIntakeShoot", ((((new Shoot()).andThen(new GroundIntake().raceWith(Shooter.get().SmartIdleShooter()))).andThen(new Shoot())).asProxy())),
           new NamedCommand("IntakeShoot", (((new GroundIntake()).andThen(new Shoot())).asProxy())),
           new NamedCommand("ShootFree", ((new Shoot()).asProxy())),
           new NamedCommand("Shoot", (new Shoot()).asProxy().deadlineWith(new Rotate())),
-          new NamedCommand("Intake", (new GroundIntake()).asProxy()),
+          new NamedCommand("Intake", (new GroundIntake().raceWith(Shooter.get().SmartIdleShooter())).asProxy()),
           new NamedCommand("Drop", (new ManualShot(new Constants.shooter.state(0, 2500, 2500))).asProxy()),
           new NamedCommand("Subwoofer", (new ManualShot(new Constants.shooter.state(4.7, 3800, 3900)))),
-          new NamedCommand("NotePickup", new AutoDriveTowardsNote(false))
+          new NamedCommand("NotePickup", new AutoDriveTowardsNote(false)),
+          new NamedCommand("Rotate", new Rotate())
         );
 
         configureBinds();

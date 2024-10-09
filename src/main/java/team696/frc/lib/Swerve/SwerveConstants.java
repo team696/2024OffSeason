@@ -16,7 +16,7 @@ public class SwerveConstants {
 
 		public static final double wheelX = Units.inchesToMeters(13.0);
 		public static final double wheelY = Units.inchesToMeters(13.0);
-		public static final double wheelDiameter = Units.inchesToMeters(3.91);
+		public static final double wheelDiameter = Units.inchesToMeters(3.85);
 		public static final double wheelCircumference = wheelDiameter * Math.PI;
 
 		public static final double theoreticalMaxSpeed = Motors.Kraken.freeSpinRPM / 60 / driveGearRatio * wheelCircumference; // 5.13 mps way more resonable

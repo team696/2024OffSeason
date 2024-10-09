@@ -16,6 +16,12 @@
           "data": {
             "pathName": "MiddleThingMiddleCont"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Rotate"
+          }
         }
       ]
     }

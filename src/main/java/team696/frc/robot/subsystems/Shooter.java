@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 
 import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,7 +39,7 @@ public class Shooter extends SubsystemBase {
 
     _BangBangController = new BangBangController(100);
 
-    this.setDefaultCommand(this.spinShooter(0.05));
+    this.setDefaultCommand(this.SmartIdleShooter());
   }
 
   public static Shooter get() {
@@ -100,6 +101,17 @@ public class Shooter extends SubsystemBase {
     return this.runEnd(()->  setShooterPercent(speed, speed), this::stop);
   }
 
+  public Command SmartIdleShooter() {
+    return this.runEnd(()-> 
+    {
+      if (DriverStation.isAutonomous() && Swerve.get().getDistToSpeaker() < 4.5) {
+        setShooterPercent(0.50, 0.50);
+      } else {
+        setShooterPercent(0.05, 0.05);
+      }
+    } ,this::stop);
+  }
+
   public Command spinShooter(double speedl, double speedr) {
     return this.runEnd(()->  setShooterPercent(speedl, speedr), this::stop);
   }
@@ -120,5 +132,3 @@ public class Shooter extends SubsystemBase {
     builder.addDoubleProperty("Right Velocity", ()->_RightShooter.getVelocity() * 60, null);
   }
 }
-
-

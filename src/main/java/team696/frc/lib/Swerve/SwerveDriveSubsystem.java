@@ -224,7 +224,7 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
       
         swerveModuleDesiredStatePublisher.set(swerveModuleDesiredStates);
 
-        Logger.recordOutput("Slippage", _kinematics.toChassisSpeeds(getModuleStates()).omegaRadiansPerSecond - _kinematics.toChassisSpeeds(swerveModuleDesiredStates).omegaRadiansPerSecond);
+        Logger.recordOutput("Slippage", _kinematics.toChassisSpeeds(getModuleStates()).omegaRadiansPerSecond - _pigeon.getAngularVelocityZWorld().getValueAsDouble() * Math.PI/180);
 
         onUpdate();
     }

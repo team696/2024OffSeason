@@ -44,7 +44,7 @@ public final class SwerveConfigs {
                 angle.CurrentLimits.SupplyTimeThreshold = 0.1;
                 angle.CurrentLimits.StatorCurrentLimitEnable = true;
                 angle.CurrentLimits.StatorCurrentLimit = 40;
-                angle.Slot0.kP = 250.0;
+                angle.Slot0.kP = 175.0;
                 angle.Slot0.kI = 0.0;
                 angle.Slot0.kD = 0.0;
 

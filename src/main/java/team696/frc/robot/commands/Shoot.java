@@ -43,7 +43,7 @@ public class Shoot extends Command {
     double dist = Swerve.get().getDistToSpeaker();
     Constants.shooter.state desiredState = Constants.shooter.adjustedState(dist);
 
-    desiredState.angle -= Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond * dist * 0.05;
+    desiredState.angle -= Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond * dist * 0.1;
 
     Shooter.get().setShooter(desiredState);
     Hood.get().setHood(desiredState);
@@ -52,7 +52,7 @@ public class Shoot extends Command {
         && Hood.get().atAngle(desiredState, 1.5)
         && Math.abs(Swerve.get().getPose().getRotation().getDegrees() - Swerve.get().getAngleToSpeaker().getDegrees()) < 5
         && Math.abs(Swerve.get().getRobotRelativeSpeeds().omegaRadiansPerSecond) < 1.
-        && Math.abs(Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond) < 2.
+        && Math.abs(Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond) < 1.25
         && Math.abs(Swerve.get().getRobotRelativeSpeeds().vyMetersPerSecond) < 3.5) {
           feed = true;
     }

@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import team696.frc.lib.Util;
 import team696.frc.lib.Camera.LimeLightCam;
 import team696.frc.lib.Dashboards.ShuffleDashboard;
-import team696.frc.lib.Swerve.SwerveConstants;
 import team696.frc.lib.Swerve.SwerveDriveSubsystem;
 import team696.frc.robot.Constants;
 
@@ -99,8 +98,8 @@ public class Swerve extends SwerveDriveSubsystem {
     shooterCam.addVisionEstimate(this::addVisionMeasurement, (latestResult)-> {
         if (latestResult.ambiguity > 0.4) return false; // Too Ambiguous, Ignore
         if (getState().angularVelocity() > 2.5) return false; // Rotating too fast, ignore
-        if (getState().velocity() > SwerveConstants.maxSpeed * 0.3)
-            return false; // Moving Too fast, ignore
+       // if (getState().velocity() > SwerveConstants.maxSpeed * 0.6)
+        //    return false; // Moving Too fast, ignore
         double deviationRatio;
         if (latestResult.ambiguity < 3 / 100.0) {
             deviationRatio = 0.001; // Tag estimation very good -> Use it

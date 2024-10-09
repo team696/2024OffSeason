@@ -22,6 +22,12 @@
           "data": {
             "pathName": "SprintToMid"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "EndMid"
+          }
         }
       ]
     }
