@@ -20,7 +20,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Rotate"
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MiddleReturn"
           }
         }
       ]
