@@ -6,11 +6,11 @@ package team696.frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import team696.frc.lib.TalonFactory;
+import team696.frc.lib.HardwareDevices.TalonFactory;
 import team696.frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
-  private static Intake m_Intake;
+  private static Intake _Intake;
 
   private TalonFactory _serializer;
 
@@ -20,11 +20,11 @@ public class Intake extends SubsystemBase {
   }
 
   public static Intake get(){
-    if (m_Intake == null) {
-      m_Intake = new Intake();
+    if (_Intake == null) {
+      _Intake = new Intake();
     }
 
-    return m_Intake;
+    return _Intake;
   }
 
   public void stop() {

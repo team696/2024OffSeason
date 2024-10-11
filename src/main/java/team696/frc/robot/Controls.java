@@ -39,7 +39,7 @@ public final class Controls {
     public static final JoystickButton Leftest = new JoystickButton(operatorPanelB, 8);
 
 
-    public static final class Controller {
+    public static final class XBOXController {
         public static final CommandXboxController controller = new CommandXboxController(5);
 
         public static final DoubleSupplier leftJoyY =  ()->-controller.getRawAxis(1);

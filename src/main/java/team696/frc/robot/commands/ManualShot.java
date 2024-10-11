@@ -4,10 +4,6 @@
 
 package team696.frc.robot.commands;
 
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.DoubleTopic;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import team696.frc.robot.Constants;
 import team696.frc.robot.subsystems.Hood;
@@ -21,14 +17,9 @@ public class ManualShot extends Command {
 
   double extraadded = 0;
 
-  NetworkTableInstance inst = NetworkTableInstance.getDefault();
-  DoubleTopic dblTopic = inst.getDoubleTopic("Manual Adjustment");
-  DoubleSubscriber sub = dblTopic.subscribe(0);
-
   public ManualShot(Constants.shooter.state d) {
     desiredState = d;
     
-    SmartDashboard.putNumber("Manual Adjustment", extraadded);
 
     addRequirements(Hood.get(), Serializer.get(), Shooter.get());
   }
@@ -40,7 +31,7 @@ public class ManualShot extends Command {
 
   @Override
   public void execute() {
-    extraadded = sub.get();
+    extraadded = 0;
     Constants.shooter.state adesiredState = new Constants.shooter.state(desiredState.angle + extraadded, desiredState.speed_l, desiredState.speed_r);
     Shooter.get().setShooter(adesiredState);
     Hood.get().setHood(adesiredState);

@@ -210,19 +210,19 @@ public class Robot extends LoggedRobot {
 
     @SuppressWarnings("unused") 
     private void configureControllerBinds() { 
-      TeleopSwerve.config(Controls.Controller.leftJoyX, Controls.Controller.leftJoyY, Controls.Controller.rightJoyX, Controls.Controller.RB, 0.02);
+      TeleopSwerve.config(Controls.XBOXController.leftJoyX, Controls.XBOXController.leftJoyY, Controls.XBOXController.rightJoyX, Controls.XBOXController.RB, 0.02);
       Swerve.get().setDefaultCommand(new TeleopSwerve(()->Swerve.get().getAngleToSpeaker()));
-      Controls.Controller.A.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
+      Controls.XBOXController.A.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
 
-      Controls.Controller.RT.whileTrue(new Shoot());
+      Controls.XBOXController.RT.whileTrue(new Shoot());
 
-      Controls.Controller.Y.whileTrue(new ShooterIntake());
+      Controls.XBOXController.Y.whileTrue(new ShooterIntake());
 
-      Controls.Controller.X.whileTrue(new Drop());
+      Controls.XBOXController.X.whileTrue(new Drop());
 
-      Controls.Controller.B.whileTrue(new GroundIntake());
+      Controls.XBOXController.B.whileTrue(new GroundIntake());
 
-      Controls.Controller.LB.whileTrue(new Amp(Controls.Controller.LT).alongWith(new TeleopSwerve(()-> Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getRotation() : Constants.Field.BLUE.Amp.getRotation())));
+      Controls.XBOXController.LB.whileTrue(new Amp(Controls.XBOXController.LT).alongWith(new TeleopSwerve(()-> Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getRotation() : Constants.Field.BLUE.Amp.getRotation())));
     }
 
     @SuppressWarnings("unused")

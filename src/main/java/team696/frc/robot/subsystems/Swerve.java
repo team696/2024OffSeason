@@ -14,6 +14,7 @@ import team696.frc.lib.Util;
 import team696.frc.lib.Camera.LimeLightCam;
 import team696.frc.lib.Dashboards.ShuffleDashboard;
 import team696.frc.lib.Swerve.SwerveDriveSubsystem;
+import team696.frc.lib.Swerve.SwerveModule;
 import team696.frc.robot.Constants;
 
 public class Swerve extends SwerveDriveSubsystem {
@@ -129,6 +130,9 @@ public class Swerve extends SwerveDriveSubsystem {
     if (Constants.DEBUG) {
       builder.addDoubleProperty("Gyro", ()->getYaw().getDegrees(), null);
       builder.addDoubleProperty("DistToSpeaker",()->getDistToSpeaker(),null);
+      for (SwerveModule mod : _modules) {
+        mod.putData();
+      }
     }
   }
 }

@@ -3,25 +3,28 @@ package team696.frc.lib.Swerve;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import team696.frc.lib.TalonFactory;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import team696.frc.lib.Util;
+import team696.frc.lib.HardwareDevices.CANCoderFactory;
+import team696.frc.lib.HardwareDevices.TalonFactory;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 
-public class SwerveModule {
+public class SwerveModule implements Sendable{
     public int moduleNumber;
     private double _angleOffset;
     
     private TalonFactory _angleMotor;
     private TalonFactory _driveMotor;
-    private CANcoder _encoder;
+    private CANCoderFactory _encoder;
 
     private double _lastAngle;
 
@@ -35,23 +38,22 @@ public class SwerveModule {
         this.moduleNumber = moduleNumber;
         this._angleOffset = moduleConstants.CANcoderOffset; 
         /* Angle Encoder Config */
-        _encoder = new CANcoder(moduleConstants.CANcoderId);
-        _encoder.getConfigurator().apply(SwerveConfigs.canCoder);
+        _encoder = new CANCoderFactory(moduleConstants.CANcoderId, SwerveConstants.canBus, SwerveConfigs.canCoder, "Swerve Encoder " + moduleNumber);
 
         /* Angle Motor Config */
-        _angleMotor = new TalonFactory(moduleConstants.SteerMotorId, SwerveConfigs.angle, "Swerve Angle " + moduleNumber);
+        _angleMotor = new TalonFactory(moduleConstants.SteerMotorId, SwerveConstants.canBus, SwerveConfigs.angle, "Swerve Angle " + moduleNumber);
         resetToAbsolute();
 
         /* Drive Motor Config */
-        _driveMotor = new TalonFactory(moduleConstants.DriveMotorId, SwerveConfigs.drive, "Swerve Drive " + moduleNumber);
+        _driveMotor = new TalonFactory(moduleConstants.DriveMotorId, SwerveConstants.canBus, SwerveConfigs.drive, "Swerve Drive " + moduleNumber);
 
-        _encoder.getAbsolutePosition().setUpdateFrequency(100);
+        _encoder.get().getAbsolutePosition().setUpdateFrequency(100);
         _angleMotor.get().getPosition().setUpdateFrequency(100);
         _angleMotor.get().getVelocity().setUpdateFrequency(100);
         _driveMotor.get().getPosition().setUpdateFrequency(100);
         _driveMotor.get().getVelocity().setUpdateFrequency(100);
 
-        ParentDevice.optimizeBusUtilizationForAll(_encoder, _angleMotor.get(), _driveMotor.get());
+        ParentDevice.optimizeBusUtilizationForAll(_encoder.get(), _angleMotor.get(), _driveMotor.get());
 
         _lastAngle = getState().angle.getRotations();
     }
@@ -76,7 +78,7 @@ public class SwerveModule {
     }
 
     public Rotation2d getCANCoderAngle(){
-        return Rotation2d.fromRotations(_encoder.getAbsolutePosition().getValue());
+        return _encoder.getPosition();
     }
 
     public void resetToAbsolute(){
@@ -104,5 +106,16 @@ public class SwerveModule {
 
     public double getAngleMotorPosition() {
         return BaseStatusSignal.getLatencyCompensatedValue(_angleMotor.get().getPosition(), _angleMotor.get().getVelocity());
+    }
+
+    public void putData() {
+        SmartDashboard.putData("Swerve/Mod " + this.moduleNumber, this);
+    }
+
+    @Override 
+    public void initSendable(SendableBuilder builder) {
+        builder.addDoubleProperty("Motor Angle", this._angleMotor::getPosition, null);
+        builder.addDoubleProperty("Velocity", this._driveMotor::getVelocity, null);
+        builder.addDoubleProperty("Encoder Angle", ()->this.getCANCoderAngle().getRotations(), null);
     }
 }

@@ -5,6 +5,8 @@ import edu.wpi.first.math.util.Units;
 import team696.frc.robot.Constants.Motors;
 
 public class SwerveConstants {
+		public static final String canBus = "rio";
+
 		public static final double drivekS = (0.667 / 12); 
 		public static final double drivekV = (2.44 / 12);
 		public static final double drivekA = (0.27 / 12);

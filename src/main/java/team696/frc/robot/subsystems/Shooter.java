@@ -6,13 +6,11 @@ package team696.frc.robot.subsystems;
 
 import com.ctre.phoenix6.controls.VelocityVoltage;
 
-import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import team696.frc.lib.TalonFactory;
+import team696.frc.lib.HardwareDevices.TalonFactory;
 import team696.frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
@@ -24,11 +22,6 @@ public class Shooter extends SubsystemBase {
   private VelocityVoltage _VelocityControllerL;
   private VelocityVoltage _VelocityControllerR;
 
-  private BangBangController _BangBangController;
-
-  public double leftSpeed = 500;
-  public double rightSpeed = 500;
-
   /** Creates a new Shooter. */
   private Shooter() {
     _LeftShooter = new TalonFactory(13, Constants.canivoreName, Constants.configs.shooter.left, "Shooter Left Shooter");
@@ -36,8 +29,6 @@ public class Shooter extends SubsystemBase {
 
     _VelocityControllerL = new VelocityVoltage(0);
     _VelocityControllerR = new VelocityVoltage(0);
-
-    _BangBangController = new BangBangController(100);
 
     this.setDefaultCommand(this.SmartIdleShooter());
   }
@@ -50,38 +41,37 @@ public class Shooter extends SubsystemBase {
     return m_Shooter;
   }
 
+  public double getLeftVelocity() {
+    return _LeftShooter.getVelocity() * 60;
+  }
+
+  public double getRightVelocity() {
+    return _RightShooter.getVelocity() * 60;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
 
-  public boolean upToSpeed(double top, double bottom, double tolerance) {
-      if (_LeftShooter.getVelocity() * 60 < top - tolerance || _LeftShooter.getVelocity() * 60 > top + tolerance) return false;
-      if (_RightShooter.getVelocity() * 60 < bottom - tolerance || _RightShooter.getVelocity() * 60 > top + tolerance) return false;
+  public boolean upToSpeed(double speed_L, double speed_R, double tolerance) {
+      if (getLeftVelocity() < speed_L - tolerance || getLeftVelocity() > speed_L + tolerance) return false;
+      if (getRightVelocity() < speed_R - tolerance || getRightVelocity() > speed_R + tolerance) return false;
 
       return true;
   }
 
   public boolean upToSpeed(Constants.shooter.state desired, double tolerance) {
-      if (_LeftShooter.getVelocity()  * 60 < desired.speed_l - tolerance || _LeftShooter.getVelocity()  * 60 > desired.speed_l + tolerance) return false;
-      if (_RightShooter.getVelocity() * 60 < desired.speed_r - tolerance || _RightShooter.getVelocity() * 60 > desired.speed_r + tolerance) return false;
-
-      return true;
+    return upToSpeed(desired.speed_l, desired.speed_r, tolerance);
   }
 
   public void setShooter(Constants.shooter.state desired) {
-    _LeftShooter.setControl(_VelocityControllerL.withVelocity(desired.speed_l / 60.0));
-    _RightShooter.setControl(_VelocityControllerR.withVelocity(desired.speed_r / 60.0));
+    setShooter(desired.speed_l, desired.speed_r);
   }
 
   public void setShooter(double l, double r) {
     _LeftShooter.setControl(_VelocityControllerL.withVelocity(l/60.0));
     _RightShooter.setControl(_VelocityControllerR.withVelocity(r/60.0));
-  }
-
-  public void setBangShooter(double speed) {
-    _LeftShooter.PercentOutput(_BangBangController.calculate(_LeftShooter.getVelocity() * 60, speed));
-    _RightShooter.PercentOutput(_BangBangController.calculate(_RightShooter.getVelocity() * 60, speed));
   }
 
   public void stop() {
@@ -90,15 +80,12 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setShooterPercent(double l, double r) {
-  _LeftShooter.PercentOutput(l);_RightShooter.PercentOutput(r);
-  }
-
- public Command spinShooter() {
-    return this.runEnd(()->  setShooterPercent(leftSpeed, rightSpeed), this::stop);
+    _LeftShooter.PercentOutput(l);
+    _RightShooter.PercentOutput(r);
   }
 
   public Command spinShooter(double speed) {
-    return this.runEnd(()->  setShooterPercent(speed, speed), this::stop);
+    return this.runEnd(()-> setShooterPercent(speed, speed), this::stop);
   }
 
   public Command SmartIdleShooter() {
@@ -113,7 +100,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command spinShooter(double speedl, double speedr) {
-    return this.runEnd(()->  setShooterPercent(speedl, speedr), this::stop);
+    return this.runEnd(()-> setShooterPercent(speedl, speedr), this::stop);
   }
 
   public Command spinShooterRPM(double speed) {
@@ -122,13 +109,7 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addDoubleProperty("Left Speed", null, (l)->leftSpeed=l);
-    builder.addDoubleProperty("Right Speed", null, (r)->rightSpeed=r);
-
-    SmartDashboard.putNumber("Shooter/Left Speed", leftSpeed);
-    SmartDashboard.putNumber("Shooter/Right Speed", rightSpeed);
-
-    builder.addDoubleProperty("Left Velocity", ()->_LeftShooter.getVelocity() * 60, null);
-    builder.addDoubleProperty("Right Velocity", ()->_RightShooter.getVelocity() * 60, null);
+    builder.addDoubleProperty("Left Velocity", this::getLeftVelocity, null);
+    builder.addDoubleProperty("Right Velocity", this::getRightVelocity, null);
   }
 }

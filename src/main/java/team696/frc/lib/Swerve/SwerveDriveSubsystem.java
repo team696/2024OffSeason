@@ -5,10 +5,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.hardware.Pigeon2;
-
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -27,15 +23,16 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team696.frc.lib.Util;
+import team696.frc.lib.HardwareDevices.PigeonFactory;
 
 public abstract class SwerveDriveSubsystem extends SubsystemBase {
     private final SwerveModulePosition[] _swervePositions = new SwerveModulePosition[4];
     private final SwerveDrivePoseEstimator _poseEstimator;
 
-    private final SwerveModule[] _modules;
+    protected final SwerveModule[] _modules;
     protected final SwerveDriveKinematics _kinematics;
 
-    protected final Pigeon2 _pigeon; 
+    protected final PigeonFactory _pigeon; 
 
     protected Rotation2d yawOffset = new Rotation2d(0);
 
@@ -69,11 +66,10 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
             _swervePositions[i] = _modules[i].getPosition();
         }
 
-        _pigeon = new Pigeon2(0);
-        _pigeon.getConfigurator().apply(SwerveConfigs.pigeon);
-        _pigeon.getYaw().setUpdateFrequency(100);
-        _pigeon.getAngularVelocityZWorld().setUpdateFrequency(100);
-        _pigeon.optimizeBusUtilization();
+        _pigeon = new PigeonFactory(0, SwerveConfigs.pigeon, "Pigeon");
+        _pigeon.get().getYaw().setUpdateFrequency(100);
+        _pigeon.get().getAngularVelocityZWorld().setUpdateFrequency(100);
+        _pigeon.get().optimizeBusUtilization();
 
         _poseEstimator = new SwerveDrivePoseEstimator(_kinematics, getYaw(), _swervePositions, new Pose2d(0,0,new Rotation2d(0)), VecBuilder.fill(0.1, 0.1, 0.01), VecBuilder.fill(0.3, 0.3, 0.6)); 
     
@@ -117,11 +113,11 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     public abstract void onUpdate();
 
     public Rotation2d getYaw() {
-        return Rotation2d.fromDegrees( MathUtil.inputModulus(_pigeon.getYaw().getValueAsDouble(),-180,180)); 
+        return _pigeon.getYaw();
     }
 
     public Rotation2d latencyAdjustedYaw() {
-        return Rotation2d.fromDegrees(BaseStatusSignal.getLatencyCompensatedValue(_pigeon.getYaw(), _pigeon.getAngularVelocityZWorld()));
+        return _pigeon.getLatencyAdjustedYaw();
     }
 
     public void zeroYaw() {
@@ -224,7 +220,7 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
       
         swerveModuleDesiredStatePublisher.set(swerveModuleDesiredStates);
 
-        Logger.recordOutput("Slippage", _kinematics.toChassisSpeeds(getModuleStates()).omegaRadiansPerSecond - _pigeon.getAngularVelocityZWorld().getValueAsDouble() * Math.PI/180);
+        Logger.recordOutput("Slippage", _kinematics.toChassisSpeeds(getModuleStates()).omegaRadiansPerSecond - _pigeon.getAngularVelocity() * Math.PI/180);
 
         onUpdate();
     }

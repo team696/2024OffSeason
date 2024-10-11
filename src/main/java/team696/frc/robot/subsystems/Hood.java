@@ -6,29 +6,26 @@ package team696.frc.robot.subsystems;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import team696.frc.lib.TalonFactory;
+import team696.frc.lib.HardwareDevices.TalonFactory;
 import team696.frc.robot.Constants;
 
 public class Hood extends SubsystemBase {
 
-    private static Hood m_Hood;
+    private static Hood _Hood;
 
     private TalonFactory _LeftAngle;
     private TalonFactory _RightAngle;
 
     private MotionMagicVoltage _AngleRequest;
 
-    private double inputangle;
-
     public static Hood get() {
-        if (m_Hood == null) {
-            m_Hood = new Hood();
+        if (_Hood == null) {
+            _Hood = new Hood();
         }
 
-        return m_Hood;
+        return _Hood;
     }
 
     /** Creates a new Hood. */
@@ -91,13 +88,6 @@ public class Hood extends SubsystemBase {
             );
     }
 
-    public Command positionHood() {
-        return this.runEnd(
-                () -> _LeftAngle.setControl(_AngleRequest.withPosition(inputangle)),
-                () -> _LeftAngle.stop()
-            );
-    }
-
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
@@ -115,8 +105,5 @@ public class Hood extends SubsystemBase {
             () -> _RightAngle.getPosition(),
             null
         );
-
-        builder.addDoubleProperty("Manual Angle", null, a -> inputangle = a);
-        SmartDashboard.putNumber("Hood/Manual Angle", inputangle);
     }
 }
