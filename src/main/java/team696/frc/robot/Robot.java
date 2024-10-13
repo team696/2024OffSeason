@@ -188,7 +188,7 @@ public class Robot extends LoggedRobot {
     private void configureOperatorBinds() {
       Controls.Amp.whileTrue(new Amp(Controls.Rollers)
        .alongWith(new TeleopSwerve(
-        () ->  Swerve.get().distTo(Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation() : Constants.Field.BLUE.Amp.getTranslation()),
+        () ->  0.75,
         ()-> Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getRotation() : Constants.Field.BLUE.Amp.getRotation()
         )).alongWith(LED.get().LerpColor(()->Swerve.get().distTo(Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation()           : Constants.Field.BLUE.Amp.getTranslation())*4)));
       Controls.Shoot.whileTrue(new Shoot());

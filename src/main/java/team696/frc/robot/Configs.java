@@ -42,8 +42,8 @@ public final class Configs {
         hood.left.Slot0.kS = 0.6;
         hood.left.Slot0.kV = 0;
         hood.left.Slot0.kA = 0;
-        hood.left.MotionMagic.MotionMagicCruiseVelocity = 20;
-        hood.left.MotionMagic.MotionMagicAcceleration = 50;
+        hood.left.MotionMagic.MotionMagicCruiseVelocity = 60;
+        hood.left.MotionMagic.MotionMagicAcceleration = 80;
 
         hood.right.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         hood.right.MotorOutput.NeutralMode = hood.left.MotorOutput.NeutralMode;

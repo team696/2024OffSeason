@@ -14,7 +14,7 @@ public class SwerveConstants {
 		public static final double driveGearRatio = (5.36 / 1.0); // L3
 		public static final double angleGearRatio = (150.0/7.0 / 1.0); 
 
-		public static final double massKgs = Units.lbsToKilograms(70);
+		public static final double massKgs = Units.lbsToKilograms(110);
 
 		public static final double wheelX = Units.inchesToMeters(13.0);
 		public static final double wheelY = Units.inchesToMeters(13.0);

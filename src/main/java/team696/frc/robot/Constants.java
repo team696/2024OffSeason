@@ -69,7 +69,7 @@ public final class Constants {
 		public static final double rollerSpeed = 4100;
 		public static final double rollerSpeedA = 3700;
 
-		public static final double globalOffset = -0.05;
+		public static final double globalOffset = 0.15;
 
 		public static final TreeMap<Double, state> distToState = new TreeMap<Double, state>(){{
 			put(1.5, new state(4.30 + globalOffset, 3200, 3200));

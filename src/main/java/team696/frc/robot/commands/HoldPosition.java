@@ -33,7 +33,6 @@ public class HoldPosition extends Command{
         double drivey = y.calculate(Swerve.get().getPose().getY(), desired.getY());
         double driver = r.calculate(Swerve.get().getPose().getRotation().getDegrees(), desired.getRotation().getDegrees());
 
-
         Swerve.get().Drive(new Translation2d(drivex, drivey), driver, true, true);
     }
 }

@@ -6,15 +6,27 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Middlething"
+            "name": "Shoot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "MiddleThingCloseCont"
+            "pathName": "Rightrun"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SourceContinuation"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SourceEnd"
           }
         }
       ]

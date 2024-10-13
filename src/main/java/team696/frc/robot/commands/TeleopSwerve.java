@@ -86,8 +86,10 @@ public class TeleopSwerve extends Command {
             rAxis = (Math.abs(rAxis) > rotationDeadband) ? Util.map(rAxis * rAxis, rotationDeadband, 1, 0, 1) * Math.signum(rAxis) : 0;
         }
 
+        double outputPercent = Math.min(multiplier.getAsDouble(),1);
+
         double rotation = rAxis * SwerveConstants.maxAngularVelocity;
-        Translation2d translation = new Translation2d(Math.pow(magnitude, 2), theta).times(SwerveConstants.maxSpeed).times(multiplier.getAsDouble());
+        Translation2d translation = new Translation2d(Math.pow(magnitude, 2), theta).times(SwerveConstants.maxSpeed).times(outputPercent);
 
         Swerve.get().Drive(translation, rotation, fieldRelative, openLoop);
     }
