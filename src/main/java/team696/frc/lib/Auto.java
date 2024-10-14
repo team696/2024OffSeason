@@ -110,6 +110,10 @@ public class Auto {
         return m_instance.autoChooser.getSelected();
     }
 
+    public static Command SelectedEndAt15() {
+        return Selected().raceWith(new WaitCommand(15.0));
+    }
+
     public static Command PathFind(Pose2d end) {
         return AutoBuilder.pathfindToPose(end, new PathConstraints(1, 1, Math.PI,Math.PI));
     }

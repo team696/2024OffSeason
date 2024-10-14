@@ -15,7 +15,7 @@ public final class Constants {
 
 	public static final double epsilon = 0.0000001; // just a really small number
 
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 
 	public static final String canivoreName = "vore";
 

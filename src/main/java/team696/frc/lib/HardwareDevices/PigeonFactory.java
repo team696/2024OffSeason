@@ -21,6 +21,9 @@ public class PigeonFactory implements GyroInterface {
     private boolean _configured = false;
     private double _lastConfiguration = -100;
 
+    public StatusSignal<Double> _yawSignal;
+    public StatusSignal<Double> _yawVelocitySignal;
+
     public PigeonFactory(int id, String canBus, Pigeon2Configuration config, String name) {
         this._gyro = new Pigeon2(id, canBus);
         this._name = name;
@@ -43,7 +46,10 @@ public class PigeonFactory implements GyroInterface {
         _lastConfiguration = Timer.getFPGATimestamp();
         StatusCode configCode = _gyro.getConfigurator().apply(this._config, TIMEOUT);
 
-        if(configCode.isError()) {
+        _yawSignal = _gyro.getYaw();
+        _yawVelocitySignal = _gyro.getAngularVelocityZWorld();
+
+        if(configCode.isError() || _yawSignal.getStatus().isError() || _yawVelocitySignal.getStatus().isError()) {
             PLog.unusual(_name, "Failed to configure");
         } else {
             PLog.info(_name, "Configured");
@@ -54,17 +60,29 @@ public class PigeonFactory implements GyroInterface {
             _configured = true;
         }
 
+        // Actually Used In Swerve
+        _yawSignal.setUpdateFrequency(100);
+        _yawVelocitySignal.setUpdateFrequency(100);
+
+        // Useful Other Commands That May Be Used In The Future
+        _gyro.getPitch().setUpdateFrequency(100);
+        _gyro.getRoll().setUpdateFrequency(100);
+
+        _gyro.optimizeBusUtilization();
+
         return _configured;
     }
 
-    private double getRawYaw() {
+    private double getRawYaw(boolean refresh) {
         if (configure()) {
-            StatusSignal<Double> positionCode = _gyro.getYaw();
-            if(!positionCode.getStatus().isOK()) {
-                _configured = false;
-                return 0;
+            if (refresh) {
+                StatusSignal<Double> code = _yawSignal.refresh();
+                if(!code.getStatus().isOK()) {
+                    _configured = false;
+                    return 0;
+                }
             }
-            return MathUtil.inputModulus(positionCode.getValueAsDouble(),-180,180);
+            return MathUtil.inputModulus(_yawSignal.getValueAsDouble(),-180,180);
         } else 
             return 0;
     }
@@ -74,7 +92,7 @@ public class PigeonFactory implements GyroInterface {
      */
     @Override 
     public Rotation2d getYaw() {
-        return Rotation2d.fromDegrees(getRawYaw());
+        return Rotation2d.fromDegrees(getRawYaw(false));
     }
 
     @Override 
@@ -82,17 +100,23 @@ public class PigeonFactory implements GyroInterface {
         _gyro.reset();
     }
 
-    @Override 
-    public double getAngularVelocity() {
+    public double getAngularVelocity(boolean refresh) {
         if (configure()) {
-            StatusSignal<Double> positionCode = _gyro.getAngularVelocityZWorld();
-            if(!positionCode.getStatus().isOK()) {
-                _configured = false;
-                return 0;
+            if (refresh) {
+                StatusSignal<Double> code = _yawVelocitySignal.refresh();
+                if(!code.getStatus().isOK()) {
+                    _configured = false;
+                    return 0;
+                }
             }
-            return positionCode.getValueAsDouble();
+            return _yawVelocitySignal.getValueAsDouble();
         } else 
             return 0;
+    }
+
+    @Override
+    public double getAngularVelocity() {
+        return getAngularVelocity(false);
     }
 
     public Pigeon2 get() {
@@ -100,6 +124,6 @@ public class PigeonFactory implements GyroInterface {
     }
 
     public Rotation2d getLatencyAdjustedYaw() {
-        return Rotation2d.fromDegrees(MathUtil.inputModulus(BaseStatusSignal.getLatencyCompensatedValue(_gyro.getYaw(), _gyro.getAngularVelocityZWorld()),-180,180));
+        return Rotation2d.fromDegrees(MathUtil.inputModulus(BaseStatusSignal.getLatencyCompensatedValue(_yawSignal, _yawVelocitySignal),-180,180));
     }
 }

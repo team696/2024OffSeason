@@ -5,6 +5,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -19,8 +21,8 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import team696.frc.lib.Util;
 import team696.frc.lib.HardwareDevices.PigeonFactory;
@@ -54,10 +56,10 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
         this._stateLock = new ReentrantReadWriteLock();
         this._cachedState = new SwerveDriveState();
 
-		SwerveModule frontLeft = new SwerveModule(0, SwerveConfigs.Mod0);
-		SwerveModule frontRight = new SwerveModule(1,SwerveConfigs.Mod1);
-		SwerveModule backLeft = new SwerveModule(2,  SwerveConfigs.Mod2);
-		SwerveModule backRight = new SwerveModule(3, SwerveConfigs.Mod3);
+		SwerveModule frontLeft = new SwerveModule(SwerveConfigs.Mod0);
+		SwerveModule frontRight = new SwerveModule(SwerveConfigs.Mod1);
+		SwerveModule backLeft = new SwerveModule(SwerveConfigs.Mod2);
+		SwerveModule backRight = new SwerveModule(SwerveConfigs.Mod3);
 		_modules = new SwerveModule[]{ frontLeft, frontRight, backLeft, backRight };
 
         _kinematics = new SwerveDriveKinematics(SwerveConstants.modPositions);
@@ -67,9 +69,6 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
         }
 
         _pigeon = new PigeonFactory(0, SwerveConfigs.pigeon, "Pigeon");
-        _pigeon.get().getYaw().setUpdateFrequency(100);
-        _pigeon.get().getAngularVelocityZWorld().setUpdateFrequency(100);
-        _pigeon.get().optimizeBusUtilization();
 
         _poseEstimator = new SwerveDrivePoseEstimator(_kinematics, getYaw(), _swervePositions, new Pose2d(0,0,new Rotation2d(0)), VecBuilder.fill(0.1, 0.1, 0.01), VecBuilder.fill(0.3, 0.3, 0.6)); 
     
@@ -238,6 +237,8 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     class odometryThread extends Thread {
         private SwerveDriveSubsystem this0;
 
+        private BaseStatusSignal[] _allSignals;
+
         odometryThread(SwerveDriveSubsystem this0) {
             this.this0 = this0;
 
@@ -246,8 +247,22 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
         }
 
         public void run() {
+            _allSignals = new BaseStatusSignal[this0._modules.length * SwerveModule.SIGNAL_COUNT + 2];
+            for (SwerveModule mod : this0._modules) {
+
+                BaseStatusSignal[] signals = mod.getSignals();
+
+                for(int i = 0; i < SwerveModule.SIGNAL_COUNT; i++) {
+                    _allSignals[mod.moduleNumber * SwerveModule.SIGNAL_COUNT + i] = signals[i];
+                }
+            }
+            _allSignals[_allSignals.length - 2] = this0._pigeon._yawSignal;
+            _allSignals[_allSignals.length - 1] = this0._pigeon._yawVelocitySignal;
+
             while (true) {
                 try {
+                    BaseStatusSignal.refreshAll(_allSignals);
+
                     this.this0._stateLock.writeLock().lock();
 
                     for (int i = 0; i < 4; ++i) {
