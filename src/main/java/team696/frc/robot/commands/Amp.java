@@ -16,7 +16,7 @@ public class Amp extends Command {
 
   BooleanSupplier shoot_button;
 
-  Constants.shooter.state desired = new Constants.shooter.state(12.25, 825, 825);
+  Constants.shooter.state desired = new Constants.shooter.state(12.25, 875, 850);
 
   public Amp(BooleanSupplier sbutton) {
     shoot_button = sbutton;

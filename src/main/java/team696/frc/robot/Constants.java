@@ -31,7 +31,7 @@ public final class Constants {
         public static final class BLUE {
             public static final Translation2d Speaker = new Translation2d(-0.04, 5.54);
             public static final Pose2d Amp = new Pose2d(1.7, 7.8, new Rotation2d(Math.PI/2));
-            public static final Pose2d Source = new Pose2d(15.15, 1.5, Rotation2d.fromDegrees(135)); 
+            public static final Pose2d Source = new Pose2d(15.15, 1.5, Rotation2d.fromDegrees(-45)); 
 			public static final Translation2d Corner = new Translation2d(2., 7.);
 
         }
@@ -69,12 +69,12 @@ public final class Constants {
 		public static final double rollerSpeed = 4100;
 		public static final double rollerSpeedA = 3700;
 
-		public static final double globalOffset = 0.15;
+		public static final double globalOffset = 0.25;
 
 		public static final TreeMap<Double, state> distToState = new TreeMap<Double, state>(){{
-			put(1.5, new state(4.30 + globalOffset, 3200, 3200));
-			put(2.0, new state(3.30 + globalOffset, 3200, 3200));
-			put(2.5, new state(2.40 + globalOffset, 3200, 3200));
+			put(1.5, new state(4.30 + globalOffset, 3600, 3300));
+			put(2.0, new state(3.30 + globalOffset, 3600, 3300));
+			put(2.5, new state(2.40 + globalOffset, 3600, 3300));
 			put(3.0, new state(1.60 + globalOffset, rollerSpeed, rollerSpeedA));
 			put(3.5, new state(1.30 + globalOffset, rollerSpeed, rollerSpeedA));
 			put(4.0, new state(0.90 + globalOffset, rollerSpeed, rollerSpeedA));

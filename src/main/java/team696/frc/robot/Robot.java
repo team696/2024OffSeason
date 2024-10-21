@@ -104,6 +104,7 @@ public class Robot extends LoggedRobot {
           new NamedCommand("ShootFree", ((new Shoot()).asProxy())),
           new NamedCommand("Shoot", (new Shoot()).asProxy().deadlineWith(new Rotate())),
           new NamedCommand("Intake", (new GroundIntake().raceWith(Shooter.get().SmartIdleShooter())).asProxy()),
+          new NamedCommand("ShootIntakeShootFree", ((((new Shoot()).andThen(new GroundIntake(false).raceWith(Shooter.get().SmartIdleShooter()))).andThen(new Shoot())).asProxy())),
           new NamedCommand("Drop", (new ManualShot(new Constants.shooter.state(0, 2500, 2500))).asProxy()),
           new NamedCommand("Subwoofer", (new ManualShot(new Constants.shooter.state(4.7, 3800, 3900)))),
           new NamedCommand("NotePickup", new AutoDriveTowardsNote(false)),
@@ -135,7 +136,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = Auto.Selected();
+    m_autonomousCommand = Auto.SelectedEndAt15();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
