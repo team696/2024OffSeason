@@ -4,6 +4,8 @@
 
 package team696.frc.lib.Swerve;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -54,8 +56,10 @@ public class SwerveDriveState {
     }
 
     public void publish() {
-        posePublisher.set(this.pose);
-        speedsPublisher.set(this.robotRelativeSpeeds);
+        //posePublisher.set(this.pose);
+        Logger.recordOutput("Pose", this.pose);
+        //speedsPublisher.set(this.robotRelativeSpeeds);
+        Logger.recordOutput("Speeds", this.robotRelativeSpeeds);
         updatePublisher.set(this.timeSinceLastUpdate);
     }
 }

@@ -34,7 +34,7 @@ public final class Configs {
 
         intake.serializer = new TalonFXConfiguration();
 
-        hood.left.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        hood.left.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         hood.left.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         hood.left.CurrentLimits.StatorCurrentLimitEnable = true;
         hood.left.CurrentLimits.StatorCurrentLimit = 80;
@@ -45,7 +45,7 @@ public final class Configs {
         hood.left.MotionMagic.MotionMagicCruiseVelocity = 60;
         hood.left.MotionMagic.MotionMagicAcceleration = 80;
 
-        hood.right.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        hood.right.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         hood.right.MotorOutput.NeutralMode = hood.left.MotorOutput.NeutralMode;
         hood.right.Slot0.kP = hood.left.Slot0.kP;
         hood.right.CurrentLimits.StatorCurrentLimitEnable = true;

@@ -55,7 +55,9 @@ public class Shoot extends Command {
         && Math.abs(Swerve.get().getRobotRelativeSpeeds().vxMetersPerSecond) < 1.1
         && Math.abs(Swerve.get().getRobotRelativeSpeeds().vyMetersPerSecond) < 3.5) {
           if (!feed) {
-            Logger.recordOutput("Shoot Parameters", Swerve.get().getPose() );
+            Logger.recordOutput("Shoot Parameters: Pose", Swerve.get().getPose() );
+            Logger.recordOutput("Shoot Parameters: Speeds", Swerve.get().getRobotRelativeSpeeds() );
+
             //new Constants.shooter.state(Hood.get().getPosition(), Shooter.get().getLeftVelocity(), Shooter.get().getRightVelocity() )
             // desiredState
             // Swerve.get().getRobotRelativeSpeeds()
