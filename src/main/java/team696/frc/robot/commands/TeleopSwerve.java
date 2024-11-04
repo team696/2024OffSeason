@@ -78,9 +78,9 @@ public class TeleopSwerve extends Command {
         Rotation2d theta = new Rotation2d(yAxis, xAxis);
         double magnitude = Math.min(Math.sqrt((xAxis * xAxis) + (yAxis * yAxis)), 1);
         if (magnitude < deadband) magnitude = 0;
-
-        if (lockRotation != null && lockRotation.getAsBoolean() && goalRotation.get() != null) { // Rotation Lock To Angle TODO: REWORK THIS PID
-            double pid = pidController.calculate(Swerve.get().getPose().getRotation().getDegrees(), goalRotation.get().getDegrees());
+        Rotation2d goalRotationval = goalRotation.get();
+        if (lockRotation != null && lockRotation.getAsBoolean() && goalRotationval != null) { // Rotation Lock To Angle TODO: REWORK THIS PID
+            double pid = pidController.calculate(Swerve.get().getPose().getRotation().getDegrees(), goalRotationval.getDegrees());
             rAxis = Math.abs(pidController.getPositionError()) > 1 ? Math.abs(Math.pow(pid, 2)) * 1.1 * Math.signum(pid) + pid * 2.2 : 0;
         } else {
             rAxis = (Math.abs(rAxis) > rotationDeadband) ? Util.map(rAxis * rAxis, rotationDeadband, 1, 0, 1) * Math.signum(rAxis) : 0;

@@ -30,8 +30,8 @@ public class Amp extends Command {
   @Override
   public void execute() {
     Shooter.get().setShooter(desired);
-    Hood.get().setHood(desired);
     if (shoot_button.getAsBoolean() ) {
+      Hood.get().setHood(desired.angle);
       if (Hood.get().getPosition() > desired.angle - 4.90) {
         Serializer.get().setSpeed(1.);
       } else {
@@ -39,6 +39,8 @@ public class Amp extends Command {
       }
     } else {
       Serializer.get().setSpeed(0);
+
+      Hood.get().setHood(desired.angle - 1.75);
     }
 
    /*  if (Serializer.get().BackBeam() && Serializer.get().FrontBeam()) {

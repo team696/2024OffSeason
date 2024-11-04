@@ -111,5 +111,8 @@ public class Shooter extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
     builder.addDoubleProperty("Left Velocity", this::getLeftVelocity, null);
     builder.addDoubleProperty("Right Velocity", this::getRightVelocity, null);
+
+    builder.addDoubleProperty("Left Desired Velocity", ()->_VelocityControllerL.Velocity * 60, null);
+    builder.addDoubleProperty("Right Desired Velocity", ()->_VelocityControllerR.Velocity * 60, null);
   }
 }

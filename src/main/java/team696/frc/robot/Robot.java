@@ -136,7 +136,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = Auto.SelectedEndAt15();
+    m_autonomousCommand = Auto.Selected();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

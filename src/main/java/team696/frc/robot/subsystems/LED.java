@@ -86,7 +86,7 @@ public class LED extends SubsystemBase {
   public Command HasNote(){
     return this.run(()->{
       if(!Serializer.get().BackBeam()){
-        setAnimation(new SingleFadeAnimation(0, 255, 0));
+        setColor(0, 255, 0);
       }else{
         if(RobotController.getRSLState()) { setColor(255,20,0); } else { setColor(0,0,0);}
       }

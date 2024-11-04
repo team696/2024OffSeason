@@ -38,12 +38,12 @@ public final class Configs {
         hood.left.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         hood.left.CurrentLimits.StatorCurrentLimitEnable = true;
         hood.left.CurrentLimits.StatorCurrentLimit = 80;
-        hood.left.Slot0.kP = 7.; 
+        hood.left.Slot0.kP = 6.; 
         hood.left.Slot0.kS = 0.6;
         hood.left.Slot0.kV = 0;
         hood.left.Slot0.kA = 0;
-        hood.left.MotionMagic.MotionMagicCruiseVelocity = 60;
-        hood.left.MotionMagic.MotionMagicAcceleration = 80;
+        hood.left.MotionMagic.MotionMagicCruiseVelocity = 80;
+        hood.left.MotionMagic.MotionMagicAcceleration = 100;
 
         hood.right.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         hood.right.MotorOutput.NeutralMode = hood.left.MotorOutput.NeutralMode;
@@ -59,7 +59,7 @@ public final class Configs {
 
         shooter.left.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         shooter.left.Slot0.kP = 0.35;
-        shooter.left.Slot0.kV = 0.14;
+        shooter.left.Slot0.kV = 0.13;
         shooter.left.Slot0.kS = 0.14;
         shooter.left.CurrentLimits.StatorCurrentLimitEnable = true;
         shooter.left.CurrentLimits.StatorCurrentLimit = 80;
