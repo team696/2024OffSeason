@@ -282,7 +282,7 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
                 } finally {
                     this.this0._stateLock.writeLock().unlock();
                 }
-                Timer.delay(1.0 / 100.0);
+               // Timer.delay(1.0 / 100.0);
             }
         }
     }
