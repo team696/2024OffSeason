@@ -7,7 +7,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
-import team696.frc.lib.PLog;
+import team696.frc.lib.Logging.PLog;
 
 public class CANCoderFactory {
     private final double TIMEOUT = 0.05;

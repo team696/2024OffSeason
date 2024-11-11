@@ -11,7 +11,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.net.PortForwarder;
-import team696.frc.lib.PLog;
+import team696.frc.lib.Logging.PLog;
 
 public class PhotonVisionCam extends BaseCam {
 

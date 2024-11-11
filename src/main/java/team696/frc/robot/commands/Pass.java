@@ -34,7 +34,7 @@ public class Pass extends Command {
   @Override
   public void execute() {
     double dist = Swerve.get().getDistToCorner();
-    Constants.shooter.state desiredState = Constants.shooter.adjustedPassState(dist);
+    Shooter.state desiredState = Constants.shooter.ShooterTable.getValue(dist);
 
     Shooter.get().setShooter(desiredState);
     Hood.get().setHood(desiredState);

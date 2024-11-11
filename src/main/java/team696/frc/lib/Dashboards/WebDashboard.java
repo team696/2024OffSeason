@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import team696.frc.lib.PLog;
+import team696.frc.lib.Logging.PLog;
 
 public class WebDashboard extends WebSocketServer {
 

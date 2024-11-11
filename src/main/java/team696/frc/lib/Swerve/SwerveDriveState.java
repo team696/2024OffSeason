@@ -10,7 +10,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructPublisher;
 
 /** Add your docs here. */
 public class SwerveDriveState {
@@ -19,10 +18,7 @@ public class SwerveDriveState {
     public double timeStamp;
     public double timeSinceLastUpdate;
 
-    private final static StructPublisher<Pose2d> posePublisher = NetworkTableInstance.getDefault().getStructTopic("696/RobotState/Pose", Pose2d.struct).publish();
-    private final static StructPublisher<ChassisSpeeds> speedsPublisher = NetworkTableInstance.getDefault().getStructTopic("696/RobotState/Speeds", ChassisSpeeds.struct).publish();
     private final static DoublePublisher updatePublisher = NetworkTableInstance.getDefault().getDoubleTopic("696/RobotState/loopTime").publish();
-
 
     public SwerveDriveState(Pose2d pose, ChassisSpeeds speeds, double time) {
         update(pose, speeds, time);
@@ -56,9 +52,7 @@ public class SwerveDriveState {
     }
 
     public void publish() {
-        //posePublisher.set(this.pose);
         Logger.recordOutput("Pose", this.pose);
-        //speedsPublisher.set(this.robotRelativeSpeeds);
         Logger.recordOutput("Speeds", this.robotRelativeSpeeds);
         updatePublisher.set(this.timeSinceLastUpdate);
     }

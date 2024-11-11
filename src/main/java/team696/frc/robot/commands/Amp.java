@@ -7,7 +7,6 @@ package team696.frc.robot.commands;
 import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import team696.frc.robot.Constants;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Serializer;
 import team696.frc.robot.subsystems.Shooter;
@@ -16,7 +15,7 @@ public class Amp extends Command {
 
   BooleanSupplier shoot_button;
 
-  Constants.shooter.state desired = new Constants.shooter.state(12.25, 875, 850);
+  Shooter.state desired = new Shooter.state(12.25, 875, 850);
 
   public Amp(BooleanSupplier sbutton) {
     shoot_button = sbutton;

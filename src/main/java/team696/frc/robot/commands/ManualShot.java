@@ -5,7 +5,6 @@
 package team696.frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import team696.frc.robot.Constants;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Serializer;
 import team696.frc.robot.subsystems.Shooter;
@@ -13,11 +12,11 @@ import team696.frc.robot.subsystems.Shooter;
 public class ManualShot extends Command {
 
   boolean feed;
-  Constants.shooter.state desiredState;
+  Shooter.state desiredState;
 
   double extraadded = 0;
 
-  public ManualShot(Constants.shooter.state d) {
+  public ManualShot(Shooter.state d) {
     desiredState = d;
     
 
@@ -32,7 +31,7 @@ public class ManualShot extends Command {
   @Override
   public void execute() {
     extraadded = 0;
-    Constants.shooter.state adesiredState = new Constants.shooter.state(desiredState.angle + extraadded, desiredState.speed_l, desiredState.speed_r);
+    Shooter.state adesiredState = new Shooter.state(desiredState.angle + extraadded, desiredState.speed_l, desiredState.speed_r);
     Shooter.get().setShooter(adesiredState);
     Hood.get().setHood(adesiredState);
 

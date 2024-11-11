@@ -1,4 +1,4 @@
-package team696.frc.robot.commands;
+package team696.frc.lib.Swerve.Commands;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -10,7 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import team696.frc.lib.Util;
 import team696.frc.lib.Swerve.SwerveConstants;
-import team696.frc.robot.subsystems.Swerve;
+import team696.frc.lib.Swerve.SwerveDriveSubsystem;
 
 public class TeleopSwerve extends Command {
     protected static DoubleSupplier translation = ()->0;
@@ -18,6 +18,7 @@ public class TeleopSwerve extends Command {
     protected static DoubleSupplier rotation = ()->0;
     protected static double deadband = 1; // deadband for controller -> defaulted to 1 so you must config swerve
     protected static double rotationDeadband = 1;
+    protected static SwerveDriveSubsystem swerveSubsystem = null;
     private static PIDController pidController = new PIDController(0.0056, 0.00, 0); 
     static {
         pidController.enableContinuousInput(-180, 180);
@@ -27,10 +28,10 @@ public class TeleopSwerve extends Command {
 
     private boolean fieldRelative; // should do fieldRelative controol
     private boolean openLoop; // should do openLoop control
-    private Supplier<Rotation2d> goalRotation; // Rotation to lock to once lockRotation has been activated
+    private Supplier<Rotation2d> rotationGoal; // Rotation to lock to once lockRotation has been activated
     private DoubleSupplier multiplier = ()->1; // Multiplier to outputted Speed
 
-    public static void config(DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, BooleanSupplier rotationLock, double deadBand) {
+    public static void config(SwerveDriveSubsystem s, DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, BooleanSupplier rotationLock, double deadBand) {
         strafe = x;
         translation = y;
         rotation = r;
@@ -39,34 +40,47 @@ public class TeleopSwerve extends Command {
 
         deadband = deadBand;
         rotationDeadband = Math.sqrt(2 * Math.pow(deadband, 2));
+        swerveSubsystem = s;
+    }
+
+    public static TeleopSwerve New(){
+        return new TeleopSwerve();
     }
     
-    public TeleopSwerve(DoubleSupplier multiplier, Supplier<Rotation2d> goal, boolean fieldRelative, boolean openLoop) {
-        this.fieldRelative = fieldRelative;
-        this.openLoop = openLoop;
+    private TeleopSwerve() {
+        this.fieldRelative = true;
+        this.openLoop = true;
 
-        this.goalRotation = goal;
+        this.rotationGoal = ()->null;
 
+        this.multiplier = ()->1;
+
+        addRequirements(swerveSubsystem);
+    }
+
+    public TeleopSwerve withMultiplier(DoubleSupplier multiplier) {
         this.multiplier = multiplier;
-
-        addRequirements(Swerve.get());
+        return this;
     }
 
-    public TeleopSwerve(DoubleSupplier multiplier, Supplier<Rotation2d> goal) {
-        this(multiplier, goal, true, true);
+    public TeleopSwerve withMultiplier(double multiplier) {
+        this.multiplier = ()->multiplier;
+        return this;
     }
 
-
-    public TeleopSwerve(DoubleSupplier multiplier) {
-        this(multiplier, null, true, true);
+    public TeleopSwerve withRotationGoal(Supplier<Rotation2d> goal) {
+        this.rotationGoal = goal;
+        return this;
     }
 
-    public TeleopSwerve(Supplier<Rotation2d> goal) {
-        this(()->1, goal, true, true);
+    public TeleopSwerve withfieldRelative(boolean fieldRelative) {
+        this.fieldRelative = fieldRelative;
+        return this;
     }
 
-    public TeleopSwerve() {
-        this(()->1, null, true, true);
+    public TeleopSwerve withOpenLoop(boolean openLoop) {
+        this.openLoop = openLoop;
+        return this;
     }
 
     @Override
@@ -78,9 +92,9 @@ public class TeleopSwerve extends Command {
         Rotation2d theta = new Rotation2d(yAxis, xAxis);
         double magnitude = Math.min(Math.sqrt((xAxis * xAxis) + (yAxis * yAxis)), 1);
         if (magnitude < deadband) magnitude = 0;
-        Rotation2d goalRotationval = goalRotation.get();
-        if (lockRotation != null && lockRotation.getAsBoolean() && goalRotationval != null) { // Rotation Lock To Angle TODO: REWORK THIS PID
-            double pid = pidController.calculate(Swerve.get().getPose().getRotation().getDegrees(), goalRotationval.getDegrees());
+        Rotation2d goalRotation = rotationGoal.get();
+        if (lockRotation != null && lockRotation.getAsBoolean() && goalRotation != null) { // Rotation Lock To Angle TODO: REWORK THIS PID
+            double pid = pidController.calculate(swerveSubsystem.getPose().getRotation().getDegrees(), goalRotation.getDegrees());
             rAxis = Math.abs(pidController.getPositionError()) > 1 ? Math.abs(Math.pow(pid, 2)) * 1.1 * Math.signum(pid) + pid * 2.2 : 0;
         } else {
             rAxis = (Math.abs(rAxis) > rotationDeadband) ? Util.map(rAxis * rAxis, rotationDeadband, 1, 0, 1) * Math.signum(rAxis) : 0;
@@ -91,6 +105,6 @@ public class TeleopSwerve extends Command {
         double rotation = rAxis * SwerveConstants.maxAngularVelocity;
         Translation2d translation = new Translation2d(Math.pow(magnitude, 2), theta).times(SwerveConstants.maxSpeed).times(outputPercent);
 
-        Swerve.get().Drive(translation, rotation, fieldRelative, openLoop);
+        swerveSubsystem.Drive(translation, rotation, fieldRelative, openLoop);
     }
 }

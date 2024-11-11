@@ -9,7 +9,7 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
-import team696.frc.lib.PLog;
+import team696.frc.lib.Logging.PLog;
 
 public class PigeonFactory implements GyroInterface {
 

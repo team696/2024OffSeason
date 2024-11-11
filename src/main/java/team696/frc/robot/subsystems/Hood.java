@@ -57,7 +57,7 @@ public class Hood extends SubsystemBase {
         return _LeftAngle.getPosition();
     }
 
-    public void setHood(Constants.shooter.state desired) { 
+    public void setHood(Shooter.state desired) { 
         setHood(desired.angle);
     }
 
@@ -72,7 +72,7 @@ public class Hood extends SubsystemBase {
         _LeftAngle.stop();
     }
 
-    public boolean atAngle(Constants.shooter.state desired, double tolerance) {
+    public boolean atAngle(Shooter.state desired, double tolerance) {
         if (
             desired.angle < getPosition() - tolerance ||
             desired.angle > getPosition() + tolerance

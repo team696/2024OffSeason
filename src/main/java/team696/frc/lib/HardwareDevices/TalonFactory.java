@@ -10,7 +10,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.Timer;
-import team696.frc.lib.PLog;
+import team696.frc.lib.Logging.PLog;
 
 public class TalonFactory { 
     private final double TIMEOUT = 0.05;

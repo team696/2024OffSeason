@@ -2,7 +2,6 @@ package team696.frc.lib.Swerve;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import team696.frc.robot.Constants.Motors;
 
 public class SwerveConstants {
 		public static final String canBus = "rio";
@@ -21,8 +20,8 @@ public class SwerveConstants {
 		public static final double wheelDiameter = Units.inchesToMeters(3.94);
 		public static final double wheelCircumference = wheelDiameter * Math.PI;
 
-		public static final double theoreticalMaxSpeed = Motors.Kraken.freeSpinRPM / 60 / driveGearRatio * wheelCircumference; // 5.13 mps way more resonable
-		public static final double theoreticalMaxAcceleration = (4 * Motors.Kraken.stallTorqueNm * driveGearRatio) / (massKgs * wheelDiameter / 2);  // 66 mps^2 wtf
+		public static final double theoreticalMaxSpeed = 6000 / 60 / driveGearRatio * wheelCircumference; // 5.13 mps way more resonable
+		public static final double theoreticalMaxAcceleration = (4 * 7.09 * driveGearRatio) / (massKgs * wheelDiameter / 2);  // 66 mps^2 wtf
 		public static final double maxSpeed = theoreticalMaxSpeed * 0.9; //MPS
 		public static final double maxAngularVelocity = 8; //MPS^2
 

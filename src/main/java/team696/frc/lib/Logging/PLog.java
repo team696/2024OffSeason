@@ -1,4 +1,4 @@
-package team696.frc.lib;
+package team696.frc.lib.Logging;
 
 import edu.wpi.first.wpilibj.DriverStation;
 

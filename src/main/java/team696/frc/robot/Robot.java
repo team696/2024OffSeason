@@ -6,10 +6,10 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,21 +17,21 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import team696.frc.lib.Auto;
-import team696.frc.lib.Util;
 import team696.frc.lib.Auto.NamedCommand;
+import team696.frc.lib.Util;
 import team696.frc.lib.Dashboards.ShuffleDashboard;
 import team696.frc.lib.Dashboards.WebDashboard;
+import team696.frc.lib.Swerve.Commands.TeleopSwerve;
 import team696.frc.robot.commands.Amp;
 import team696.frc.robot.commands.AutoDriveTowardsNote;
 import team696.frc.robot.commands.Drop;
-import team696.frc.robot.commands.Shoot;
-import team696.frc.robot.commands.ShooterIntake;
-import team696.frc.robot.commands.TeleopSwerve;
 import team696.frc.robot.commands.GroundIntake;
 import team696.frc.robot.commands.HoldPosition;
 import team696.frc.robot.commands.ManualShot;
 import team696.frc.robot.commands.Pass;
 import team696.frc.robot.commands.Rotate;
+import team696.frc.robot.commands.Shoot;
+import team696.frc.robot.commands.ShooterIntake;
 import team696.frc.robot.subsystems.Hood;
 import team696.frc.robot.subsystems.Intake;
 import team696.frc.robot.subsystems.LED;
@@ -105,8 +105,8 @@ public class Robot extends LoggedRobot {
           new NamedCommand("Shoot", (new Shoot()).asProxy().deadlineWith(new Rotate())),
           new NamedCommand("Intake", (new GroundIntake().raceWith(Shooter.get().SmartIdleShooter())).asProxy()),
           new NamedCommand("ShootIntakeShootFree", ((((new Shoot()).andThen(new GroundIntake(false).raceWith(Shooter.get().SmartIdleShooter()))).andThen(new Shoot())).asProxy())),
-          new NamedCommand("Drop", (new ManualShot(new Constants.shooter.state(0, 2500, 2500))).asProxy()),
-          new NamedCommand("Subwoofer", (new ManualShot(new Constants.shooter.state(4.7, 3800, 3900)))),
+          new NamedCommand("Drop", (new ManualShot(new Shooter.state(0, 2500, 2500))).asProxy()),
+          new NamedCommand("Subwoofer", (new ManualShot(new Shooter.state(4.7, 3800, 3900)))),
           new NamedCommand("NotePickup", new AutoDriveTowardsNote(false)),
           new NamedCommand("Rotate", new Rotate())
         );
@@ -179,40 +179,39 @@ public class Robot extends LoggedRobot {
 
   @SuppressWarnings("unused") 
     private void configureBinds() {
-      TeleopSwerve.config(Controls.leftJoyX, Controls.leftJoyY, Controls.rightJoyX, Controls.rightJoyB, Constants.deadBand);
-      Swerve.get().setDefaultCommand(new TeleopSwerve(()->Swerve.get().getAngleToSpeaker()));
-      Controls.leftJoyB.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
-      Controls.Left.onTrue(Commands.run(()->Swerve.get().updateYawOffset()));
+      TeleopSwerve.config(Swerve.get(), Controls.DriverStation.leftJoyX, Controls.DriverStation.leftJoyY, Controls.DriverStation.rightJoyX, Controls.DriverStation.rightJoyB, Constants.deadBand);
+      Swerve.get().setDefaultCommand(TeleopSwerve.New().withRotationGoal(()->Swerve.get().getAngleToSpeaker()));
+      Controls.DriverStation.leftJoyB.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
+      Controls.DriverStation.Left.onTrue(Commands.run(()->Swerve.get().updateYawOffset()));
     }
 
     @SuppressWarnings("unused") 
     private void configureOperatorBinds() {
-      Controls.Amp.whileTrue(new Amp(Controls.Rollers)
-       .alongWith(new TeleopSwerve(
-        () ->  0.75,
-        ()-> Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getRotation() : Constants.Field.BLUE.Amp.getRotation()
-        )).alongWith(LED.get().LerpColor(()->Swerve.get().distTo(Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation()           : Constants.Field.BLUE.Amp.getTranslation())*4)));
-      Controls.Shoot.whileTrue(new Shoot());
-      Controls.Drop.whileTrue(new Drop());
+      Controls.DriverStation.Amp.whileTrue(new Amp(Controls.DriverStation.Rollers)
+       .alongWith(
+       TeleopSwerve.New()
+       .withMultiplier(0.75)
+       .withRotationGoal(()-> Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getRotation() : Constants.Field.BLUE.Amp.getRotation())
+       ).alongWith(LED.get().LerpColor(()->Swerve.get().distTo(Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getTranslation()           : Constants.Field.BLUE.Amp.getTranslation())*4)));
+      Controls.DriverStation.Shoot.whileTrue(new Shoot());
+      Controls.DriverStation.Drop.whileTrue(new Drop());
 
-      Controls.Ground.whileTrue((new GroundIntake()).alongWith(new TeleopSwerve(Swerve.get()::getAngleForNote)));
-      Controls.Source.whileTrue((new ShooterIntake()).alongWith(new TeleopSwerve(()->Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Source.getRotation() : Constants.Field.BLUE.Source.getRotation())));
+      Controls.DriverStation.Ground.whileTrue((new GroundIntake()).alongWith(TeleopSwerve.New().withRotationGoal(Swerve.get()::getAngleForNote)));
+      Controls.DriverStation.Source.whileTrue((new ShooterIntake()).alongWith(TeleopSwerve.New().withRotationGoal(()->Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Source.getRotation() : Constants.Field.BLUE.Source.getRotation())));
 
-      Controls.ExtraA.whileTrue(new ManualShot(new Constants.shooter.state(4.7, 3800, 3900)));
+      Controls.DriverStation.ExtraA.whileTrue(new ManualShot(new Shooter.state(4.7, 3800, 3900)));
 
-      Controls.Trap.whileTrue(new Pass().alongWith(new TeleopSwerve(()->Swerve.get().getAngleToCorner())));
+      Controls.DriverStation.Trap.whileTrue(new Pass().alongWith(TeleopSwerve.New().withRotationGoal(()->Swerve.get().getAngleToCorner())));
 
-      Controls.Rightest.whileTrue(Auto.PathFind(Constants.Field.BLUE.Amp));
+      Controls.DriverStation.Rightest.whileTrue(Auto.PathFind(Constants.Field.BLUE.Amp));
 
-      Controls.Right.whileTrue((new HoldPosition(Constants.Field.BLUE.Amp)).alongWith(LED.get().LerpColor(()->Swerve.get().getState().velocity()*3)));
-
-      //Controls.Right.whileTrue(Auto.get().PathFindToAutoBeginning());
+      Controls.DriverStation.Right.whileTrue((new HoldPosition(Constants.Field.BLUE.Amp)).alongWith(LED.get().LerpColor(()->Swerve.get().getState().velocity()*3)));
     }
 
     @SuppressWarnings("unused") 
     private void configureControllerBinds() { 
-      TeleopSwerve.config(Controls.XBOXController.leftJoyX, Controls.XBOXController.leftJoyY, Controls.XBOXController.rightJoyX, Controls.XBOXController.RB, 0.02);
-      Swerve.get().setDefaultCommand(new TeleopSwerve(()->Swerve.get().getAngleToSpeaker()));
+      TeleopSwerve.config(Swerve.get(), Controls.XBOXController.leftJoyX, Controls.XBOXController.leftJoyY, Controls.XBOXController.rightJoyX, Controls.XBOXController.RB, 0.02);
+      Swerve.get().setDefaultCommand(TeleopSwerve.New().withRotationGoal(()->Swerve.get().getAngleToSpeaker()));
       Controls.XBOXController.A.onTrue(new InstantCommand(()->Swerve.get().zeroYaw()));
 
       Controls.XBOXController.RT.whileTrue(new Shoot());
@@ -223,12 +222,12 @@ public class Robot extends LoggedRobot {
 
       Controls.XBOXController.B.whileTrue(new GroundIntake());
 
-      Controls.XBOXController.LB.whileTrue(new Amp(Controls.XBOXController.LT).alongWith(new TeleopSwerve(()-> Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getRotation() : Constants.Field.BLUE.Amp.getRotation())));
+      Controls.XBOXController.LB.whileTrue(new Amp(Controls.XBOXController.LT).alongWith(TeleopSwerve.New().withRotationGoal(()-> Util.getAlliance() == Alliance.Red ? Constants.Field.RED.Amp.getRotation() : Constants.Field.BLUE.Amp.getRotation())));
     }
 
     @SuppressWarnings("unused")
     private void configureWebControlsBinds() {
-      TeleopSwerve.config(()->WebDashboard.getData("inputX").getDouble(), ()->WebDashboard.getData("inputY").getDouble(), ()->0, null, 0.05);
-      Swerve.get().setDefaultCommand(new TeleopSwerve(()->Swerve.get().getAngleToSpeaker()));
+      TeleopSwerve.config(Swerve.get(), ()->WebDashboard.getData("inputX").getDouble(), ()->WebDashboard.getData("inputY").getDouble(), ()->0, null, 0.05);
+      Swerve.get().setDefaultCommand(TeleopSwerve.New().withRotationGoal(()->Swerve.get().getAngleToSpeaker()));
     }
 }

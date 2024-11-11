@@ -43,7 +43,7 @@ public class Shoot extends Command {
   @Override
   public void execute() {
     double dist = Swerve.get().getDistToSpeaker();
-    Constants.shooter.state desiredState = Constants.shooter.adjustedState(dist);
+    Shooter.state desiredState = Constants.shooter.ShooterTable.getValue(dist);
 
     Shooter.get().setShooter(desiredState);
     Hood.get().setHood(desiredState);
@@ -58,7 +58,7 @@ public class Shoot extends Command {
             Logger.recordOutput("Shoot Parameters: Pose", Swerve.get().getPose() );
             Logger.recordOutput("Shoot Parameters: Speeds", Swerve.get().getRobotRelativeSpeeds() );
 
-            //new Constants.shooter.state(Hood.get().getPosition(), Shooter.get().getLeftVelocity(), Shooter.get().getRightVelocity() )
+            //new Shooter.state(Hood.get().getPosition(), Shooter.get().getLeftVelocity(), Shooter.get().getRightVelocity() )
             // desiredState
             // Swerve.get().getRobotRelativeSpeeds()
           }

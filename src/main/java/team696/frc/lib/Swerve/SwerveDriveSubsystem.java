@@ -51,7 +51,6 @@ public abstract class SwerveDriveSubsystem extends SubsystemBase {
     private final StructArrayPublisher<SwerveModuleState> swerveModuleStatePublisher = NetworkTableInstance.getDefault()
 .getStructArrayTopic("696/Swerve/MeasuredStates", SwerveModuleState.struct).publish();
 
-
     public SwerveDriveSubsystem() {
         this._stateLock = new ReentrantReadWriteLock();
         this._cachedState = new SwerveDriveState();

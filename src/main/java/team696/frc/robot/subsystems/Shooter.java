@@ -6,10 +6,12 @@ package team696.frc.robot.subsystems;
 
 import com.ctre.phoenix6.controls.VelocityVoltage;
 
+import edu.wpi.first.math.interpolation.Interpolatable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import team696.frc.lib.Util;
 import team696.frc.lib.HardwareDevices.TalonFactory;
 import team696.frc.robot.Constants;
 
@@ -21,6 +23,27 @@ public class Shooter extends SubsystemBase {
 
   private VelocityVoltage _VelocityControllerL;
   private VelocityVoltage _VelocityControllerR;
+
+  public static class state implements Interpolatable<state>{
+    public double angle;
+
+    public double speed_l;
+    public double speed_r;
+
+    public state(double a, double l, double r) {
+      angle = a;
+      speed_l = l;
+      speed_r = r;
+    }
+
+    @Override
+    public state interpolate(state endValue, double t) {
+        return new state(
+				Util.lerp(t, this.angle,   endValue.angle), 
+				Util.lerp(t, this.speed_l, endValue.speed_l), 
+				Util.lerp(t, this.speed_r, endValue.speed_r));
+    }
+  }
 
   /** Creates a new Shooter. */
   private Shooter() {
@@ -61,11 +84,11 @@ public class Shooter extends SubsystemBase {
       return true;
   }
 
-  public boolean upToSpeed(Constants.shooter.state desired, double tolerance) {
+  public boolean upToSpeed(Shooter.state desired, double tolerance) {
     return upToSpeed(desired.speed_l, desired.speed_r, tolerance);
   }
 
-  public void setShooter(Constants.shooter.state desired) {
+  public void setShooter(Shooter.state desired) {
     setShooter(desired.speed_l, desired.speed_r);
   }
 

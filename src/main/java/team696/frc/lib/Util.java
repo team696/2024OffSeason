@@ -12,6 +12,7 @@ import java.util.Map;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import team696.frc.lib.Logging.PLog;
 
 // Collection of Helpful Functions
 public class Util {

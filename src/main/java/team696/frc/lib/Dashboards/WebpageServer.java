@@ -11,7 +11,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import team696.frc.lib.PLog;
+import team696.frc.lib.Logging.PLog;
 import team696.frc.robot.Robot;
 
 public class WebpageServer {
